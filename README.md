@@ -47,6 +47,27 @@ Escape the terminal-based CLI and leverage all Claude Code features through an i
 
 ---
 
+## Installation
+
+1. Download the latest `Clarc-x.y.z.zip` from the [Releases](https://github.com/ttnear/Clarc/releases) page.
+2. Unzip and move `Clarc.app` to your `Applications` folder.
+3. Launch `Clarc.app`.
+
+### First Launch on macOS 15 (Sequoia)
+
+macOS Sequoia blocks the first launch of any downloaded app — even notarized ones — and routes approval through System Settings instead of the old right-click → Open flow.
+
+When you see **"Apple could not verify 'Clarc.app' is free of malware..."**:
+
+1. Click **Done** on the dialog.
+2. Open **System Settings → Privacy & Security**.
+3. Scroll to the Security section and click **Open Anyway** next to `Clarc.app`.
+4. Confirm with your password or Touch ID.
+
+After this one-time approval, Clarc launches normally. The app is signed with a Developer ID certificate and notarized by Apple — this prompt is standard macOS behavior, not a security warning specific to Clarc.
+
+---
+
 ## License
 
 Apache License 2.0 — see the [LICENSE](LICENSE) file for details.
