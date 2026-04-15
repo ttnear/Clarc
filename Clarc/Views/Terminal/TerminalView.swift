@@ -49,7 +49,7 @@ struct EmbeddedTerminalView: NSViewRepresentable {
         tv.startProcess(
             executable: executable,
             args: arguments,
-            environment: environment,
+            environment: resolvedEnvironment(),
             currentDirectory: currentDirectory
         )
 
@@ -71,6 +71,28 @@ struct EmbeddedTerminalView: NSViewRepresentable {
 
     func makeCoordinator() -> Coordinator {
         Coordinator(onTerminated: onProcessTerminated)
+    }
+
+    /// Build an environment array that guarantees UTF-8 locale so Korean and other
+    /// multibyte characters render correctly in the terminal.
+    private func resolvedEnvironment() -> [String] {
+        // Start from the caller-supplied environment or the current process environment.
+        var env: [String: String]
+        if let provided = environment {
+            env = Dictionary(uniqueKeysWithValues: provided.compactMap { entry -> (String, String)? in
+                let parts = entry.split(separator: "=", maxSplits: 1)
+                guard parts.count == 2 else { return nil }
+                return (String(parts[0]), String(parts[1]))
+            })
+        } else {
+            env = ProcessInfo.processInfo.environment
+        }
+        // Ensure UTF-8 locale for correct multibyte (Korean, CJK, etc.) rendering.
+        if env["LANG"] == nil || !(env["LANG"]?.hasSuffix("UTF-8") ?? false) {
+            env["LANG"] = "en_US.UTF-8"
+        }
+        env["LC_CTYPE"] = "UTF-8"
+        return env.map { "\($0.key)=\($0.value)" }
     }
 
     private func pollAndSend(tv: LocalProcessTerminalView, command: String, attempt: Int = 0) {

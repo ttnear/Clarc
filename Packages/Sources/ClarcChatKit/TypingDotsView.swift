@@ -54,13 +54,12 @@ struct PulseRingView: View {
         }
         .frame(width: size, height: size)
         .onAppear {
-            // Must start on the next run loop so SwiftUI first commits the initial (false) layout.
-            // Do not reset animated on disappear — in a non-lazy ScrollView, onDisappear fires whenever
-            // the view scrolls off-screen (not only when removed from the hierarchy). Resetting would
-            // restart the ripple animation from scratch each time the user scrolls back into view.
-            if !animated {
-                DispatchQueue.main.async { animated = true }
-            }
+            // Reset and restart every time the view becomes visible.
+            // In a non-lazy ScrollView, onAppear fires each time the view scrolls into the viewport.
+            // Resetting animated here ensures the ripple animation restarts cleanly rather than
+            // staying frozen in the paused state it was in when it scrolled off-screen.
+            animated = false
+            DispatchQueue.main.async { animated = true }
         }
     }
 }

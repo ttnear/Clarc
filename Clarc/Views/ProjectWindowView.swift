@@ -12,15 +12,23 @@ struct ProjectWindowView: View {
     @State private var showShortcutManager = false
     @State private var inspectorStarted = false
     @State private var inspectorProcess = TerminalProcess()
+    @State private var columnVisibility: NavigationSplitViewVisibility = .all
 
     var body: some View {
         Group {
             if windowState.isInitialized {
                 HSplitView {
-                    NavigationSplitView {
+                    NavigationSplitView(columnVisibility: $columnVisibility) {
                         sidebarContent
                     } detail: {
                         detailContent
+                    }
+                    .background {
+                        Button("") {
+                            columnVisibility = (columnVisibility == .all) ? .detailOnly : .all
+                        }
+                        .keyboardShortcut("3", modifiers: .command)
+                        .hidden()
                     }
                     .id(appState.themeRevision)
                     .navigationTitle(windowState.selectedProject?.name ?? "Project")
@@ -79,7 +87,7 @@ struct ProjectWindowView: View {
                 HistoryListView()
             }
 
-            SidebarTabShortcuts(sidebarTab: $sidebarTab, fileSearchTrigger: $fileSearchTrigger)
+            SidebarTabShortcuts(sidebarTab: $sidebarTab, fileSearchTrigger: $fileSearchTrigger, columnVisibility: $columnVisibility)
 
             ClaudeThemeDivider()
 
@@ -170,6 +178,7 @@ struct ProjectWindowView: View {
                     Image(systemName: "sidebar.trailing")
                 }
                 .help("Toggle Inspector")
+                .keyboardShortcut("4", modifiers: .command)
             }
         }
         .focusedValue(\.startNewChat) {

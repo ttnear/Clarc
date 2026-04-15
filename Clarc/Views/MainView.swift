@@ -15,6 +15,7 @@ struct MainView: View {
     @State private var fileSearchTrigger = false
     @State private var inspectorStarted = false
     @State private var inspectorProcess = TerminalProcess()
+    @State private var columnVisibility: NavigationSplitViewVisibility = .all
 
     enum SidebarTab: String, CaseIterable {
         case history = "History"
@@ -33,10 +34,17 @@ struct MainView: View {
             OnboardingView()
         } else {
             HSplitView {
-                NavigationSplitView {
+                NavigationSplitView(columnVisibility: $columnVisibility) {
                     sidebarContent
                 } detail: {
                     detailContent
+                }
+                .background {
+                    Button("") {
+                        columnVisibility = (columnVisibility == .all) ? .detailOnly : .all
+                    }
+                    .keyboardShortcut("3", modifiers: .command)
+                    .hidden()
                 }
                 .overlay {
                     if windowState.showMarketplace {
@@ -126,7 +134,7 @@ struct MainView: View {
             }
 
             if windowState.selectedProject != nil {
-                SidebarTabShortcuts(sidebarTab: $sidebarTab, fileSearchTrigger: $fileSearchTrigger)
+                SidebarTabShortcuts(sidebarTab: $sidebarTab, fileSearchTrigger: $fileSearchTrigger, columnVisibility: $columnVisibility)
             }
 
             ClaudeThemeDivider()
@@ -282,6 +290,7 @@ struct MainView: View {
                     Image(systemName: "sidebar.trailing")
                 }
                 .help("Toggle Inspector")
+                .keyboardShortcut("4", modifiers: .command)
 
                 Button {
                     openSettings()
@@ -423,6 +432,7 @@ struct ClaudeSegmentedControl: View {
 struct SidebarTabShortcuts: View {
     @Binding var sidebarTab: MainView.SidebarTab
     @Binding var fileSearchTrigger: Bool
+    @Binding var columnVisibility: NavigationSplitViewVisibility
 
     var body: some View {
         Color.clear
@@ -436,12 +446,14 @@ struct SidebarTabShortcuts: View {
                 .hidden()
 
                 Button("") {
+                    columnVisibility = .all
                     withAnimation(.easeInOut(duration: 0.15)) { sidebarTab = .history }
                 }
                 .keyboardShortcut("1", modifiers: .command)
                 .hidden()
 
                 Button("") {
+                    columnVisibility = .all
                     withAnimation(.easeInOut(duration: 0.15)) { sidebarTab = .files }
                 }
                 .keyboardShortcut("2", modifiers: .command)
