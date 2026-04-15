@@ -32,7 +32,7 @@ struct MainView: View {
         if !appState.onboardingCompleted {
             OnboardingView()
         } else {
-            HStack(spacing: 0) {
+            HSplitView {
                 NavigationSplitView {
                     sidebarContent
                 } detail: {
@@ -102,7 +102,6 @@ struct MainView: View {
                     inspectorPanel
                 }
             }
-            .animation(.spring(response: 0.35, dampingFraction: 0.85), value: windowState.showInspector)
         }
     }
 
@@ -339,7 +338,10 @@ struct MainView: View {
                 .clipped()
         }
         .background(ClaudeTheme.surfaceElevated)
-        .frame(width: windowState.showInspector ? 420 : 0)
+        .frame(
+            minWidth: windowState.showInspector ? 380 : 0,
+            maxWidth: windowState.showInspector ? .infinity : 0
+        )
         .opacity(windowState.showInspector ? 1 : 0)
         .clipped()
     }

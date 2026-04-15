@@ -152,6 +152,7 @@
 "Done" = "완료";
 
 // MARK: - UserManualView
+// Topic titles
 "About Clarc" = "Clarc 소개";
 "Project Management" = "프로젝트 관리";
 "Chat Basics" = "채팅 기본";
@@ -159,46 +160,68 @@
 "Slash Commands" = "슬래시 커맨드";
 "File & Image Attachments" = "파일 및 이미지 첨부";
 "Shortcut Buttons" = "단축 버튼";
-"Terminal" = "터미널";
+"Inspector Panel" = "인스펙터 패널";
+"GitHub Integration" = "GitHub 연동";
 "Permission Requests" = "권한 요청";
+
+// Overview
 "What is Clarc?" = "Clarc란?";
-"A native macOS desktop client for the Claude Code CLI. Use all Claude Code features via a GUI without needing a terminal." = "Claude Code CLI를 위한 네이티브 macOS 데스크톱 클라이언트입니다. 터미널 없이 GUI로 Claude Code의 모든 기능을 사용할 수 있습니다.";
+"A native macOS desktop client for the Claude Code CLI. Use all Claude Code features via a polished GUI without needing a terminal." = "Claude Code CLI를 위한 네이티브 macOS 데스크톱 클라이언트입니다. 터미널 없이 세련된 GUI로 Claude Code의 모든 기능을 사용할 수 있습니다.";
 "Main Layout" = "기본 레이아웃";
-"The left sidebar has History and Files tabs. Project tabs are shown at the top of the chat area; click to switch projects." = "왼쪽 사이드바에는 기록 및 파일 탭이 있습니다. 채팅 영역 상단에 프로젝트 탭이 표시되며, 클릭하여 프로젝트를 전환할 수 있습니다.";
+"The left sidebar has History and Files tabs. Project tabs appear at the top of the chat area — click to switch projects. The right inspector panel contains the Terminal and Memo tabs." = "왼쪽 사이드바에는 기록 및 파일 탭이 있습니다. 채팅 영역 상단에 프로젝트 탭이 표시되며 클릭하여 전환할 수 있습니다. 오른쪽 인스펙터 패널에는 터미널과 메모 탭이 있습니다.";
 "Chat is disabled when no project is selected." = "프로젝트가 선택되지 않으면 채팅을 사용할 수 없습니다.";
 "Top Toolbar" = "상단 툴바";
-"The toolbar lets you start a new chat, open the terminal, access the skill marketplace, manage shortcuts and slash commands, change the theme, and open the user guide." = "툴바에서 새 채팅 시작, 터미널 열기, 스킬 마켓플레이스 접근, 단축키 및 슬래시 커맨드 관리, 테마 변경, 사용 가이드 열기 등을 할 수 있습니다.";
+"The toolbar contains: New Chat, Manage Slash Commands, Manage Shortcut Buttons, Skip Permissions toggle, Model picker, Inspector panel toggle, Settings, and the GitHub integration button." = "툴바 구성: 새 채팅, 슬래시 커맨드 관리, 단축 버튼 관리, 권한 건너뛰기 토글, 모델 선택, 인스펙터 패널 토글, 설정, GitHub 연동 버튼.";
+
+// Project Management
 "Adding a Project" = "프로젝트 추가";
 "Click the + button at the top of the sidebar or drag a folder from Finder. Claude Code uses that folder as its working directory." = "사이드바 상단의 + 버튼을 클릭하거나 Finder에서 폴더를 드래그하세요. Claude Code는 해당 폴더를 작업 디렉토리로 사용합니다.";
 "Project Tabs" = "프로젝트 탭";
-"Project tabs appear at the top of the chat area. Click a tab to switch projects. You can switch even while streaming; the active stream continues running in the background." = "채팅 영역 상단에 프로젝트 탭이 표시됩니다. 탭을 클릭하여 프로젝트를 전환할 수 있습니다. 스트리밍 중에도 전환 가능하며, 진행 중인 스트림은 백그라운드에서 계속 실행됩니다.";
+"Project tabs appear at the top of the chat area. Click a tab to switch projects. You can switch even while Claude is streaming — the active stream continues in the background." = "채팅 영역 상단에 프로젝트 탭이 표시됩니다. 탭을 클릭하여 전환하세요. Claude가 스트리밍 중에도 전환 가능하며, 진행 중인 스트림은 백그라운드에서 계속 실행됩니다.";
 "Dedicated Project Window" = "전용 프로젝트 창";
-"Double-click a project tab to open it in its own independent window. You can work on multiple projects simultaneously, each in its own window." = "프로젝트 탭을 더블 클릭하면 독립적인 전용 창에서 열립니다. 여러 프로젝트를 동시에 각자의 창에서 작업할 수 있습니다.";
+"Double-click a project tab to open it in its own independent window. Each window manages its own sessions independently, allowing you to work on multiple projects at once." = "프로젝트 탭을 더블 클릭하면 독립적인 전용 창에서 열립니다. 각 창은 세션을 독립적으로 관리하므로 여러 프로젝트를 동시에 작업할 수 있습니다.";
 "In a dedicated project window, only the project name is shown — there are no project tabs." = "전용 프로젝트 창에서는 프로젝트 이름만 표시되며 프로젝트 탭은 없습니다.";
 "Sidebar Tabs" = "사이드바 탭";
 "History tab: shows previous conversations\nFiles tab: browse the project file tree" = "기록 탭: 이전 대화 표시\n파일 탭: 프로젝트 파일 트리 탐색";
 "Go to History tab" = "기록 탭으로 이동";
 "Go to Files tab" = "파일 탭으로 이동";
 "Files tab + activate search" = "파일 탭 + 검색 활성화";
+"History Management" = "기록 관리";
+"Right-click a session in the History tab for context menu options." = "기록 탭에서 세션을 우클릭하면 컨텍스트 메뉴가 표시됩니다.";
+"Pin / Unpin — pinned sessions stay at the top of the list" = "고정 / 고정 해제 — 고정된 세션은 항상 목록 최상단에 표시됩니다";
+"Rename — change the session title" = "이름 변경 — 세션 제목을 수정합니다";
+"Delete — remove the session" = "삭제 — 세션을 삭제합니다";
+"Use the trash icon in the History header to delete all sessions at once." = "기록 헤더의 휴지통 아이콘을 사용하면 모든 세션을 한 번에 삭제할 수 있습니다.";
+"File Inspector" = "파일 인스펙터";
+"Click any file in the Files tab to preview it with syntax highlighting. Press the pencil button to enter edit mode and modify the file directly." = "파일 탭에서 파일을 클릭하면 구문 강조와 함께 미리 볼 수 있습니다. 연필 버튼을 눌러 편집 모드로 전환하고 파일을 직접 수정할 수 있습니다.";
+"Save file changes" = "파일 변경사항 저장";
+"Exit edit mode" = "편집 모드 종료";
+"Files larger than 1 MB cannot be previewed." = "1 MB를 초과하는 파일은 미리볼 수 없습니다.";
 "Git Status" = "Git 상태";
 "The number of changed files is shown at the bottom of the sidebar." = "변경된 파일 수가 사이드바 하단에 표시됩니다.";
+
+// Chat Basics
 "Sending Messages" = "메시지 전송";
 "Type a message in the input field and press Return or the send button." = "입력창에 메시지를 입력하고 Return 키 또는 전송 버튼을 누르세요.";
 "Send message" = "메시지 전송";
 "Send message (alternative)" = "메시지 전송 (대체)";
 "Insert line break" = "줄 바꿈 삽입";
 "Stop streaming (cancel response generation)" = "스트리밍 중지 (응답 생성 취소)";
-"Sending Messages While Streaming" = "스트리밍 중 메시지 전송";
-"You can send messages even while Claude is responding. The next message will be sent automatically once the current response finishes. Queued messages are shown as a badge above the input field." = "Claude가 응답하는 동안에도 메시지를 전송할 수 있습니다. 현재 응답이 완료되면 다음 메시지가 자동으로 전송됩니다. 대기 중인 메시지는 입력창 위에 배지로 표시됩니다.";
+"Message Queue" = "메시지 큐";
+"You can send messages even while Claude is responding. New messages are queued automatically and sent once the current response finishes. Queued messages appear as a badge above the input field — click the × on each item to remove it from the queue." = "Claude가 응답하는 동안에도 메시지를 전송할 수 있습니다. 새 메시지는 자동으로 큐에 추가되고 현재 응답이 완료되면 전송됩니다. 대기 중인 메시지는 입력창 위에 배지로 표시되며, 각 항목의 × 버튼으로 제거할 수 있습니다.";
 "Recalling Previous Messages" = "이전 메시지 불러오기";
-"When the input field is empty, use ↑/↓ to recall previously sent messages." = "입력창이 비어 있을 때 ↑/↓를 눌러 이전에 전송한 메시지를 불러올 수 있습니다.";
-"Recall previous message" = "이전 메시지 불러오기 (↑)";
-"Next message / clear input" = "다음 메시지 / 입력 지우기 (↓)";
+"When the input field is empty, use ↑/↓ to navigate your message history." = "입력창이 비어 있을 때 ↑/↓를 눌러 메시지 기록을 탐색할 수 있습니다.";
+"Recall previous message" = "이전 메시지 불러오기";
+"Next message / clear input" = "다음 메시지 / 입력 지우기";
 "Changing the Model" = "모델 변경";
-"Use the model dropdown at the top right of the chat area to switch Claude models." = "채팅 영역 오른쪽 상단의 모델 드롭다운을 사용하여 Claude 모델을 전환하세요.";
+"Use the model dropdown at the top of the chat area to switch Claude models." = "채팅 영역 상단의 모델 드롭다운을 사용하여 Claude 모델을 전환하세요.";
 "Skip Permissions" = "권한 건너뛰기";
-"Click the shield icon at the top of the chat to automatically approve all permission prompts. Use with caution." = "채팅 상단의 방패 아이콘을 클릭하면 모든 권한 요청이 자동으로 승인됩니다. 주의해서 사용하세요.";
-"Green = permission requests active / Red = all permissions auto-approved" = "초록색 = 권한 요청 활성화 / 빨간색 = 모든 권한 자동 승인";
+"Toggle the shield icon at the top of the chat to auto-approve all permission prompts. Use with caution." = "채팅 상단의 방패 아이콘을 토글하면 모든 권한 요청이 자동으로 승인됩니다. 주의해서 사용하세요.";
+"Normal mode — permission prompts appear as usual" = "일반 모드 — 권한 요청 팝업이 정상 표시됩니다";
+"Skip mode — all permissions auto-approved" = "건너뛰기 모드 — 모든 권한이 자동 승인됩니다";
+"Only enable Skip Permissions on projects you fully trust." = "완전히 신뢰하는 프로젝트에서만 권한 건너뛰기를 활성화하세요.";
+
+// Keyboard Shortcuts
 "Global Shortcuts" = "전체 단축키";
 "Start new chat" = "새 채팅 시작";
 "Close current window" = "현재 창 닫기";
@@ -214,44 +237,90 @@
 "Slash Command Popup" = "슬래시 커맨드 팝업";
 "Select item" = "항목 선택";
 "Execute command" = "커맨드 실행";
+"Execute selected command" = "선택한 커맨드 실행";
 "View command details" = "커맨드 상세 보기";
 "Autocomplete command" = "커맨드 자동 완성";
 "Close popup" = "팝업 닫기";
 "@ File Popup" = "@ 파일 팝업";
 "Insert file path" = "파일 경로 삽입";
+"Insert file path into message" = "메시지에 파일 경로 삽입";
+
+// Slash Commands
 "What are Slash Commands?" = "슬래시 커맨드란?";
-"Type / in the input field to see a popup list of available commands. Quickly execute Claude Code CLI commands from here." = "입력창에 /를 입력하면 사용 가능한 커맨드 팝업 목록이 표시됩니다. 여기서 Claude Code CLI 커맨드를 빠르게 실행할 수 있습니다.";
+"Type / in the input field to open a popup list of available commands. Slash commands let you quickly trigger Claude Code CLI operations without typing them manually." = "입력창에 /를 입력하면 사용 가능한 커맨드 팝업 목록이 열립니다. 슬래시 커맨드를 사용하면 Claude Code CLI 작업을 빠르게 실행할 수 있습니다.";
 "How to Use" = "사용 방법";
-"Type / in the input field to open the popup. Continue typing to filter results, then use ↑↓ to select and press Return or Tab to execute." = "입력창에 /를 입력하여 팝업을 엽니다. 계속 입력하면 결과가 필터링되고, ↑↓로 선택 후 Return 또는 Tab을 눌러 실행합니다.";
-"Custom Commands" = "커스텀 커맨드";
-"Click the / button in the toolbar to add, edit, or delete custom slash commands. Commands are saved per project." = "툴바의 / 버튼을 클릭하여 커스텀 슬래시 커맨드를 추가, 편집 또는 삭제하세요. 커맨드는 프로젝트별로 저장됩니다.";
-"Built-in commands can be hidden or modified, and you can also add entirely new commands." = "기본 내장 커맨드를 숨기거나 수정할 수 있으며, 완전히 새로운 커맨드를 추가할 수도 있습니다.";
+"Type / to open the popup, then continue typing to filter results. Use ↑/↓ to navigate." = "/를 입력하여 팝업을 열고 계속 입력하면 결과가 필터링됩니다. ↑/↓로 탐색하세요.";
+"Interactive Commands" = "인터랙티브 커맨드";
+"Some commands (such as /config, /permissions, /model) open in a full interactive terminal popup sheet, where you can use the interactive CLI interface. The popup closes automatically when the command finishes." = "/config, /permissions, /model 등 일부 커맨드는 별도의 인터랙티브 터미널 팝업 시트에서 실행됩니다. 커맨드가 완료되면 자동으로 닫힙니다.";
+"Managing Commands" = "커맨드 관리";
+"Click the / button in the toolbar, or open Settings → Slash Commands to add, edit, hide, or disable commands. Custom commands and changes to built-in commands are saved per project." = "툴바의 / 버튼을 클릭하거나 설정 → 슬래시 커맨드를 열어 커맨드를 추가, 편집, 숨김 또는 비활성화할 수 있습니다. 변경사항은 프로젝트별로 저장됩니다.";
+"JSON import/export is supported for backing up or sharing your command set." = "커맨드 세트를 백업하거나 공유하기 위한 JSON 가져오기/내보내기를 지원합니다.";
+
+// File & Image Attachments
 "Attaching Files" = "파일 첨부";
-"Click the clip icon to the left of the input field, or drag and drop files onto the input field to attach them." = "입력창 왼쪽의 클립 아이콘을 클릭하거나 파일을 입력창으로 드래그 앤 드롭하여 첨부하세요.";
-"Attaching Images" = "이미지 첨부";
-"Drag an image file or paste from the clipboard (⌘V). Screenshots can be pasted directly as well." = "이미지 파일을 드래그하거나 클립보드에서 붙여넣기(⌘V)하세요. 스크린샷도 바로 붙여넣을 수 있습니다.";
-"Auto-converting Long Text" = "긴 텍스트 자동 변환";
-"Pasting long text automatically converts it into a text attachment. Click the attachment to preview its contents." = "긴 텍스트를 붙여넣으면 자동으로 텍스트 첨부 파일로 변환됩니다. 첨부 파일을 클릭하면 내용을 미리 볼 수 있습니다.";
+"Click the clip icon to the left of the input field, or drag and drop files onto the input field. When dragging, the input field border highlights in the accent color to show the drop zone." = "입력창 왼쪽의 클립 아이콘을 클릭하거나 파일을 입력창으로 드래그하세요. 드래그 중에는 입력창 테두리가 강조 색상으로 표시됩니다.";
+"Clipboard Detection" = "클립보드 감지";
+"Pasting (⌘V) is smart — Clarc detects what's in the clipboard and handles it automatically." = "붙여넣기(⌘V)가 스마트합니다 — Clarc가 클립보드 내용을 자동으로 감지하여 처리합니다.";
+"Image data (PNG/TIFF) → attached as an image" = "이미지 데이터(PNG/TIFF) → 이미지로 첨부";
+"File path → attached as a file" = "파일 경로 → 파일로 첨부";
+"URL → attached as a URL reference" = "URL → URL 참조로 첨부";
+"Long text (>2 KB) → converted to a text attachment" = "장문 텍스트(>2 KB) → 텍스트 첨부 파일로 변환";
+"Screenshots can be pasted directly — they are automatically attached as images." = "스크린샷을 바로 붙여넣을 수 있으며 자동으로 이미지로 첨부됩니다.";
 "@ File References" = "@ 파일 참조";
-"Type @ in the input field to open a project file search popup. Selecting a file inserts its path into the message so Claude can reference it." = "입력창에 @를 입력하면 프로젝트 파일 검색 팝업이 열립니다. 파일을 선택하면 메시지에 해당 경로가 삽입되어 Claude가 참조할 수 있습니다.";
+"Type @ in the input field to open a project file search popup. Files are filtered in real time as you type." = "입력창에 @를 입력하면 프로젝트 파일 검색 팝업이 열립니다. 입력할수록 실시간으로 필터링됩니다.";
+
+// Shortcut Buttons
 "What are Shortcut Buttons?" = "단축 버튼이란?";
-"Quick-access buttons shown at the top of the chat. Run frequently used messages or terminal commands with a single click." = "채팅 상단에 표시되는 빠른 접근 버튼입니다. 자주 사용하는 메시지나 터미널 커맨드를 한 번의 클릭으로 실행할 수 있습니다.";
+"Quick-access buttons shown at the top of the chat area. Run frequently used messages or shell commands with a single click." = "채팅 영역 상단에 표시되는 빠른 접근 버튼입니다. 자주 사용하는 메시지나 셸 커맨드를 한 번의 클릭으로 실행할 수 있습니다.";
 "Adding a Shortcut" = "단축 버튼 추가";
-"Click the lightning bolt icon (⚡) in the toolbar, or press the + button on the right side of the shortcut bar. You can set a name, message/command, icon, and color." = "툴바의 번개 아이콘(⚡)을 클릭하거나 단축 버튼 바 오른쪽의 + 버튼을 누르세요. 이름, 메시지/커맨드, 아이콘, 색상을 설정할 수 있습니다.";
-"Terminal Command Shortcuts" = "터미널 커맨드 단축 버튼";
-"Enable the \"Run as terminal command\" option to execute the command in the terminal instead of sending it as a chat message." = "\"터미널 커맨드로 실행\" 옵션을 활성화하면 채팅 메시지 대신 터미널에서 커맨드를 실행합니다.";
-"Shortcuts are saved per project. Import/export as JSON is also supported." = "단축 버튼은 프로젝트별로 저장됩니다. JSON으로 가져오기/내보내기도 지원합니다.";
-"Opening the Terminal" = "터미널 열기";
-"Click the terminal icon in the toolbar to open an inspector panel in the sidebar, with the terminal running at the current project path." = "툴바의 터미널 아이콘을 클릭하면 현재 프로젝트 경로에서 터미널이 실행되는 인스펙터 패널이 사이드바에 열립니다.";
+"Click the ⚡ button in the toolbar to open the Shortcut Manager, or press the + button on the right side of the shortcut bar. You can set a name, message/command, icon, and color." = "툴바의 ⚡ 버튼을 클릭하여 단축 버튼 관리자를 열거나, 단축 버튼 바 오른쪽의 + 버튼을 누르세요. 이름, 메시지/커맨드, 아이콘, 색상을 설정할 수 있습니다.";
+"Terminal Command Mode" = "터미널 커맨드 모드";
+"Enable the \"Run as terminal command\" option to execute the shortcut as a shell command in the inspector terminal instead of sending it as a chat message. The project directory is used as the working directory." = "\"터미널 커맨드로 실행\" 옵션을 활성화하면 채팅 메시지 대신 인스펙터 터미널에서 셸 커맨드로 실행됩니다. 프로젝트 디렉토리가 작업 디렉토리로 사용됩니다.";
+"Managing Shortcuts" = "단축 버튼 관리";
+"Open Settings → Shortcuts to reorder, edit, or delete shortcuts. Shortcut configurations are saved per project." = "설정 → 단축키를 열어 단축 버튼을 순서 변경, 편집 또는 삭제할 수 있습니다. 설정은 프로젝트별로 저장됩니다.";
+"JSON import/export is supported for backing up or sharing your shortcut set." = "단축 버튼 세트를 백업하거나 공유하기 위한 JSON 가져오기/내보내기를 지원합니다.";
+
+// Inspector Panel
+"Opening the Inspector Panel" = "인스펙터 패널 열기";
+"Click the sidebar.trailing (⊟) button at the top right of the toolbar to toggle the inspector panel. The panel docks to the right side of the window and contains two tabs: Terminal and Memo." = "툴바 오른쪽 상단의 ⊟ 버튼을 클릭하여 인스펙터 패널을 열고 닫습니다. 패널은 창 오른쪽에 고정되며 터미널과 메모 탭을 포함합니다.";
+"Terminal Tab" = "터미널 탭";
+"An embedded zsh terminal that opens at the current project's directory. Use it to run shell commands, inspect files, or manage git — all without leaving the app." = "현재 프로젝트 디렉토리에서 실행되는 내장 zsh 터미널입니다. 앱을 벗어나지 않고 셸 커맨드 실행, 파일 확인, git 관리 등을 할 수 있습니다.";
+"Memo Tab" = "메모 탭";
+"A per-project rich text memo editor. Notes are auto-saved after a short pause and persist across sessions. Markdown formatting is supported." = "프로젝트별 서식 있는 텍스트 메모 편집기입니다. 메모는 잠시 후 자동 저장되며 세션을 넘어 유지됩니다. 마크다운 서식을 지원합니다.";
+"Heading levels (# / ## / ###)" = "제목 수준 (# / ## / ###)";
+"Bold" = "굵게";
+"Italic" = "기울임꼴";
+"Inline code" = "인라인 코드";
+"Strikethrough" = "취소선";
+"Unordered list (auto-continues on Return)" = "순서 없는 목록 (Return 시 자동 계속)";
 "Interactive Terminal Popup" = "대화형 터미널 팝업";
-"Some slash commands (/config, /permissions, etc.) open in an interactive terminal popup. Use interactive CLI tools in a separate sheet window. It closes automatically when done." = "일부 슬래시 커맨드(/config, /permissions 등)는 대화형 터미널 팝업에서 열립니다. 별도의 시트 창에서 대화형 CLI 도구를 사용할 수 있으며, 완료되면 자동으로 닫힙니다.";
-"Click the brain icon in the toolbar to browse the MCP plugin catalog published on Anthropic's GitHub." = "툴바의 뇌 아이콘을 클릭하면 Anthropic GitHub에 게시된 MCP 플러그인 카탈로그를 탐색할 수 있습니다.";
+"Some slash commands (such as /config, /permissions, /model) open in a separate interactive terminal sheet. The popup runs the command automatically and closes when it exits." = "일부 슬래시 커맨드(/config, /permissions, /model 등)는 별도의 대화형 터미널 시트에서 열립니다. 팝업이 커맨드를 자동으로 실행하고 종료 시 닫힙니다.";
+"The exit code is shown at the bottom — \"exit 0\" means the command completed successfully." = "하단에 종료 코드가 표시됩니다 — \"exit 0\"은 커맨드가 성공적으로 완료되었음을 의미합니다.";
+
+// GitHub Integration
+"Click the GitHub Mark button at the top of the sidebar to open the GitHub panel. After connecting your GitHub account, your repositories are listed and can be added to Clarc with one click." = "사이드바 상단의 GitHub 마크 버튼을 클릭하여 GitHub 패널을 열어보세요. GitHub 계정을 연결하면 저장소 목록이 표시되고 한 번의 클릭으로 Clarc에 추가할 수 있습니다.";
+"Adding a Repository" = "저장소 추가";
+"Search for a repository by name, then click Add. Clarc clones it automatically and opens it as a new project." = "이름으로 저장소를 검색한 후 추가 버튼을 클릭하세요. Clarc가 자동으로 클론하고 새 프로젝트로 엽니다.";
+"Private repository" = "비공개 저장소";
+"Public repository" = "공개 저장소";
+"Already added to Clarc" = "이미 Clarc에 추가됨";
+
+// Skill Marketplace
+"Click the brain icon (🧠) in the toolbar to browse the MCP plugin catalog published on Anthropic's GitHub. Plugins can be filtered by category or searched by name, description, or author." = "툴바의 🧠 아이콘을 클릭하면 Anthropic GitHub에 게시된 MCP 플러그인 카탈로그를 탐색할 수 있습니다. 카테고리별 필터링 또는 이름, 설명, 작성자로 검색이 가능합니다.";
 "Installing Plugins" = "플러그인 설치";
-"Select a plugin in the marketplace to see instructions on how to install it in Claude Code. The catalog refreshes automatically every 5 minutes." = "마켓플레이스에서 플러그인을 선택하면 Claude Code에 설치하는 방법이 표시됩니다. 카탈로그는 5분마다 자동으로 새로고침됩니다.";
+"Click a plugin to view its details, then press Install. An interactive terminal popup opens and runs the install command automatically." = "플러그인을 클릭하여 상세 정보를 확인한 후 설치 버튼을 누르세요. 대화형 터미널 팝업이 열리고 설치 커맨드가 자동으로 실행됩니다.";
+"Not installed" = "미설치";
+"Installing…" = "설치 중…";
+"The catalog refreshes automatically every 5 minutes." = "카탈로그는 5분마다 자동으로 새로고침됩니다.";
+
+// Permission Requests
 "What are Permission Requests?" = "권한 요청이란?";
-"Before Claude performs actions like editing files or running commands, it asks for your approval. A popup appears where you can allow or deny the request." = "Claude가 파일 편집이나 커맨드 실행 등의 작업을 수행하기 전에 승인을 요청합니다. 팝업이 표시되어 요청을 허용하거나 거부할 수 있습니다.";
+"Before Claude edits files or runs commands, it pauses and asks for your approval. A modal appears showing the tool name and its arguments." = "Claude가 파일을 편집하거나 커맨드를 실행하기 전에 잠시 멈추고 승인을 요청합니다. 도구 이름과 인수를 보여주는 모달이 표시됩니다.";
+"Approval Options" = "승인 옵션";
+"Each permission request offers three choices." = "각 권한 요청은 세 가지 선택지를 제공합니다.";
+"Approve this single action" = "이 단일 작업만 승인";
+"Approve all future requests of this type for the current session" = "현재 세션 동안 이 유형의 모든 요청을 승인";
+"Reject the action" = "작업 거부";
+"If no action is taken, the request is automatically denied after 5 minutes. Press Return to Allow, or Escape to Deny." = "5분 안에 응답이 없으면 요청이 자동으로 거부됩니다. Return으로 허용, Escape로 거부할 수 있습니다.";
 "Skip Permissions Mode" = "권한 건너뛰기 모드";
 "Toggle the shield icon at the top of the chat to auto-approve all permission requests. This speeds up tasks but also auto-executes potentially dangerous operations — use with caution." = "채팅 상단의 방패 아이콘을 토글하면 모든 권한 요청이 자동으로 승인됩니다. 작업 속도는 빨라지지만 잠재적으로 위험한 작업도 자동 실행되므로 주의해서 사용하세요.";
-"Permission requests active (normal mode)" = "권한 요청 활성화 (일반 모드)";
-"All permissions auto-approved (Skip mode)" = "모든 권한 자동 승인 (건너뛰기 모드)";
-"Only use Skip Permissions on projects you trust." = "신뢰하는 프로젝트에서만 권한 건너뛰기를 사용하세요.";
