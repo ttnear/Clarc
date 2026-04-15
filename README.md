@@ -4,7 +4,7 @@
 
 Escape the terminal-based CLI and leverage all Claude Code features through an intuitive GUI.
 
-![Platform](https://img.shields.io/badge/platform-macOS%2026.2%2B-blue)
+![Platform](https://img.shields.io/badge/platform-macOS%2015.0%2B-blue)
 ![Swift](https://img.shields.io/badge/Swift-6.0-orange)
 ![License](https://img.shields.io/badge/license-Apache%202.0-green)
 
@@ -36,7 +36,7 @@ Escape the terminal-based CLI and leverage all Claude Code features through an i
 
 ## Requirements
 
-- **macOS 26.2** or later
+- **macOS 15.0** or later
 - **[Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code)** must be installed
 - **Xcode 16** or later (for building)
 
