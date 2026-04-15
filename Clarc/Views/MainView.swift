@@ -16,6 +16,9 @@ struct MainView: View {
     @State private var inspectorStarted = false
     @State private var inspectorProcess = TerminalProcess()
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
+    @State private var projectToDelete: Project? = nil
+    @State private var projectToRename: Project? = nil
+    @State private var renameText: String = ""
 
     enum SidebarTab: String, CaseIterable {
         case history = "History"
@@ -190,6 +193,20 @@ struct MainView: View {
                         .onTapGesture(count: 2) {
                             openWindow(id: "project-window", value: project.id)
                         }
+                        .contextMenu {
+                            Button {
+                                renameText = project.name
+                                projectToRename = project
+                            } label: {
+                                Label("Rename Project", systemImage: "pencil")
+                            }
+                            Divider()
+                            Button(role: .destructive) {
+                                projectToDelete = project
+                            } label: {
+                                Label("Delete Project", systemImage: "trash")
+                            }
+                        }
                     }
                 }
             }
@@ -201,6 +218,29 @@ struct MainView: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
         .background(ClaudeTheme.surfaceElevated)
+        .confirmationDialog(
+            "Delete \"\(projectToDelete?.name ?? "")\"?",
+            isPresented: Binding(
+                get: { projectToDelete != nil },
+                set: { if !$0 { projectToDelete = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button("Delete", role: .destructive) {
+                if let project = projectToDelete {
+                    Task { await appState.deleteProject(project, in: windowState) }
+                }
+                projectToDelete = nil
+            }
+            Button("Cancel", role: .cancel) { projectToDelete = nil }
+        } message: {
+            Text("This will remove the project from Clarc. The files on disk will not be deleted.")
+        }
+        .sheet(item: $projectToRename) { project in
+            RenameProjectSheet(name: $renameText) {
+                Task { await appState.renameProject(project, to: renameText) }
+            }
+        }
     }
 
     // MARK: - Detail

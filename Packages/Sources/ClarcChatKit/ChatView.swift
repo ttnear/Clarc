@@ -1,3 +1,4 @@
+import Combine
 import SwiftUI
 import ClarcCore
 
@@ -32,6 +33,9 @@ public struct ChatView: View {
         }
         .onChange(of: windowState.registryVersion) { _, _ in
             reloadShortcuts()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .chatShortcutsDidChange)) { _ in
+            projectShortcuts = ChatShortcutRegistry.currentShortcuts
         }
         .onAppear {
             reloadShortcuts()

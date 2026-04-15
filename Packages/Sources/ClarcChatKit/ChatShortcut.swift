@@ -2,6 +2,12 @@ import Foundation
 import SwiftUI
 import ClarcCore
 
+// MARK: - Notifications
+
+extension Notification.Name {
+    public static let chatShortcutsDidChange = Notification.Name("ChatShortcutRegistry.shortcutsDidChange")
+}
+
 // MARK: - Chat Shortcut Data
 
 public struct ChatShortcut: Identifiable, Codable, Hashable {
@@ -102,6 +108,7 @@ public enum ChatShortcutRegistry {
         } catch {
             print("Failed to save shortcuts: \(error)")
         }
+        NotificationCenter.default.post(name: .chatShortcutsDidChange, object: nil)
     }
 
     // MARK: - Export / Import

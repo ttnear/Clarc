@@ -76,6 +76,10 @@
 
 // MARK: - ProjectListView
 "Projects" = "프로젝트";
+"Rename Project" = "프로젝트 이름 변경";
+"Delete Project" = "프로젝트 삭제";
+"This will remove the project from Clarc. The files on disk will not be deleted." = "Clarc에서 프로젝트가 제거됩니다. 디스크의 파일은 삭제되지 않습니다.";
+"Project name" = "프로젝트 이름";
 
 // MARK: - HistoryListView
 "Show current project only" = "현재 프로젝트만 표시";

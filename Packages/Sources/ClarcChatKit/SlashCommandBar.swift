@@ -585,6 +585,7 @@ struct CommandMenuButton: View {
         .popover(isPresented: $showUsagePopover, arrowEdge: .top) { UsagePopoverView() }
         .sheet(isPresented: $showCommandManager) {
             SlashCommandManagerView(projectName: windowState.selectedProject?.name ?? "")
+                .onDisappear { windowState.registryVersion += 1 }
         }
     }
 

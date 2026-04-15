@@ -382,14 +382,7 @@ struct ShortcutEditView: View {
                             .foregroundStyle(.secondary)
                     }
 
-                    // Preview
-                    fieldSection("Preview") {
-                        HStack {
-                            shortcutPreviewButton
-                            Spacer()
-                        }
-                    }
-                }
+}
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(20)
             }
@@ -429,21 +422,6 @@ struct ShortcutEditView: View {
                 isTerminalCommand = s.isTerminalCommand
             }
         }
-    }
-
-    private var shortcutPreviewButton: some View {
-        HStack(spacing: 6) {
-            Text(name.isEmpty ? "Shortcut" : name)
-                .font(.system(size: 12, weight: .medium))
-        }
-        .foregroundStyle(.secondary)
-        .padding(.horizontal, 12)
-        .padding(.vertical, 6)
-        .background(Color(NSColor.controlBackgroundColor), in: Capsule())
-        .overlay(
-            Capsule()
-                .strokeBorder(Color(NSColor.separatorColor), lineWidth: 1)
-        )
     }
 
     @ViewBuilder

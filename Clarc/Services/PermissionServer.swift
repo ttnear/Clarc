@@ -80,6 +80,7 @@ actor PermissionServer {
             do {
                 let params = NWParameters.tcp
                 params.allowLocalEndpointReuse = true
+                params.requiredInterfaceType = .loopback
                 let l = try NWListener(using: params, on: NWEndpoint.Port(rawValue: candidatePort)!)
                 self.port = candidatePort
                 self.listener = l

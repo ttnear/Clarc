@@ -1443,6 +1443,42 @@ final class AppState {
         catch { logger.error("Failed to save pinned session: \(error.localizedDescription)") }
     }
 
+    func renameProject(_ project: Project, to newName: String) async {
+        let trimmed = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty,
+              let index = projects.firstIndex(where: { $0.id == project.id }) else { return }
+        projects[index].name = trimmed
+        do {
+            try await persistence.saveProjects(projects)
+        } catch {
+            logger.error("Failed to save projects after rename: \(error.localizedDescription)")
+        }
+    }
+
+    func deleteProject(_ project: Project, in window: WindowState) async {
+        // Switch away if the deleted project is currently selected
+        if window.selectedProject?.id == project.id {
+            let next = projects.first(where: { $0.id != project.id })
+            if let next {
+                await selectProject(next, in: window)
+            } else {
+                window.selectedProject = nil
+                window.currentSessionId = nil
+            }
+        }
+
+        // Remove all in-memory session summaries for this project
+        allSessionSummaries.removeAll { $0.projectId == project.id }
+
+        // Remove from projects list and persist
+        projects.removeAll { $0.id == project.id }
+        do {
+            try await persistence.saveProjects(projects)
+        } catch {
+            logger.error("Failed to save projects after deletion: \(error.localizedDescription)")
+        }
+    }
+
     func deleteSession(_ session: ChatSession, in window: WindowState) async {
         if window.currentSessionId == session.id {
             startNewChat(in: window)
