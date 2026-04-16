@@ -556,6 +556,15 @@ struct InputBarView: View {
                           let url = URL(dataRepresentation: data, relativeTo: nil) else { return }
                     if let attachment = AttachmentFactory.fromFileURL(url) {
                         DispatchQueue.main.async { windowState.addAttachment(attachment) }
+                        return
+                    }
+                    // File URL exists but unsupported type — fall back to image data if available
+                    guard provider.hasRepresentationConforming(toTypeIdentifier: UTType.image.identifier) else { return }
+                    provider.loadDataRepresentation(forTypeIdentifier: UTType.image.identifier) { data, _ in
+                        guard let data else { return }
+                        let name = "drop-\(UUID().uuidString.prefix(8)).png"
+                        let attachment = Attachment(type: .image, name: name, imageData: data)
+                        DispatchQueue.main.async { windowState.addAttachment(attachment) }
                     }
                 }
             } else if provider.hasRepresentationConforming(toTypeIdentifier: UTType.image.identifier) {
@@ -576,12 +585,12 @@ struct InputBarView: View {
 
     private func detectPasteContent() -> PasteResult? {
         let pb = NSPasteboard.general
-        if let urls = pb.readObjects(forClasses: [NSURL.self]) as? [URL],
-           let url = urls.first(where: \.isFileURL) {
+        let fileURL = (pb.readObjects(forClasses: [NSURL.self]) as? [URL])?.first(where: \.isFileURL)
+        if let url = fileURL {
             if let attachment = AttachmentFactory.fromFileURL(url) {
                 return .attachment(attachment)
             }
-            return .filePath(url.path)
+            // Unsupported file type — fall through to image data check before returning path
         }
         for type in [NSPasteboard.PasteboardType.png, .tiff] {
             if let data = pb.data(forType: type) {
@@ -594,6 +603,10 @@ struct InputBarView: View {
            let bitmapRep = NSBitmapImageRep(data: tiffData),
            let pngData = bitmapRep.representation(using: .png, properties: [:]) {
             return .attachment(Attachment(type: .image, name: "clipboard-\(UUID().uuidString.prefix(8)).png", imageData: pngData))
+        }
+        // No image data found — if there was an unsupported file URL, return its path
+        if let url = fileURL {
+            return .filePath(url.path)
         }
         if let text = pb.string(forType: .string) {
             let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
