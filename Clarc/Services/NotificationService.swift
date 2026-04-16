@@ -13,7 +13,8 @@ final class NotificationService: NSObject {
     private var didRequestAuthorization = false
 
     /// Invoked on the main actor when the user clicks a notification.
-    var onNotificationTapped: ((UUID) -> Void)?
+    /// Parameters: projectId, sessionId
+    var onNotificationTapped: ((UUID, String) -> Void)?
 
     override init() {
         super.init()
@@ -33,7 +34,7 @@ final class NotificationService: NSObject {
     }
 
     /// Post a "response complete" notification. Silently no-ops if unauthorized.
-    func postResponseComplete(title: String, body: String, projectId: UUID) async {
+    func postResponseComplete(title: String, body: String, projectId: UUID, sessionId: String) async {
         let settings = await UNUserNotificationCenter.current().notificationSettings()
         switch settings.authorizationStatus {
         case .authorized, .provisional:
@@ -48,7 +49,7 @@ final class NotificationService: NSObject {
             ? NSLocalizedString("Response complete", comment: "Notification body when Claude finishes a response")
             : body
         content.sound = .default
-        content.userInfo = ["projectId": projectId.uuidString]
+        content.userInfo = ["projectId": projectId.uuidString, "sessionId": sessionId]
 
         let request = UNNotificationRequest(
             identifier: UUID().uuidString,
@@ -80,11 +81,12 @@ extension NotificationService: UNUserNotificationCenterDelegate {
     ) async {
         let userInfo = response.notification.request.content.userInfo
         guard let projectIdString = userInfo["projectId"] as? String,
-              let projectId = UUID(uuidString: projectIdString) else { return }
+              let projectId = UUID(uuidString: projectIdString),
+              let sessionId = userInfo["sessionId"] as? String else { return }
 
         await MainActor.run {
             NSApp.activate(ignoringOtherApps: true)
-            self.onNotificationTapped?(projectId)
+            self.onNotificationTapped?(projectId, sessionId)
         }
     }
 }

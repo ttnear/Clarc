@@ -91,6 +91,9 @@ final class AppState {
     var notificationsEnabled: Bool = (UserDefaults.standard.object(forKey: "notificationsEnabled") as? Bool) ?? true {
         didSet { UserDefaults.standard.set(notificationsEnabled, forKey: "notificationsEnabled") }
     }
+    /// Pending session to navigate to when a project window opens or is already open.
+    /// Keyed by projectId; consumed once applied.
+    var pendingNotificationSession: [UUID: String] = [:]
 
     /// Sets the model for the current session and persists it in the session state.
     func setSessionModel(_ model: String, in window: WindowState) {
@@ -227,6 +230,14 @@ final class AppState {
     func isBackgroundStreaming(_ sessionId: String, in window: WindowState) -> Bool {
         guard sessionId != (window.currentSessionId ?? window.newSessionKey) else { return false }
         return sessionStates[sessionId]?.isStreaming ?? false
+    }
+
+    /// Returns the set of session IDs currently streaming in the background of this window.
+    func backgroundStreamingSessionIds(in window: WindowState) -> Set<String> {
+        let currentKey = window.currentSessionId ?? window.newSessionKey
+        return Set(sessionStates.compactMap { key, state in
+            (state.isStreaming && key != currentKey) ? key : nil
+        })
     }
 
     // MARK: - Initialization
@@ -890,9 +901,16 @@ final class AppState {
                                     return sentence.trimmingCharacters(in: .whitespaces)
                                 } ?? ""
                             let pid = projectId
+                            let sid = resultEvent.sessionId
                             Task { @MainActor in
-                                await NotificationService.shared.postResponseComplete(title: title, body: firstSentence, projectId: pid)
+                                await NotificationService.shared.postResponseComplete(title: title, body: firstSentence, projectId: pid, sessionId: sid)
                             }
+                        }
+
+                        // If this session is running in the background, automatically process any queued messages.
+                        // Foreground sessions are handled by InputBarView via isStreaming onChange.
+                        if !isFg {
+                            await processBackgroundQueue(for: sessionKey, projectId: projectId, cwd: cwd, in: window)
                         }
                     }
 
@@ -1772,6 +1790,61 @@ final class AppState {
         let key = window.currentSessionId ?? "new"
         if window.messageQueue.isEmpty { window.draftQueues.removeValue(forKey: key) }
         else { window.draftQueues[key] = window.messageQueue }
+    }
+
+    /// Sends the next queued message for a background session (one the window is not currently displaying).
+    /// Foreground session queues are handled by InputBarView via the isStreaming onChange handler.
+    private func processBackgroundQueue(
+        for sessionKey: String,
+        projectId: UUID,
+        cwd: String,
+        in window: WindowState
+    ) async {
+        guard sessionStates[sessionKey]?.isStreaming != true else { return }
+        guard var queue = window.draftQueues[sessionKey], !queue.isEmpty else { return }
+        let next = queue.removeFirst()
+        if queue.isEmpty { window.draftQueues.removeValue(forKey: sessionKey) }
+        else { window.draftQueues[sessionKey] = queue }
+
+        let (resolvedAttachments, tempFilePaths) = AttachmentFactory.resolvingClipboardImages(next.attachments)
+        let prompt = buildPromptWithAttachments(next.text, attachments: resolvedAttachments)
+        let displayText = next.text
+        let streamId = UUID()
+
+        updateState(sessionKey) { state in
+            state.messages.append(ChatMessage(role: .user, content: displayText, attachments: resolvedAttachments))
+            state.isStreaming = true
+            state.activeStreamId = streamId
+            state.streamingStartDate = Date()
+        }
+
+        await permission.refreshRunToken()
+
+        var hookSettingsPath: String?
+        if !dangerouslySkipPermissions {
+            do { hookSettingsPath = try await permission.writeHookSettingsFile() }
+            catch { logger.error("Failed to write hook settings for background queue: \(error.localizedDescription)") }
+        }
+
+        let skipPermissions = dangerouslySkipPermissions
+        let model = sessionStates[sessionKey]?.model ?? selectedModel
+        let task = Task { [weak self, window] in
+            guard let self else { return }
+            await self.processStream(
+                streamId: streamId,
+                prompt: prompt,
+                cwd: cwd,
+                cliSessionId: sessionKey,
+                internalSessionKey: sessionKey,
+                model: model,
+                hookSettingsPath: hookSettingsPath,
+                dangerouslySkipPermissions: skipPermissions,
+                projectId: projectId,
+                window: window
+            )
+            for path in tempFilePaths { try? FileManager.default.removeItem(atPath: path) }
+        }
+        sessionStates[sessionKey]?.streamTask = task
     }
 
     private func handleError(_ error: Error, in window: WindowState) {

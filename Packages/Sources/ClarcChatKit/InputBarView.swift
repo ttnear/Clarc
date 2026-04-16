@@ -95,8 +95,12 @@ struct InputBarView: View {
         .onChange(of: windowState.currentSessionId) { _, _ in
             lastPasteChangeCount = NSPasteboard.general.changeCount
             historyIndex = -1
-            if !chatBridge.isStreaming {
-                processNextQueued()
+            // Defer to next MainActor iteration so the bridge observation has time to
+            // update isStreaming to reflect the newly-active session before we check it.
+            Task { @MainActor in
+                if !chatBridge.isStreaming {
+                    processNextQueued()
+                }
             }
         }
         .onChange(of: chatBridge.isStreaming) { _, isStreaming in

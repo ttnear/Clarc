@@ -5,17 +5,11 @@ import ClarcCore
 public struct ChatView: View {
     @Environment(WindowState.self) private var windowState
     @Environment(ChatBridge.self) private var chatBridge
-    @State private var showShortcutManager = false
-    @State private var projectShortcuts: [ChatShortcut] = []
 
     public init() {}
 
     public var body: some View {
         VStack(spacing: 0) {
-            if windowState.selectedProject != nil && !projectShortcuts.isEmpty {
-                shortcutBar
-            }
-
             messageScrollView
 
             InputBarView()
@@ -29,81 +23,19 @@ public struct ChatView: View {
             return .handled
         }
         .onChange(of: windowState.selectedProject?.path) { _, _ in
-            reloadShortcuts()
+            bindRegistries()
         }
         .onChange(of: windowState.registryVersion) { _, _ in
-            reloadShortcuts()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .chatShortcutsDidChange)) { _ in
-            projectShortcuts = ChatShortcutRegistry.currentShortcuts
+            bindRegistries()
         }
         .onAppear {
-            reloadShortcuts()
-        }
-        .sheet(isPresented: $showShortcutManager) {
-            ShortcutManagerView(projectName: windowState.selectedProject?.name ?? "")
-                .onDisappear { windowState.registryVersion += 1 }
+            bindRegistries()
         }
     }
 
-    // MARK: - Shortcut Bar
-
-    private var shortcutBar: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                ForEach(projectShortcuts) { shortcut in
-                    Button {
-                        executeShortcut(shortcut)
-                    } label: {
-                        HStack(spacing: 5) {
-                            if shortcut.isTerminalCommand {
-                                Image(systemName: "terminal").font(.system(size: 10, weight: .medium))
-                            }
-                            Text(shortcut.name).font(.system(size: 12, weight: .medium))
-                        }
-                        .foregroundStyle(ClaudeTheme.accent)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(ClaudeTheme.accentSubtle, in: Capsule())
-                        .overlay(Capsule().strokeBorder(ClaudeTheme.accent.opacity(0.35), lineWidth: 1))
-                    }
-                    .buttonStyle(.plain)
-                    .help(shortcut.isTerminalCommand ? "⌨ \(shortcut.message)" : shortcut.message)
-                    .disabled(chatBridge.isStreaming)
-                }
-
-                Button {
-                    showShortcutManager = true
-                } label: {
-                    Image(systemName: "plus.circle")
-                        .font(.system(size: 13))
-                        .foregroundStyle(ClaudeTheme.textTertiary)
-                }
-                .buttonStyle(.plain)
-                .help("Manage shortcuts")
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 6)
-        }
-        .background(ClaudeTheme.surfaceElevated)
-    }
-
-    private func executeShortcut(_ shortcut: ChatShortcut) {
-        guard !chatBridge.isStreaming else { return }
-        if shortcut.isTerminalCommand {
-            Task { await chatBridge.runTerminalCommand(shortcut.message) }
-        } else {
-            windowState.skipPasteDetection = true
-            windowState.inputText = shortcut.message
-            Task { await chatBridge.send() }
-        }
-    }
-
-    private func reloadShortcuts() {
+    private func bindRegistries() {
         let path = windowState.selectedProject?.path
-        ChatShortcutRegistry.bind(to: path)
         SlashCommandRegistry.bind(to: path)
-        projectShortcuts = ChatShortcutRegistry.currentShortcuts
     }
 
     // MARK: - Messages

@@ -92,7 +92,8 @@ struct MainWindowRoot: View {
                 appState.setupChatBridge(chatBridge, for: windowState)
                 await appState.initializeWindow(windowState)
                 await NotificationService.shared.requestAuthorizationIfNeeded()
-                NotificationService.shared.onNotificationTapped = { projectId in
+                NotificationService.shared.onNotificationTapped = { projectId, sessionId in
+                    appState.pendingNotificationSession[projectId] = sessionId
                     openWindow(id: "project-window", value: ProjectWindowValue(projectId: projectId, instanceId: UUID()))
                 }
             }
@@ -129,6 +130,16 @@ struct ProjectWindowRoot: View {
                 // AppState is already initialized at this point
                 appState.setupChatBridge(chatBridge, for: windowState)
                 await appState.initializeWindow(windowState, selectingProjectId: projectId)
+                // Apply pending notification navigation (new window case)
+                if let sessionId = appState.pendingNotificationSession.removeValue(forKey: projectId) {
+                    windowState.currentSessionId = sessionId
+                }
+            }
+            // Apply pending notification navigation (already-open window case)
+            .onChange(of: appState.pendingNotificationSession[projectId]) { _, sessionId in
+                guard let sessionId else { return }
+                windowState.currentSessionId = sessionId
+                appState.pendingNotificationSession.removeValue(forKey: projectId)
             }
     }
 }

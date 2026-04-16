@@ -98,7 +98,7 @@ struct HistoryListView: View {
                 .tag(session.id)
         }
         .listStyle(.sidebar)
-        .animation(.none, value: sessions.map(\.id))
+        .animation(.default, value: sessions)
     }
 
     private var selectedSessionBinding: Binding<String?> {
@@ -140,7 +140,7 @@ struct HistoryListView: View {
 
             Spacer()
 
-            if appState.isBackgroundStreaming(session.id, in: windowState) {
+            if session.isBackgroundStreaming {
                 ProgressView()
                     .controlSize(.mini)
                     .help("Response in progress in the background")
@@ -208,12 +208,13 @@ struct HistoryListView: View {
 
     // MARK: - Display Model
 
-    private struct DisplaySession: Identifiable {
+    private struct DisplaySession: Identifiable, Equatable {
         let id: String
         let projectId: UUID
         let title: String
         let updatedAt: Date
         let isPinned: Bool
+        let isBackgroundStreaming: Bool
         let projectName: String?
     }
 
@@ -225,14 +226,22 @@ struct HistoryListView: View {
         }
     }
 
+    private static func sessionOrder(
+        _ a: ChatSession.Summary, _ b: ChatSession.Summary,
+        streamingIds: Set<String>
+    ) -> Bool {
+        if a.isPinned != b.isPinned { return a.isPinned }
+        let aS = streamingIds.contains(a.id), bS = streamingIds.contains(b.id)
+        if aS != bS { return aS }
+        return a.updatedAt > b.updatedAt
+    }
+
     private var currentProjectSessions: [DisplaySession] {
         guard let projectId = windowState.selectedProject?.id else { return [] }
+        let streamingIds = appState.backgroundStreamingSessionIds(in: windowState)
         return appState.allSessionSummaries
             .filter { $0.projectId == projectId }
-            .sorted { a, b in
-                if a.isPinned != b.isPinned { return a.isPinned }
-                return a.updatedAt > b.updatedAt
-            }
+            .sorted { Self.sessionOrder($0, $1, streamingIds: streamingIds) }
             .map { summary in
                 DisplaySession(
                     id: summary.id,
@@ -240,6 +249,7 @@ struct HistoryListView: View {
                     title: summary.title,
                     updatedAt: summary.updatedAt,
                     isPinned: summary.isPinned,
+                    isBackgroundStreaming: streamingIds.contains(summary.id),
                     projectName: nil
                 )
             }
@@ -249,13 +259,10 @@ struct HistoryListView: View {
         let projectNames = Dictionary(
             uniqueKeysWithValues: appState.projects.map { ($0.id, $0.name) }
         )
-
+        let streamingIds = appState.backgroundStreamingSessionIds(in: windowState)
         var seen = Set<String>()
         return appState.allSessionSummaries
-            .sorted { a, b in
-                if a.isPinned != b.isPinned { return a.isPinned }
-                return a.updatedAt > b.updatedAt
-            }
+            .sorted { Self.sessionOrder($0, $1, streamingIds: streamingIds) }
             .filter { seen.insert($0.id).inserted }
             .map { summary in
                 DisplaySession(
@@ -264,6 +271,7 @@ struct HistoryListView: View {
                     title: summary.title,
                     updatedAt: summary.updatedAt,
                     isPinned: summary.isPinned,
+                    isBackgroundStreaming: streamingIds.contains(summary.id),
                     projectName: projectNames[summary.projectId]
                 )
             }
@@ -278,11 +286,15 @@ struct HistoryListView: View {
         )
     }
 
+    private static let relativeDateFormatter: RelativeDateTimeFormatter = {
+        let f = RelativeDateTimeFormatter()
+        f.locale = .current
+        f.unitsStyle = .abbreviated
+        return f
+    }()
+
     private func formattedDate(_ date: Date) -> String {
-        let formatter = RelativeDateTimeFormatter()
-        formatter.locale = .current
-        formatter.unitsStyle = .abbreviated
-        return formatter.localizedString(for: date, relativeTo: Date())
+        Self.relativeDateFormatter.localizedString(for: date, relativeTo: Date())
     }
 }
 
