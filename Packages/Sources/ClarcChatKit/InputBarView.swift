@@ -427,7 +427,7 @@ struct InputBarView: View {
                         .foregroundStyle(ClaudeTheme.textSecondary.opacity(0.7))
 
                     Text(queued.text.isEmpty ? String(localized: "(attachment)", bundle: .module) : queued.text)
-                        .font(.system(size: 14))
+                        .font(.system(size: 13))
                         .foregroundStyle(ClaudeTheme.textSecondary)
                         .lineLimit(1)
                         .truncationMode(.tail)
@@ -452,7 +452,7 @@ struct InputBarView: View {
                     }
                     .buttonStyle(.borderless)
                 }
-                .padding(.horizontal, 14)
+                .padding(.horizontal, 10)
                 .padding(.vertical, 8)
                 .background(.ultraThinMaterial)
                 .clipShape(Capsule())
