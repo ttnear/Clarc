@@ -4,7 +4,6 @@ import ClarcCore
 
 struct MessageBubble: View {
     @Environment(ChatBridge.self) private var chatBridge
-    @Environment(WindowState.self) private var windowState
     let message: ChatMessage
     @State private var isCopied = false
     @State private var cursorVisible = true
@@ -12,7 +11,6 @@ struct MessageBubble: View {
     @State private var editText = ""
     @FocusState private var isEditFocused: Bool
     @State private var isLongTextExpanded = false
-    @State private var isHoveringUserBubble = false
     @State private var hoveredBlockId: String? = nil
 
     /// Threshold (character count) for collapsing long text
@@ -209,14 +207,6 @@ struct MessageBubble: View {
                 }
             }
             .bubbleStyle(.user)
-            .overlay(alignment: .bottomTrailing) {
-                if isHoveringUserBubble {
-                    copyButton(for: message.content)
-                        .padding(6)
-                        .transition(.opacity.animation(.easeInOut(duration: 0.15)))
-                }
-            }
-            .onHover { isHoveringUserBubble = $0 }
             .contextMenu {
                 Button {
                     copyToClipboard(message.content, feedback: $isCopied)
