@@ -23,6 +23,11 @@ struct InputBarView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            if !windowState.messageQueue.isEmpty {
+                queuedMessagePreviews
+                    .transition(.offset(y: 10).combined(with: .opacity))
+            }
+
             if !windowState.attachments.isEmpty {
                 attachmentPreviews
             }
@@ -76,10 +81,6 @@ struct InputBarView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                if !windowState.messageQueue.isEmpty {
-                    queuedMessagePreviews
-                        .transition(.offset(y: 10).combined(with: .opacity))
-                }
             }
             .padding(.horizontal, 16)
             .offset(y: -4)

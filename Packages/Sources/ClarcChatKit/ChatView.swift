@@ -23,6 +23,10 @@ public struct ChatView: View {
         }
         .background(ClaudeTheme.background)
         .onKeyPress(.escape, phases: .down) { _ in
+            if !windowState.messageQueue.isEmpty {
+                windowState.messageQueue.removeLast()
+                return .handled
+            }
             guard chatBridge.isStreaming else { return .ignored }
             Task { await chatBridge.cancelStreaming() }
             return .handled
