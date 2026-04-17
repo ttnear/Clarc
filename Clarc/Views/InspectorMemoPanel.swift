@@ -6,7 +6,7 @@ private let memoTextKey = "clarc.memoText"
 private let memoRTFKey  = "clarc.memoRTFData"
 
 struct InspectorMemoPanel: View {
-    var clearTrigger: UUID = UUID()
+    var clearTrigger: UUID? = nil
 
     var body: some View {
         PlainEditorView(clearTrigger: clearTrigger)
@@ -16,7 +16,7 @@ struct InspectorMemoPanel: View {
 }
 
 private struct PlainEditorView: NSViewRepresentable {
-    let clearTrigger: UUID
+    let clearTrigger: UUID?
 
     func makeNSView(context: Context) -> NSScrollView {
         let scrollView = NSScrollView()
@@ -48,12 +48,13 @@ private struct PlainEditorView: NSViewRepresentable {
     }
 
     func updateNSView(_ scrollView: NSScrollView, context: Context) {
-        guard clearTrigger != context.coordinator.lastClearTrigger else { return }
-        context.coordinator.lastClearTrigger = clearTrigger
+        guard let trigger = clearTrigger,
+              trigger != context.coordinator.lastClearTrigger else { return }
+        context.coordinator.lastClearTrigger = trigger
+        context.coordinator.cancelPendingSave()
         guard let tv = scrollView.documentView as? NSTextView else { return }
         tv.string = ""
-        UserDefaults.standard.removeObject(forKey: memoTextKey)
-        UserDefaults.standard.removeObject(forKey: memoRTFKey)
+        UserDefaults.standard.set("", forKey: memoTextKey)
     }
 
     func makeCoordinator() -> Coordinator { Coordinator() }
@@ -61,8 +62,13 @@ private struct PlainEditorView: NSViewRepresentable {
     // MARK: - Coordinator
 
     final class Coordinator: NSObject, NSTextViewDelegate {
-        var lastClearTrigger: UUID = UUID()
-        private var saveTask: Task<Void, Never>?
+        var lastClearTrigger: UUID? = nil
+        var saveTask: Task<Void, Never>?
+
+        func cancelPendingSave() {
+            saveTask?.cancel()
+            saveTask = nil
+        }
 
         func loadText() -> String {
             // Migrate legacy RTF → plain text
@@ -105,7 +111,7 @@ private struct PlainEditorView: NSViewRepresentable {
         func textDidChange(_ notification: Notification) {
             guard let tv = notification.object as? NSTextView else { return }
             let text = tv.string
-            saveTask?.cancel()
+            cancelPendingSave()
             saveTask = Task {
                 try? await Task.sleep(for: .seconds(1))
                 guard !Task.isCancelled else { return }
