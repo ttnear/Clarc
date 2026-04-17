@@ -596,7 +596,7 @@ struct ChatToolbarControls: View {
             Picker("", selection: modelBinding) {
                 Section("Model Picker") {
                     ForEach(AppState.availableModels, id: \.self) { model in
-                        Text(model.capitalized).tag(model)
+                        Text(AppState.modelDisplayName(model)).tag(model)
                     }
                 }
             }
@@ -674,13 +674,21 @@ struct ModelPickerSheet: View {
             VStack(spacing: 8) {
                 ForEach(AppState.availableModels.indices, id: \.self) { index in
                     let model = AppState.availableModels[index]
-                    HStack {
-                        Text(model.capitalized)
-                            .foregroundStyle(ClaudeTheme.textPrimary)
+                    HStack(alignment: .top) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(AppState.modelDisplayName(model))
+                                .font(.system(size: 13, weight: .medium))
+                                .foregroundStyle(ClaudeTheme.textPrimary)
+                            Text(AppState.modelDescription(model))
+                                .font(.system(size: 11))
+                                .foregroundStyle(ClaudeTheme.textSecondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
                         Spacer()
                         if effectiveModel == model {
                             Image(systemName: "checkmark")
                                 .foregroundStyle(ClaudeTheme.accent)
+                                .padding(.top, 2)
                         }
                     }
                     .padding(.horizontal, 16)
@@ -699,7 +707,7 @@ struct ModelPickerSheet: View {
                 .foregroundStyle(ClaudeTheme.textTertiary)
         }
         .padding(20)
-        .frame(width: 300)
+        .frame(width: 380)
         .background(ClaudeTheme.background)
         .focusable()
         .focused($isFocused)

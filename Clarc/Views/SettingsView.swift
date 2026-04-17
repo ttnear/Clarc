@@ -89,16 +89,18 @@ struct GeneralSettingsTab: View {
                 .font(.system(size: 11))
                 .foregroundStyle(.secondary)
 
-            HStack(spacing: 8) {
+            Picker("", selection: appState) {
                 ForEach(AppState.availableModels, id: \.self) { model in
-                    ModelOptionButton(
-                        label: model.capitalized,
-                        isSelected: appState.wrappedValue == model
-                    ) {
-                        appState.wrappedValue = model
-                    }
+                    Text(AppState.modelDisplayName(model)).tag(model)
                 }
             }
+            .labelsHidden()
+            .pickerStyle(.menu)
+            .fixedSize()
+
+            Text(AppState.modelDescription(appState.wrappedValue))
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
         }
     }
 
@@ -239,34 +241,6 @@ struct GeneralSettingsTab: View {
                 RoundedRectangle(cornerRadius: 8)
                     .strokeBorder(Color(NSColor.separatorColor), lineWidth: 1)
             )
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-// MARK: - Model Option Button
-
-private struct ModelOptionButton: View {
-    let label: String
-    let isSelected: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Text(label)
-                .font(.system(size: 13))
-                .foregroundStyle(isSelected ? Color.primary : Color.secondary)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(isSelected ? Color.accentColor.opacity(0.12) : Color(NSColor.controlBackgroundColor))
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .strokeBorder(
-                            isSelected ? Color.accentColor : Color(NSColor.separatorColor),
-                            lineWidth: isSelected ? 1.5 : 1
-                        )
-                )
         }
         .buttonStyle(.plain)
     }

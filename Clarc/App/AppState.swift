@@ -81,7 +81,37 @@ final class AppState {
 
     // MARK: - Model
 
-    static let availableModels = ["opus", "sonnet", "haiku"]
+    static let availableModels = ["default", "best", "opus", "opus[1m]", "opusplan", "sonnet", "sonnet[1m]", "haiku"]
+
+    static func modelDisplayName(_ model: String) -> String {
+        switch model {
+        case "default": return "Default"
+        case "best": return "Best"
+        case "opus": return "Opus"
+        case "opus[1m]": return "Opus 1M"
+        case "opusplan": return "Opus Plan"
+        case "sonnet": return "Sonnet"
+        case "sonnet[1m]": return "Sonnet 1M"
+        case "haiku": return "Haiku"
+        default: return model.capitalized
+        }
+    }
+
+    static func modelDescription(_ model: String) -> String {
+        let key: String
+        switch model {
+        case "default":   key = "model.desc.default"
+        case "best":      key = "model.desc.best"
+        case "opus":      key = "model.desc.opus"
+        case "opus[1m]":  key = "model.desc.opus1m"
+        case "opusplan":  key = "model.desc.opusplan"
+        case "sonnet":    key = "model.desc.sonnet"
+        case "sonnet[1m]": key = "model.desc.sonnet1m"
+        case "haiku":     key = "model.desc.haiku"
+        default: return ""
+        }
+        return NSLocalizedString(key, comment: "")
+    }
     static let availableEfforts = ["low", "medium", "high", "xhigh", "max"]
     var selectedModel: String = UserDefaults.standard.string(forKey: "selectedModel") ?? "opus" {
         didSet { UserDefaults.standard.set(selectedModel, forKey: "selectedModel") }
@@ -104,10 +134,10 @@ final class AppState {
     }
 
     func modelDisplayName(for model: String, in window: WindowState) -> String {
-        if let active = activeModelName(in: window), active.lowercased().contains(model) {
-            return Self.formatModelId(active)
+        if let active = activeModelName(in: window) {
+            return active
         }
-        return model.capitalized
+        return Self.modelDisplayName(model)
     }
 
     static func formatModelId(_ raw: String) -> String {
@@ -433,7 +463,7 @@ final class AppState {
         case "model":
             if parts.count > 1 {
                 let arg = String(parts[1]).trimmingCharacters(in: .whitespaces).lowercased()
-                let matched = Self.availableModels.first { arg.contains($0) } ?? arg
+                let matched = Self.availableModels.first { $0 == arg } ?? Self.availableModels.first { arg.contains($0) } ?? arg
                 setSessionModel(matched, in: window)
             } else {
                 window.showModelPicker = true

@@ -176,6 +176,16 @@
 "Memo" = "Memo";
 "Terminal" = "Terminal";
 
+// MARK: - Model Descriptions
+"model.desc.default" = "Reverts to the recommended model for your account type";
+"model.desc.best" = "Most capable available model, currently equivalent to Opus";
+"model.desc.opus" = "Latest Opus model for complex reasoning tasks";
+"model.desc.opus1m" = "Opus with 1 million token context window for long sessions";
+"model.desc.opusplan" = "Opus in plan mode, then switches to Sonnet for execution";
+"model.desc.sonnet" = "Latest Sonnet model for daily coding tasks";
+"model.desc.sonnet1m" = "Sonnet with 1 million token context window for long sessions";
+"model.desc.haiku" = "Fast and efficient model for simple tasks";
+
 // MARK: - AppState
 "Previous conversation has been compacted" = "Previous conversation has been compacted";
 "No response received" = "No response received";

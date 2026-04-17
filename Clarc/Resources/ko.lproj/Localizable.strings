@@ -176,6 +176,16 @@
 "Memo" = "메모";
 "Terminal" = "터미널";
 
+// MARK: - Model Descriptions
+"model.desc.default" = "계정 유형에 따른 권장 모델로 되돌림";
+"model.desc.best" = "현재 사용 가능한 가장 강력한 모델 (현재 Opus와 동일)";
+"model.desc.opus" = "복잡한 추론 작업을 위한 최신 Opus 모델";
+"model.desc.opus1m" = "긴 세션을 위한 100만 토큰 컨텍스트 윈도우 Opus";
+"model.desc.opusplan" = "Plan Mode에서 Opus 사용 후 실행 시 Sonnet으로 전환";
+"model.desc.sonnet" = "일일 코딩 작업을 위한 최신 Sonnet 모델";
+"model.desc.sonnet1m" = "긴 세션을 위한 100만 토큰 컨텍스트 윈도우 Sonnet";
+"model.desc.haiku" = "간단한 작업을 위한 빠르고 효율적인 모델";
+
 // MARK: - AppState
 "Previous conversation has been compacted" = "이전 대화가 압축되었습니다";
 "No response received" = "응답을 받지 못했습니다";
