@@ -11,6 +11,10 @@
 "Browse and manage Claude Code skills" = "Claude Code 스킬을 탐색하고 관리하세요";
 "Default Model" = "기본 모델";
 "Used for new sessions. You can override the model per session from the toolbar." = "새 세션의 기본 모델입니다. 툴바에서 세션별로 모델을 변경할 수 있습니다.";
+"Default Permission Mode" = "기본 권한 모드 (Permission Mode)";
+"Used for new sessions. You can override the permission mode per session from the toolbar." = "새 세션의 기본 권한 모드입니다. 툴바에서 세션별로 변경할 수 있습니다.";
+"Default Effort Level" = "기본 작업량 수준 (Effort Level)";
+"Used for new sessions. You can override the effort level per session from the toolbar." = "새 세션의 기본 Effort 수준입니다. 툴바에서 세션별로 변경할 수 있습니다.";
 "Notifications" = "알림";
 "Notify when response completes" = "응답 완료 시 알림";
 "Sends a system notification while Clarc is in the background." = "Clarc가 백그라운드에 있을 때 시스템 알림을 보냅니다.";

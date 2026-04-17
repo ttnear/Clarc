@@ -11,6 +11,10 @@
 "Browse and manage Claude Code skills" = "Browse and manage Claude Code skills";
 "Default Model" = "Default Model";
 "Used for new sessions. You can override the model per session from the toolbar." = "Used for new sessions. You can override the model per session from the toolbar.";
+"Default Permission Mode" = "Default Permission Mode";
+"Used for new sessions. You can override the permission mode per session from the toolbar." = "Used for new sessions. You can override the permission mode per session from the toolbar.";
+"Default Effort Level" = "Default Effort Level";
+"Used for new sessions. You can override the effort level per session from the toolbar." = "Used for new sessions. You can override the effort level per session from the toolbar.";
 "Notifications" = "Notifications";
 "Notify when response completes" = "Notify when response completes";
 "Sends a system notification while Clarc is in the background." = "Sends a system notification while Clarc is in the background.";
