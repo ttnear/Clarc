@@ -32,6 +32,12 @@ struct ProjectWindowView: View {
                     .onChange(of: windowState.showInspector) { _, isShowing in
                         if isShowing, !inspectorStarted { inspectorStarted = true }
                     }
+                    .onChange(of: appState.focusMode) { _, newValue in
+                        windowState.focusMode = newValue
+                    }
+                    .onAppear {
+                        windowState.focusMode = appState.focusMode
+                    }
 
                     if inspectorStarted {
                         InspectorPanel()

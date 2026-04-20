@@ -155,6 +155,12 @@ final class AppState {
     var notificationsEnabled: Bool = (UserDefaults.standard.object(forKey: "notificationsEnabled") as? Bool) ?? true {
         didSet { UserDefaults.standard.set(notificationsEnabled, forKey: "notificationsEnabled") }
     }
+
+    // MARK: - Focus Mode
+
+    var focusMode: Bool = (UserDefaults.standard.object(forKey: "focusMode") as? Bool) ?? false {
+        didSet { UserDefaults.standard.set(focusMode, forKey: "focusMode") }
+    }
     /// Pending session to navigate to when a project window opens or is already open.
     /// Keyed by projectId; consumed once applied.
     var pendingNotificationSession: [UUID: String] = [:]
@@ -697,6 +703,11 @@ final class AppState {
             }
         }
 
+        // Resume already has the sid; new sessions register on first system event.
+        if let sid = cliSessionId {
+            await permission.registerSession(sid: sid, projectKey: project.path, mode: currentPermissionMode)
+        }
+
         if isNewSession {
             let titleText = prompt.count > 50 ? String(prompt.prefix(50)) + "..." : prompt
             let placeholder = ChatSession(id: sessionKey, projectId: project.id, title: titleText, messages: [])
@@ -851,6 +862,7 @@ final class AppState {
                         updateState(sessionKey) { $0.activeModelName = model }
                     }
                     if let sid = systemEvent.sessionId {
+                        await permission.registerSession(sid: sid, projectKey: cwd, mode: permissionMode)
                         if sessionKey != sid {
                             let oldKey = sessionKey
                             if let state = sessionStates.removeValue(forKey: oldKey) {
@@ -1922,6 +1934,8 @@ final class AppState {
             do { hookSettingsPath = try await permission.writeHookSettingsFile() }
             catch { logger.error("Failed to write hook settings for background queue: \(error.localizedDescription)") }
         }
+
+        await permission.registerSession(sid: sessionKey, projectKey: cwd, mode: currentPermissionMode)
 
         let model = sessionStates[sessionKey]?.model ?? selectedModel
         let effort = sessionStates[sessionKey]?.effort ?? (selectedEffort == "auto" ? nil : selectedEffort)

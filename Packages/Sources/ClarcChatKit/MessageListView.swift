@@ -66,9 +66,11 @@ struct MessageListView: View {
 
             // Streaming view is outside VStack — text deltas don't affect settled layout
             VStack(spacing: 16) {
-                StreamingMessageView {
-                    rebuildSettledItems()
-                    if isNearBottom { scrollToBottomDebounced() }
+                if !windowState.focusMode {
+                    StreamingMessageView {
+                        rebuildSettledItems()
+                        if isNearBottom { scrollToBottomDebounced() }
+                    }
                 }
 
                 if chatBridge.isStreaming {

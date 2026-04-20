@@ -7,12 +7,21 @@ public struct PermissionRequest: Identifiable, Sendable {
     public let toolName: String
     public let toolInput: [String: JSONValue]
     public let runToken: String
+    /// Snapshotted at hook receipt so the modal isn't affected by later picker changes.
+    public let streamPermissionMode: PermissionMode?
 
-    public init(id: String, toolName: String, toolInput: [String: JSONValue], runToken: String) {
+    public init(
+        id: String,
+        toolName: String,
+        toolInput: [String: JSONValue],
+        runToken: String,
+        streamPermissionMode: PermissionMode? = nil
+    ) {
         self.id = id
         self.toolName = toolName
         self.toolInput = toolInput
         self.runToken = runToken
+        self.streamPermissionMode = streamPermissionMode
     }
 }
 
@@ -59,8 +68,11 @@ public enum ToolCategory: Sendable {
 
 // MARK: - Permission Decision
 
-public enum PermissionDecision: String, Sendable {
+public enum PermissionDecision: Sendable, Equatable {
     case allow
     case deny
-    case allowSession
+    /// In-memory per-tool allow for the current session (Edit/Write/MultiEdit/mcp__*).
+    case allowSessionTool
+    /// Per-project persistent allow for an exact Bash command string.
+    case allowAlwaysCommand(command: String)
 }

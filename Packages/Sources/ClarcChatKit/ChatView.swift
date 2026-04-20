@@ -82,7 +82,6 @@ public struct ChatView: View {
         if shortcut.isTerminalCommand {
             Task { await chatBridge.runTerminalCommand(shortcut.message) }
         } else {
-            windowState.skipPasteDetection = true
             windowState.inputText = shortcut.message
             Task { await chatBridge.send() }
         }

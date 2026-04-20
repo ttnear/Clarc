@@ -21,17 +21,23 @@ struct SettingsView: View {
                 }
                 .tag(0)
 
+            ChatSettingsTab()
+                .tabItem {
+                    Label("Message", systemImage: "bubble.left.and.bubble.right")
+                }
+                .tag(1)
+
             SlashCommandManagerView(projectName: projectName, isEmbedded: true)
                 .tabItem {
                     Label("Slash Commands", systemImage: "terminal.fill")
                 }
-                .tag(1)
+                .tag(2)
 
             ShortcutManagerView(projectName: projectName, isEmbedded: true)
                 .tabItem {
                     Label("Shortcuts", systemImage: "bolt.fill")
                 }
-                .tag(2)
+                .tag(3)
         }
         .frame(width: 680, height: 620)
         .focusable(false)
@@ -64,12 +70,6 @@ struct GeneralSettingsTab: View {
             VStack(alignment: .leading, spacing: 24) {
                 themeSection
                 Divider()
-                modelSection(appState: $appState.selectedModel)
-                Divider()
-                permissionModeSection
-                Divider()
-                effortSection
-                Divider()
                 notificationsSection(appState: $appState.notificationsEnabled)
                 Divider()
                 VStack(alignment: .leading, spacing: 8) {
@@ -79,98 +79,6 @@ struct GeneralSettingsTab: View {
             }
             .padding(24)
             .frame(maxWidth: .infinity, alignment: .leading)
-        }
-    }
-
-    // MARK: - Model Section
-
-    private func modelSection(appState: Binding<String>) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Default Model")
-                .font(.system(size: 13, weight: .semibold))
-
-            Text("Used for new sessions. You can override the model per session from the toolbar.")
-                .font(.system(size: 11))
-                .foregroundStyle(.secondary)
-
-            Picker("", selection: appState) {
-                ForEach(AppState.availableModels, id: \.self) { model in
-                    Text(AppState.modelDisplayName(model)).tag(model)
-                }
-            }
-            .labelsHidden()
-            .pickerStyle(.menu)
-            .fixedSize()
-
-            Text(AppState.modelDescription(appState.wrappedValue))
-                .font(.system(size: 11))
-                .foregroundStyle(.secondary)
-        }
-    }
-
-    // MARK: - Permission Mode Section
-
-    private var permissionModeSection: some View {
-        @Bindable var appState = appState
-        return VStack(alignment: .leading, spacing: 12) {
-            Text("Default Permission Mode")
-                .font(.system(size: 13, weight: .semibold))
-
-            Text("Used for new sessions. You can override the permission mode per session from the toolbar.")
-                .font(.system(size: 11))
-                .foregroundStyle(.secondary)
-
-            Picker("", selection: $appState.permissionMode) {
-                ForEach(PermissionMode.allCases, id: \.self) { mode in
-                    Text(LocalizedStringKey(mode.displayName)).tag(mode)
-                }
-            }
-            .labelsHidden()
-            .pickerStyle(.menu)
-            .fixedSize()
-
-            Text(AppState.permissionModeDescription(appState.permissionMode))
-                .font(.system(size: 11))
-                .foregroundStyle(.secondary)
-        }
-    }
-
-    // MARK: - Effort Section
-
-    private var effortSection: some View {
-        @Bindable var appState = appState
-        return VStack(alignment: .leading, spacing: 12) {
-            Text("Default Effort Level")
-                .font(.system(size: 13, weight: .semibold))
-
-            Text("Used for new sessions. You can override the effort level per session from the toolbar.")
-                .font(.system(size: 11))
-                .foregroundStyle(.secondary)
-
-            Picker("", selection: $appState.selectedEffort) {
-                Text("Auto").tag("auto")
-                ForEach(AppState.availableEfforts, id: \.self) { effort in
-                    Text(effortDisplayName(effort)).tag(effort)
-                }
-            }
-            .labelsHidden()
-            .pickerStyle(.menu)
-            .fixedSize()
-
-            Text(AppState.effortDescription(appState.selectedEffort))
-                .font(.system(size: 11))
-                .foregroundStyle(.secondary)
-        }
-    }
-
-    private func effortDisplayName(_ effort: String) -> String {
-        switch effort {
-        case "low":    return "Low"
-        case "medium": return "Medium"
-        case "high":   return "High"
-        case "xhigh":  return "Extra High"
-        case "max":    return "Max"
-        default:       return effort.capitalized
         }
     }
 
@@ -313,6 +221,141 @@ struct GeneralSettingsTab: View {
             )
         }
         .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Chat Settings Tab
+
+struct ChatSettingsTab: View {
+    @Environment(AppState.self) private var appState
+
+    var body: some View {
+        @Bindable var appState = appState
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                modelSection(selectedModel: $appState.selectedModel)
+                Divider()
+                permissionModeSection
+                Divider()
+                effortSection
+                Divider()
+                focusModeSection
+            }
+            .padding(24)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    // MARK: - Model Section
+
+    private func modelSection(selectedModel: Binding<String>) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Default Model")
+                .font(.system(size: 13, weight: .semibold))
+
+            Text("Used for new sessions. You can override the model per session from the toolbar.")
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+
+            Picker("", selection: selectedModel) {
+                ForEach(AppState.availableModels, id: \.self) { model in
+                    Text(AppState.modelDisplayName(model)).tag(model)
+                }
+            }
+            .labelsHidden()
+            .pickerStyle(.menu)
+            .fixedSize()
+
+            Text(AppState.modelDescription(selectedModel.wrappedValue))
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    // MARK: - Permission Mode Section
+
+    private var permissionModeSection: some View {
+        @Bindable var appState = appState
+        return VStack(alignment: .leading, spacing: 12) {
+            Text("Default Permission Mode")
+                .font(.system(size: 13, weight: .semibold))
+
+            Text("Used for new sessions. You can override the permission mode per session from the toolbar.")
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+
+            Picker("", selection: $appState.permissionMode) {
+                ForEach(PermissionMode.allCases, id: \.self) { mode in
+                    Text(LocalizedStringKey(mode.displayName)).tag(mode)
+                }
+            }
+            .labelsHidden()
+            .pickerStyle(.menu)
+            .fixedSize()
+
+            Text(AppState.permissionModeDescription(appState.permissionMode))
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    // MARK: - Effort Section
+
+    private var effortSection: some View {
+        @Bindable var appState = appState
+        return VStack(alignment: .leading, spacing: 12) {
+            Text("Default Effort Level")
+                .font(.system(size: 13, weight: .semibold))
+
+            Text("Used for new sessions. You can override the effort level per session from the toolbar.")
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+
+            Picker("", selection: $appState.selectedEffort) {
+                Text("Auto").tag("auto")
+                ForEach(AppState.availableEfforts, id: \.self) { effort in
+                    Text(effortDisplayName(effort)).tag(effort)
+                }
+            }
+            .labelsHidden()
+            .pickerStyle(.menu)
+            .fixedSize()
+
+            Text(AppState.effortDescription(appState.selectedEffort))
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    // MARK: - Focus Mode Section
+
+    private var focusModeSection: some View {
+        @Bindable var appState = appState
+        return VStack(alignment: .leading, spacing: 12) {
+            Text("Focus Mode")
+                .font(.system(size: 13, weight: .semibold))
+
+            Text("focus.mode.desc")
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+
+            Toggle(isOn: $appState.focusMode) {
+                Text("Enable Focus Mode")
+            }
+            .toggleStyle(.switch)
+            .fixedSize()
+        }
+    }
+
+    private func effortDisplayName(_ effort: String) -> String {
+        switch effort {
+        case "low":    return "Low"
+        case "medium": return "Medium"
+        case "high":   return "High"
+        case "xhigh":  return "Extra High"
+        case "max":    return "Max"
+        default:       return effort.capitalized
+        }
     }
 }
 

@@ -34,11 +34,21 @@ actor PermissionServer {
     private var pending: [String: Pending] = [:]
     private var timeoutTasks: [String: Task<Void, Never>] = [:]
 
-    /// Session-scope allow keys. When a session is allowed, all tools in that session are auto-approved.
-    private var scopedAllows: Set<String> = []
+    /// In-memory only; cleared on `stop()`.
+    private var sessionToolAllows: Set<String> = []
 
-    private static func sessionKey(_ sessionId: String) -> String {
-        "session:\(sessionId)"
+    /// `nil` means the on-disk allowlist hasn't been loaded yet. `[:]` means loaded but empty.
+    private var bashCmdAllows: [String: Set<String>]?
+
+    private struct SessionContext: Sendable {
+        let projectKey: String
+        let mode: PermissionMode
+    }
+    private var sessionRegistry: [String: SessionContext] = [:]
+
+    /// Safe: CLI tool names are alphanumeric (`Bash`, `Edit`, `mcp__server__name`).
+    private static func sessionToolKey(sid: String, tool: String) -> String {
+        "\(sid)::\(tool)"
     }
 
     /// Per-subscriber broadcast continuations. One is issued per window via subscribe().
@@ -136,12 +146,15 @@ actor PermissionServer {
             continuation.finish()
         }
         subscribers.removeAll()
+        sessionRegistry.removeAll()
+        sessionToolAllows.removeAll()
+        bashCmdAllows = nil
     }
 
     // MARK: - Public API
 
     /// Called by the UI when the user makes a decision.
-    func respond(toolUseId: String, decision: PermissionDecision) {
+    func respond(toolUseId: String, decision: PermissionDecision) async {
         timeoutTasks.removeValue(forKey: toolUseId)?.cancel()
 
         guard let entry = pending.removeValue(forKey: toolUseId) else {
@@ -150,15 +163,29 @@ actor PermissionServer {
         }
 
         let resolved: PermissionDecision
-        if decision == .allowSession {
+        switch decision {
+        case .allowSessionTool:
             if let sid = entry.sessionId {
-                scopedAllows.insert(Self.sessionKey(sid))
-                logger.info("Session-allowed all tools for \(sid.prefix(8))")
+                sessionToolAllows.insert(Self.sessionToolKey(sid: sid, tool: entry.toolName))
+                logger.info("Session-allowed tool \(entry.toolName) for \(sid.prefix(8))")
             } else {
-                logger.warning("allowSession without sessionId for \(toolUseId) — falling back to allow")
+                logger.warning("allowSessionTool without sessionId for \(toolUseId) — falling back to allow")
             }
             resolved = .allow
-        } else {
+
+        case .allowAlwaysCommand(let command):
+            if let sid = entry.sessionId,
+               let projectKey = sessionRegistry[sid]?.projectKey {
+                await loadBashAllowlistIfNeeded()
+                bashCmdAllows?[projectKey, default: []].insert(command)
+                await persistBashAllowlist()
+                logger.info("Persisted Bash command for project \(projectKey.suffix(40)): \(command)")
+            } else {
+                logger.warning("allowAlwaysCommand without sid/project for \(toolUseId) — falling back to allow")
+            }
+            resolved = .allow
+
+        case .allow, .deny:
             resolved = decision
         }
 
@@ -167,19 +194,32 @@ actor PermissionServer {
         }
     }
 
+    /// Idempotent.
+    func registerSession(sid: String, projectKey: String, mode: PermissionMode) async {
+        await loadBashAllowlistIfNeeded()
+        sessionRegistry[sid] = SessionContext(projectKey: projectKey, mode: mode)
+    }
+
     // MARK: - Auto-approve
 
     /// Determines whether the request should be auto-approved. Returns a reason string if approved, or nil otherwise.
-    private func autoApproveReason(for req: HookRequestBody) -> String? {
+    private func autoApproveReason(for req: HookRequestBody) async -> String? {
         if let sid = req.sessionId,
-           scopedAllows.contains(Self.sessionKey(sid)) {
-            return "Allowed for session by user"
+           sessionToolAllows.contains(Self.sessionToolKey(sid: sid, tool: req.toolName)) {
+            return "Tool allowed for session by user"
         }
 
         if req.toolName == "Bash",
-           let command = req.toolInput["command"]?.stringValue,
-           BashSafety.isSafeReadOnly(command: command) {
-            return "Safe read-only command"
+           let command = req.toolInput["command"]?.stringValue {
+            if BashSafety.isSafeReadOnly(command: command) {
+                return "Safe read-only command"
+            }
+            await loadBashAllowlistIfNeeded()
+            if let sid = req.sessionId,
+               let projectKey = sessionRegistry[sid]?.projectKey,
+               bashCmdAllows?[projectKey]?.contains(command) == true {
+                return "Bash command allowlisted for this project"
+            }
         }
 
         return nil
@@ -267,16 +307,18 @@ actor PermissionServer {
 
                 let hookRequest = try JSONDecoder().decode(HookRequestBody.self, from: bodyData)
 
-                if let autoReason = autoApproveReason(for: hookRequest) {
+                if let autoReason = await autoApproveReason(for: hookRequest) {
                     try await sendHookResponse(connection, decision: "allow", reason: autoReason)
                     return
                 }
 
+                let streamMode = hookRequest.sessionId.flatMap { sessionRegistry[$0]?.mode }
                 let permissionRequest = PermissionRequest(
                     id: hookRequest.toolUseId,
                     toolName: hookRequest.toolName,
                     toolInput: hookRequest.toolInput,
-                    runToken: runToken
+                    runToken: runToken,
+                    streamPermissionMode: streamMode
                 )
 
                 let decision = await waitForDecision(
@@ -286,10 +328,11 @@ actor PermissionServer {
                     emit: permissionRequest
                 )
 
+                let allowed = decision == PermissionDecision.allow
                 try await sendHookResponse(
                     connection,
-                    decision: decision.rawValue,
-                    reason: decision == .allow ? "User approved" : "User denied"
+                    decision: allowed ? "allow" : "deny",
+                    reason: allowed ? "User approved" : "User denied"
                 )
 
             } catch {
@@ -352,6 +395,41 @@ actor PermissionServer {
         let data = try JSONEncoder().encode(body)
         let json = String(data: data, encoding: .utf8) ?? "{}"
         await sendHTTPResponse(connection, status: "200 OK", body: json)
+    }
+
+    // MARK: - Bash Allowlist Persistence
+
+    private static var bashAllowlistURL: URL {
+        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        return appSupport.appendingPathComponent("Clarc").appendingPathComponent("bash_allowlist.json")
+    }
+
+    private func loadBashAllowlistIfNeeded() async {
+        guard bashCmdAllows == nil else { return }
+        let url = Self.bashAllowlistURL
+        guard let data = try? Data(contentsOf: url),
+              let decoded = try? JSONDecoder().decode([String: [String]].self, from: data) else {
+            bashCmdAllows = [:]
+            return
+        }
+        let loaded = decoded.mapValues(Set.init)
+        bashCmdAllows = loaded
+        logger.info("Loaded Bash allowlist for \(loaded.count) project(s)")
+    }
+
+    private func persistBashAllowlist() async {
+        guard let snapshot = bashCmdAllows?.mapValues({ Array($0).sorted() }) else { return }
+        let url = Self.bashAllowlistURL
+        do {
+            try FileManager.default.createDirectory(
+                at: url.deletingLastPathComponent(),
+                withIntermediateDirectories: true
+            )
+            let data = try JSONEncoder().encode(snapshot)
+            try data.write(to: url, options: .atomic)
+        } catch {
+            logger.error("Failed to persist Bash allowlist: \(error.localizedDescription)")
+        }
     }
 
     // MARK: - TCP / HTTP Helpers

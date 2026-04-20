@@ -126,6 +126,31 @@ struct PermissionModal: View {
 
     // MARK: - Buttons
 
+    /// Plan mode is a deliberate read-only stance; a one-click broad allow would silently undo it.
+    private var hideBroadScopeButton: Bool {
+        request.streamPermissionMode == .plan
+    }
+
+    private var bashCommand: String? {
+        guard request.toolName.lowercased() == "bash",
+              case .string(let cmd) = request.toolInput["command"] else { return nil }
+        return cmd
+    }
+
+    private var broadScopeButtonLabel: LocalizedStringKey {
+        if bashCommand != nil {
+            return "Always allow this command"
+        }
+        return "Allow this tool for the session"
+    }
+
+    private var broadScopeDecision: PermissionDecision {
+        if let cmd = bashCommand {
+            return .allowAlwaysCommand(command: cmd)
+        }
+        return .allowSessionTool
+    }
+
     private var buttonSection: some View {
         HStack(spacing: 12) {
             Button("Deny") {
@@ -137,11 +162,13 @@ struct PermissionModal: View {
 
             Spacer()
 
-            Button("Allow Session") {
-                Task { await appState.respondToPermission(request, decision: .allowSession, in: windowState) }
+            if !hideBroadScopeButton {
+                Button(broadScopeButtonLabel) {
+                    Task { await appState.respondToPermission(request, decision: broadScopeDecision, in: windowState) }
+                }
+                .buttonStyle(ClaudeSecondaryButtonStyle())
+                .controlSize(.large)
             }
-            .buttonStyle(ClaudeSecondaryButtonStyle())
-            .controlSize(.large)
 
             Button("Allow") {
                 Task { await appState.respondToPermission(request, decision: .allow, in: windowState) }

@@ -7,6 +7,10 @@
 
 // MARK: - SettingsView
 "General" = "일반";
+"Message" = "메시지";
+"Focus Mode" = "집중 모드";
+"Enable Focus Mode" = "집중 모드 활성화";
+"focus.mode.desc" = "완료된 응답만 표시합니다. 스트리밍 중인 메시지는 생성이 완료된 후에 나타납니다.";
 "Shortcuts" = "단축키";
 "Browse and manage Claude Code skills" = "Claude Code 스킬을 탐색하고 관리하세요";
 "Default Model" = "기본 모델";
@@ -156,8 +160,9 @@
 "Input" = "입력";
 "Auto-deny in %@" = "%@ 후 자동 거부";
 "Deny" = "거부";
-"Allow Session" = "세션 동안 허용";
 "Allow" = "허용";
+"Allow this tool for the session" = "이 세션 동안 허용";
+"Always allow this command" = "이 명령 항상 허용";
 
 // MARK: - OnboardingView
 "Claude CLI Installation Check" = "Claude CLI 설치 확인";

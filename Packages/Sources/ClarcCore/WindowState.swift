@@ -54,7 +54,6 @@ public final class WindowState {
     public var attachments: [Attachment] = []
     public var draftTexts: [String: String] = [:]
     public var draftQueues: [String: [QueuedMessage]] = [:]
-    public var skipPasteDetection = false
 
     // MARK: - Message Queue
 
@@ -105,6 +104,10 @@ public final class WindowState {
     // MARK: - Window Kind
 
     public var isProjectWindow = false
+
+    // MARK: - Focus Mode
+
+    public var focusMode: Bool = false
 
     // MARK: - Session Switch Task
 

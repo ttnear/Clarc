@@ -69,6 +69,12 @@ struct MainView: View {
                 .onChange(of: windowState.showInspector) { _, isShowing in
                     if isShowing, !inspectorStarted { inspectorStarted = true }
                 }
+                .onChange(of: appState.focusMode) { _, newValue in
+                    windowState.focusMode = newValue
+                }
+                .onAppear {
+                    windowState.focusMode = appState.focusMode
+                }
                 .navigationTitle({
                     let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
                     let base = "Clarc(\(appVersion))"
@@ -563,67 +569,106 @@ struct ChatToolbarControls: View {
     @Environment(AppState.self) private var appState
     @Environment(WindowState.self) private var windowState
 
-    private var modelBinding: Binding<String> {
-        Binding(
-            get: { windowState.sessionModel ?? appState.selectedModel },
-            set: { appState.setSessionModel($0, in: windowState) }
-        )
-    }
-
-    private var effortBinding: Binding<String> {
-        Binding(
-            get: { windowState.sessionEffort ?? "auto" },
-            set: { newValue in
-                appState.setSessionEffort(newValue == "auto" ? nil : newValue, in: windowState)
-            }
-        )
-    }
-
-    private var permissionModeBinding: Binding<PermissionMode> {
-        Binding(
-            get: { windowState.sessionPermissionMode ?? appState.permissionMode },
-            set: { appState.setSessionPermissionMode($0, in: windowState) }
-        )
-    }
+    private var effectiveMode: PermissionMode { windowState.sessionPermissionMode ?? appState.permissionMode }
+    private var effectiveModel: String { windowState.sessionModel ?? appState.selectedModel }
 
     var body: some View {
-        HStack(spacing: 8) {
-            Picker("", selection: permissionModeBinding) {
-                Section("Permission Mode") {
-                    ForEach(PermissionMode.allCases, id: \.self) { mode in
-                        Text(LocalizedStringKey(mode.displayName)).tag(mode)
+        HStack(spacing: 4) {
+            Menu {
+                ForEach(PermissionMode.allCases, id: \.self) { mode in
+                    Button {
+                        appState.setSessionPermissionMode(mode, in: windowState)
+                    } label: {
+                        Label(LocalizedStringKey(mode.displayName), systemImage: mode.systemImage)
+                        if effectiveMode == mode { Image(systemName: "checkmark") }
                     }
                 }
+            } label: {
+                ToolbarChipLabel(
+                    title: effectiveMode.displayName,
+                    isModified: windowState.sessionPermissionMode != nil
+                )
             }
-            .labelsHidden()
-            .pickerStyle(.menu)
+            .menuStyle(.borderlessButton)
             .fixedSize()
-            .help("Permission mode: \((windowState.sessionPermissionMode ?? appState.permissionMode).displayName)")
+            .help("Permission mode: \(effectiveMode.displayName)")
 
-            Picker("", selection: modelBinding) {
-                Section("Model Picker") {
-                    ForEach(AppState.availableModels, id: \.self) { model in
-                        Text(AppState.modelDisplayName(model)).tag(model)
+            Menu {
+                ForEach(AppState.availableModels, id: \.self) { model in
+                    Button {
+                        appState.setSessionModel(model, in: windowState)
+                    } label: {
+                        Text(AppState.modelDisplayName(model))
+                        if effectiveModel == model { Image(systemName: "checkmark") }
                     }
                 }
+            } label: {
+                ToolbarChipLabel(
+                    title: AppState.modelDisplayName(effectiveModel),
+                    isModified: windowState.sessionModel != nil
+                )
             }
-            .labelsHidden()
-            .pickerStyle(.menu)
+            .menuStyle(.borderlessButton)
             .fixedSize()
+            .help("Model: \(AppState.modelDisplayName(effectiveModel))")
 
-            Picker("", selection: effortBinding) {
-                Section("Effort Picker") {
-                    Text("Auto Effort").tag("auto")
-                    ForEach(AppState.availableEfforts, id: \.self) { effort in
-                        Text(effortDisplayName(effort)).tag(effort)
+            Menu {
+                Button {
+                    appState.setSessionEffort(nil, in: windowState)
+                } label: {
+                    Text("Auto Effort")
+                    if windowState.sessionEffort == nil { Image(systemName: "checkmark") }
+                }
+                Divider()
+                ForEach(AppState.availableEfforts, id: \.self) { effort in
+                    Button {
+                        appState.setSessionEffort(effort, in: windowState)
+                    } label: {
+                        Text(LocalizedStringKey(effortDisplayName(effort)))
+                        if windowState.sessionEffort == effort { Image(systemName: "checkmark") }
                     }
                 }
+            } label: {
+                ToolbarChipLabel(
+                    title: windowState.sessionEffort.map { effortDisplayName($0) } ?? "Auto Effort",
+                    isModified: windowState.sessionEffort != nil
+                )
             }
-            .labelsHidden()
-            .pickerStyle(.menu)
+            .menuStyle(.borderlessButton)
             .fixedSize()
-            .help("Effort level (--effort)")
+            .help("Effort level: \(windowState.sessionEffort.map { effortDisplayName($0) } ?? "Auto Effort")")
         }
+    }
+}
+
+struct ToolbarChipLabel: View {
+    let title: String
+    let isModified: Bool
+
+    @State private var isHovered = false
+
+    var body: some View {
+        Text(LocalizedStringKey(title))
+            .font(.system(size: 11, weight: .medium))
+        .foregroundStyle(isModified ? ClaudeTheme.accent : ClaudeTheme.textSecondary)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(
+            isHovered
+                ? (isModified ? ClaudeTheme.accent.opacity(0.12) : ClaudeTheme.surfaceTertiary)
+                : (isModified ? ClaudeTheme.accent.opacity(0.08) : ClaudeTheme.surfaceSecondary),
+            in: RoundedRectangle(cornerRadius: ClaudeTheme.cornerRadiusSmall)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: ClaudeTheme.cornerRadiusSmall)
+                .strokeBorder(
+                    isModified ? ClaudeTheme.accent.opacity(0.3) : ClaudeTheme.borderSubtle,
+                    lineWidth: 0.5
+                )
+        )
+        .onHover { isHovered = $0 }
+        .pointerCursorOnHover()
+        .animation(.easeInOut(duration: 0.15), value: isHovered)
     }
 }
 

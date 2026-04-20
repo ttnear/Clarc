@@ -7,6 +7,10 @@
 
 // MARK: - SettingsView
 "General" = "General";
+"Message" = "Message";
+"Focus Mode" = "Focus Mode";
+"Enable Focus Mode" = "Enable Focus Mode";
+"focus.mode.desc" = "Show only completed responses. Streaming messages are hidden until fully generated.";
 "Shortcuts" = "Shortcuts";
 "Browse and manage Claude Code skills" = "Browse and manage Claude Code skills";
 "Default Model" = "Default Model";
@@ -156,8 +160,9 @@
 "Input" = "Input";
 "Auto-deny in %@" = "Auto-deny in %@";
 "Deny" = "Deny";
-"Allow Session" = "Allow Session";
 "Allow" = "Allow";
+"Allow this tool for the session" = "Allow this tool for the session";
+"Always allow this command" = "Always allow this command";
 
 // MARK: - OnboardingView
 "Claude CLI Installation Check" = "Claude CLI Installation Check";

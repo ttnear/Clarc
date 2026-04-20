@@ -241,6 +241,7 @@ struct MessageBubble: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             } else {
                 MarkdownContentView(text: text)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
             if message.isStreaming && isLastBlock {
                 Text("|")

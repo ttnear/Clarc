@@ -13,8 +13,6 @@ struct InputBarView: View {
     @State private var slashDetailCommand: SlashCommand?
     @State private var textPreviewAttachment: Attachment?
     @State private var isDragOver = false
-    @State private var isPasteInProgress = false
-    @State private var lastPasteChangeCount = 0
     @State private var showAtFilePopup = false
     @State private var atFileSelectedIndex = 0
     @State private var historyIndex: Int = -1
@@ -98,7 +96,6 @@ struct InputBarView: View {
             }
         }
         .onChange(of: windowState.currentSessionId) { _, _ in
-            lastPasteChangeCount = NSPasteboard.general.changeCount
             historyIndex = -1
             // Defer to next MainActor iteration so the bridge observation has time to
             // update isStreaming to reflect the newly-active session before we check it.
@@ -118,7 +115,6 @@ struct InputBarView: View {
             }
         }
         .onAppear {
-            lastPasteChangeCount = NSPasteboard.general.changeCount
             Task { @MainActor in
                 try? await Task.sleep(for: .milliseconds(300))
                 isInputFocused = true
@@ -132,6 +128,7 @@ struct InputBarView: View {
                 AtFileSearch.prefetch(projectPath: path)
             }
         }
+        .frame(maxWidth: .infinity)
         .contentShape(Rectangle())
         .onTapGesture { isInputFocused = true }
     }
@@ -194,34 +191,14 @@ struct InputBarView: View {
     }
 
     private func handleInputTextChange(oldValue: String, newValue: String) {
-        let pb = NSPasteboard.general
-        let pbCount = pb.changeCount
-        defer {
-            isPasteInProgress = false
-            lastPasteChangeCount = pbCount
-        }
-        if windowState.skipPasteDetection {
-            windowState.skipPasteDetection = false
+        // Safety net for paste routes onKeyPress doesn't intercept. delta > 1 filters out
+        // single-keystroke typing; IME commits produce non-path text so detection no-ops.
+        if newValue.count - oldValue.count > 1,
+           let inserted = insertedSubstring(oldValue: oldValue, newValue: newValue),
+           let attachment = attachmentFromPastedText(inserted) {
+            windowState.addAttachment(attachment)
+            windowState.inputText = oldValue
             return
-        }
-        let delta = newValue.count - oldValue.count
-        // Also check when image/file data is present in clipboard to catch context-menu pastes,
-        // which bypass handlePasteKey and leave isPasteInProgress=false with an unchanged count.
-        let clipboardHasImageOrFile = pb.canReadItem(withDataConformingToTypes: [UTType.image.identifier]) ||
-            (pb.readObjects(forClasses: [NSURL.self]) as? [URL])?.contains(where: \.isFileURL) == true
-        if delta > 1 && (isPasteInProgress || pbCount != lastPasteChangeCount || clipboardHasImageOrFile) {
-            if let result = detectPasteContent() {
-                switch result {
-                case .attachment(let attachment):
-                    windowState.addAttachment(attachment)
-                    windowState.skipPasteDetection = true
-                    windowState.inputText = oldValue
-                case .filePath(let path):
-                    windowState.skipPasteDetection = true
-                    windowState.inputText = oldValue + path
-                }
-                return
-            }
         }
 
         let trimmed = newValue.trimmingCharacters(in: .whitespaces)
@@ -261,7 +238,6 @@ struct InputBarView: View {
         if nextIndex < history.count {
             historyIndex = nextIndex
             let msgIndex = history.count - 1 - historyIndex
-            windowState.skipPasteDetection = true
             windowState.inputText = history[msgIndex]
         }
         return .handled
@@ -281,13 +257,11 @@ struct InputBarView: View {
         guard historyIndex >= 0 else { return .ignored }
         historyIndex -= 1
         if historyIndex < 0 {
-            windowState.skipPasteDetection = true
             windowState.inputText = ""
         } else {
             let history = userMessageHistory
             let msgIndex = history.count - 1 - historyIndex
             if msgIndex >= 0 && msgIndex < history.count {
-                windowState.skipPasteDetection = true
                 windowState.inputText = history[msgIndex]
             }
         }
@@ -306,52 +280,138 @@ struct InputBarView: View {
         return .handled
     }
 
+    // Always returns .handled so NSTextField doesn't run a native paste in parallel.
     private func handlePasteKey(_ press: KeyPress) -> KeyPress.Result {
         guard press.modifiers == .command else { return .ignored }
         let pb = NSPasteboard.general
-        let hasString = pb.string(forType: .string) != nil
-        let hasFileURL = (pb.readObjects(forClasses: [NSURL.self]) as? [URL])?.contains(where: \.isFileURL) == true
-        let hasImageData = pb.canReadItem(withDataConformingToTypes: [UTType.image.identifier])
-        if hasImageData || (!hasString && hasFileURL) {
-            if let result = detectPasteContent() {
-                switch result {
-                case .attachment(let att): windowState.addAttachment(att)
-                case .filePath(let path):
-                    windowState.skipPasteDetection = true
-                    windowState.inputText += path
-                }
-                return .handled
-            }
-            // Detection failed (e.g., clipboard not yet ready); let handleInputTextChange retry.
-            isPasteInProgress = true
-            return .ignored
-        }
-        // Multi-line text: intercept to preserve newlines, since NSTextField may strip them.
-        // Also force TextField to remeasure its height after programmatic text update.
-        if let text = pb.string(forType: .string), text.contains("\n"),
-           text.count < AttachmentFactory.longTextThreshold {
-            let current = windowState.inputText
-            if let editor = NSApp.keyWindow?.firstResponder as? NSText {
-                let range = editor.selectedRange
-                let nsString = current as NSString
-                if range.location != NSNotFound {
-                    windowState.skipPasteDetection = true
-                    windowState.inputText = nsString.replacingCharacters(in: range, with: text)
-                    textFieldLayoutID += 1
-                    DispatchQueue.main.async { isInputFocused = true }
-                    return .handled
-                }
-            }
-            windowState.skipPasteDetection = true
-            windowState.inputText = current + text
-            textFieldLayoutID += 1
-            DispatchQueue.main.async { isInputFocused = true }
+
+        if let attachment = imageAttachmentFromPasteboard(pb) {
+            windowState.addAttachment(attachment)
             return .handled
         }
-        // For all other pastes: flag onChange to check for file/image/long-text.
-        // This handles cases like Finder file copy (has both file URL and string path).
-        isPasteInProgress = true
-        return .ignored
+
+        if let url = (pb.readObjects(forClasses: [NSURL.self]) as? [URL])?.first(where: \.isFileURL) {
+            if let attachment = AttachmentFactory.fromFileURL(url) {
+                windowState.addAttachment(attachment)
+            } else {
+                insertAtCursor(url.path)
+            }
+            return .handled
+        }
+
+        guard let text = pb.string(forType: .string), !text.isEmpty else { return .handled }
+
+        if let attachment = attachmentFromPastedText(text) {
+            windowState.addAttachment(attachment)
+            return .handled
+        }
+
+        if text.count >= AttachmentFactory.longTextThreshold {
+            windowState.addAttachment(AttachmentFactory.fromLongText(text))
+            return .handled
+        }
+
+        insertAtCursor(text)
+        return .handled
+    }
+
+    private func attachmentFromPastedText(_ text: String) -> Attachment? {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty { return nil }
+        if let attachment = attachmentFromPathText(trimmed) {
+            return attachment
+        }
+        if !trimmed.contains(" "), !trimmed.contains("\n"),
+           let url = URL(string: trimmed),
+           let scheme = url.scheme, ["http", "https"].contains(scheme),
+           url.host != nil {
+            return AttachmentFactory.fromURL(url)
+        }
+        return nil
+    }
+
+    /// Assumes a single insertion (paste/type at one cursor position) — not a general diff.
+    private func insertedSubstring(oldValue: String, newValue: String) -> String? {
+        guard newValue.count > oldValue.count else { return nil }
+
+        var oldPrefix = oldValue.startIndex
+        var newPrefix = newValue.startIndex
+        while oldPrefix < oldValue.endIndex, newPrefix < newValue.endIndex,
+              oldValue[oldPrefix] == newValue[newPrefix] {
+            oldValue.formIndex(after: &oldPrefix)
+            newValue.formIndex(after: &newPrefix)
+        }
+
+        var oldSuffix = oldValue.endIndex
+        var newSuffix = newValue.endIndex
+        while oldSuffix > oldPrefix, newSuffix > newPrefix {
+            let prevOld = oldValue.index(before: oldSuffix)
+            let prevNew = newValue.index(before: newSuffix)
+            guard oldValue[prevOld] == newValue[prevNew] else { break }
+            oldSuffix = prevOld
+            newSuffix = prevNew
+        }
+
+        guard newPrefix < newSuffix else { return nil }
+        return String(newValue[newPrefix..<newSuffix])
+    }
+
+    // Image paths skip fileExists — some screenshot tools write the clipboard before the file.
+    private func attachmentFromPathText(_ trimmed: String) -> Attachment? {
+        guard !trimmed.contains("\n"), !trimmed.isEmpty else { return nil }
+
+        let path: String
+        if trimmed.hasPrefix("file://") {
+            guard let url = URL(string: trimmed), url.isFileURL else { return nil }
+            path = url.path
+        } else if trimmed.hasPrefix("/") {
+            path = trimmed
+        } else if trimmed.hasPrefix("~/") {
+            path = (trimmed as NSString).expandingTildeInPath
+        } else {
+            return nil
+        }
+
+        let url = URL(fileURLWithPath: path)
+        let ext = url.pathExtension.lowercased()
+        if AttachmentFactory.imageExtensions.contains(ext) {
+            return AttachmentFactory.fromFileURL(url)
+        }
+        if FileManager.default.fileExists(atPath: path) {
+            return AttachmentFactory.fromFileURL(url)
+        }
+        return nil
+    }
+
+    private func insertAtCursor(_ text: String) {
+        let current = windowState.inputText
+        if let editor = NSApp.keyWindow?.firstResponder as? NSText {
+            let range = editor.selectedRange
+            if range.location != NSNotFound {
+                windowState.inputText = (current as NSString).replacingCharacters(in: range, with: text)
+                textFieldLayoutID += 1
+                DispatchQueue.main.async { isInputFocused = true }
+                return
+            }
+        }
+        windowState.inputText = current + text
+        textFieldLayoutID += 1
+        DispatchQueue.main.async { isInputFocused = true }
+    }
+
+    private func imageAttachmentFromPasteboard(_ pb: NSPasteboard) -> Attachment? {
+        for type in [NSPasteboard.PasteboardType.png, .tiff] {
+            if let data = pb.data(forType: type) {
+                return Attachment(type: .image, name: "clipboard-\(UUID().uuidString.prefix(8)).png", imageData: data)
+            }
+        }
+        if let image = NSImage(pasteboard: pb),
+           let tiffData = image.tiffRepresentation,
+           let bitmapRep = NSBitmapImageRep(data: tiffData),
+           let pngData = bitmapRep.representation(using: .png, properties: [:]) {
+            return Attachment(type: .image, name: "clipboard-\(UUID().uuidString.prefix(8)).png", imageData: pngData)
+        }
+        return nil
     }
 
     private func handleEscapeKey() -> KeyPress.Result {
@@ -402,7 +462,6 @@ struct InputBarView: View {
 
     private func selectSlashCommand(_ cmd: SlashCommand) {
         withAnimation(.easeOut(duration: 0.15)) { showSlashPopup = false }
-        windowState.skipPasteDetection = true
         if cmd.acceptsInput && !cmd.isInteractive {
             windowState.inputText = cmd.command + " "
         } else {
@@ -417,7 +476,6 @@ struct InputBarView: View {
         if let atRange = text.range(of: "@", options: .backwards) {
             text.replaceSubrange(atRange.lowerBound..., with: "@\(relativePath) ")
         }
-        windowState.skipPasteDetection = true
         windowState.inputText = text
     }
 
@@ -517,7 +575,6 @@ struct InputBarView: View {
             withAnimation(.easeOut(duration: 0.2)) {
                 windowState.enqueueMessage(text: windowState.inputText, attachments: windowState.attachments)
             }
-            windowState.skipPasteDetection = true
             windowState.inputText = ""
             windowState.attachments = []
             return
@@ -528,7 +585,6 @@ struct InputBarView: View {
 
     private func processNextQueued() {
         guard let next = windowState.dequeueNext() else { return }
-        windowState.skipPasteDetection = true
         windowState.inputText = next.text
         windowState.attachments = next.attachments
         Task { await chatBridge.send() }
@@ -575,84 +631,40 @@ struct InputBarView: View {
     private func processItemProviders(_ providers: [NSItemProvider]) {
         for provider in providers {
             if provider.hasRepresentationConforming(toTypeIdentifier: UTType.fileURL.identifier) {
-                provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier) { item, _ in
-                    guard let data = item as? Data,
-                          let url = URL(dataRepresentation: data, relativeTo: nil) else { return }
-                    if let attachment = AttachmentFactory.fromFileURL(url) {
-                        DispatchQueue.main.async { windowState.addAttachment(attachment) }
-                        return
-                    }
-                    // File URL exists but unsupported type — fall back to image data if available
-                    guard provider.hasRepresentationConforming(toTypeIdentifier: UTType.image.identifier) else { return }
-                    provider.loadDataRepresentation(forTypeIdentifier: UTType.image.identifier) { data, _ in
-                        guard let data else { return }
-                        let name = "drop-\(UUID().uuidString.prefix(8)).png"
-                        let attachment = Attachment(type: .image, name: name, imageData: data)
-                        DispatchQueue.main.async { windowState.addAttachment(attachment) }
-                    }
-                }
+                loadFileURLAsAttachment(from: provider)
             } else if provider.hasRepresentationConforming(toTypeIdentifier: UTType.image.identifier) {
-                provider.loadDataRepresentation(forTypeIdentifier: UTType.image.identifier) { data, _ in
-                    guard let data else { return }
-                    let name = "drop-\(UUID().uuidString.prefix(8)).png"
-                    let attachment = Attachment(type: .image, name: name, imageData: data)
-                    DispatchQueue.main.async { windowState.addAttachment(attachment) }
-                }
+                loadImageDataAsAttachment(from: provider)
             }
         }
     }
 
-    enum PasteResult {
-        case attachment(Attachment)
-        case filePath(String)
+    private func loadFileURLAsAttachment(from provider: NSItemProvider) {
+        provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier) { item, _ in
+            if let data = item as? Data,
+               let url = URL(dataRepresentation: data, relativeTo: nil),
+               let attachment = AttachmentFactory.fromFileURL(url) {
+                DispatchQueue.main.async { windowState.addAttachment(attachment) }
+                return
+            }
+            // Inlined (not factored into loadImageDataAsAttachment) to keep `provider` within
+            // this nonisolated closure — passing it to a MainActor method violates Sendable.
+            guard provider.hasRepresentationConforming(toTypeIdentifier: UTType.image.identifier) else { return }
+            provider.loadDataRepresentation(forTypeIdentifier: UTType.image.identifier) { data, _ in
+                guard let data else { return }
+                let name = "drop-\(UUID().uuidString.prefix(8)).png"
+                let attachment = Attachment(type: .image, name: name, imageData: data)
+                DispatchQueue.main.async { windowState.addAttachment(attachment) }
+            }
+        }
     }
 
-    private func detectPasteContent() -> PasteResult? {
-        let pb = NSPasteboard.general
-        let fileURL = (pb.readObjects(forClasses: [NSURL.self]) as? [URL])?.first(where: \.isFileURL)
-        if let url = fileURL {
-            if let attachment = AttachmentFactory.fromFileURL(url) {
-                return .attachment(attachment)
-            }
-            // Unsupported file type — fall through to image data check before returning path
+    private func loadImageDataAsAttachment(from provider: NSItemProvider) {
+        provider.loadDataRepresentation(forTypeIdentifier: UTType.image.identifier) { data, _ in
+            guard let data else { return }
+            let name = "drop-\(UUID().uuidString.prefix(8)).png"
+            let attachment = Attachment(type: .image, name: name, imageData: data)
+            DispatchQueue.main.async { windowState.addAttachment(attachment) }
         }
-        for type in [NSPasteboard.PasteboardType.png, .tiff] {
-            if let data = pb.data(forType: type) {
-                return .attachment(Attachment(type: .image, name: "clipboard-\(UUID().uuidString.prefix(8)).png", imageData: data))
-            }
-        }
-        // Fallback: handles JPEG, HEIC, and other image formats not caught above
-        if let image = NSImage(pasteboard: pb),
-           let tiffData = image.tiffRepresentation,
-           let bitmapRep = NSBitmapImageRep(data: tiffData),
-           let pngData = bitmapRep.representation(using: .png, properties: [:]) {
-            return .attachment(Attachment(type: .image, name: "clipboard-\(UUID().uuidString.prefix(8)).png", imageData: pngData))
-        }
-        // No image data found — if there was an unsupported file URL, return its path
-        if let url = fileURL {
-            return .filePath(url.path)
-        }
-        if let text = pb.string(forType: .string) {
-            let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-            if !trimmed.contains("\n"), trimmed.hasPrefix("/"),
-               FileManager.default.fileExists(atPath: trimmed) {
-                let url = URL(fileURLWithPath: trimmed)
-                if let attachment = AttachmentFactory.fromFileURL(url) {
-                    return .attachment(attachment)
-                }
-                return .filePath(trimmed)
-            }
-            if !trimmed.contains(" "), !trimmed.contains("\n"),
-               let url = URL(string: trimmed),
-               let scheme = url.scheme, ["http", "https"].contains(scheme),
-               url.host != nil {
-                return .attachment(AttachmentFactory.fromURL(url))
-            }
-            if text.count >= AttachmentFactory.longTextThreshold {
-                return .attachment(AttachmentFactory.fromLongText(text))
-            }
-        }
-        return nil
     }
 
     private func handleFileImport(_ result: Result<[URL], Error>) {

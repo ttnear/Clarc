@@ -82,8 +82,6 @@ public enum AttachmentFactory {
         let name = url.lastPathComponent
         let ext = url.pathExtension.lowercased()
 
-        guard ext.isEmpty || isSupportedExtension(ext) else { return nil }
-
         let type: Attachment.AttachmentType = imageExtensions.contains(ext) ? .image : .file
         let fileSize = (try? FileManager.default.attributesOfItem(atPath: url.path))?[.size] as? Int64
         let imgData: Data? = type == .image ? (try? Data(contentsOf: url)) : nil
