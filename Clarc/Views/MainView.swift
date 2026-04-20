@@ -580,16 +580,13 @@ struct ChatToolbarControls: View {
                         Button {
                             appState.setSessionPermissionMode(mode, in: windowState)
                         } label: {
-                            Label(LocalizedStringKey(mode.displayName), systemImage: mode.systemImage)
+                            Text(LocalizedStringKey(mode.displayName))
                             if effectiveMode == mode { Image(systemName: "checkmark") }
                         }
                     }
                 }
             } label: {
-                ToolbarChipLabel(
-                    title: effectiveMode.displayName,
-                    isModified: windowState.sessionPermissionMode != nil
-                )
+                ToolbarChipLabel(title: effectiveMode.displayName)
             }
             .menuStyle(.borderlessButton)
             .fixedSize()
@@ -607,10 +604,7 @@ struct ChatToolbarControls: View {
                     }
                 }
             } label: {
-                ToolbarChipLabel(
-                    title: AppState.modelDisplayName(effectiveModel),
-                    isModified: windowState.sessionModel != nil
-                )
+                ToolbarChipLabel(title: AppState.modelDisplayName(effectiveModel))
             }
             .menuStyle(.borderlessButton)
             .fixedSize()
@@ -635,10 +629,7 @@ struct ChatToolbarControls: View {
                     }
                 }
             } label: {
-                ToolbarChipLabel(
-                    title: windowState.sessionEffort.map { effortDisplayName($0) } ?? "Auto Effort",
-                    isModified: windowState.sessionEffort != nil
-                )
+                ToolbarChipLabel(title: windowState.sessionEffort.map { effortDisplayName($0) } ?? "Auto Effort")
             }
             .menuStyle(.borderlessButton)
             .fixedSize()
@@ -649,28 +640,22 @@ struct ChatToolbarControls: View {
 
 struct ToolbarChipLabel: View {
     let title: String
-    let isModified: Bool
 
     @State private var isHovered = false
 
     var body: some View {
         Text(LocalizedStringKey(title))
-            .font(.system(size: 11, weight: .medium))
-        .foregroundStyle(isModified ? ClaudeTheme.accent : ClaudeTheme.textSecondary)
+            .font(.system(size: 13, weight: .medium))
+        .foregroundStyle(ClaudeTheme.textSecondary)
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
         .background(
-            isHovered
-                ? (isModified ? ClaudeTheme.accent.opacity(0.12) : ClaudeTheme.surfaceTertiary)
-                : (isModified ? ClaudeTheme.accent.opacity(0.08) : ClaudeTheme.surfaceSecondary),
+            isHovered ? ClaudeTheme.surfaceTertiary : ClaudeTheme.surfaceSecondary,
             in: RoundedRectangle(cornerRadius: ClaudeTheme.cornerRadiusSmall)
         )
         .overlay(
             RoundedRectangle(cornerRadius: ClaudeTheme.cornerRadiusSmall)
-                .strokeBorder(
-                    isModified ? ClaudeTheme.accent.opacity(0.3) : ClaudeTheme.borderSubtle,
-                    lineWidth: 0.5
-                )
+                .strokeBorder(ClaudeTheme.borderSubtle, lineWidth: 0.5)
         )
         .onHover { isHovered = $0 }
         .pointerCursorOnHover()
