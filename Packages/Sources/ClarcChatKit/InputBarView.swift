@@ -17,8 +17,10 @@ struct InputBarView: View {
     @State private var atFileSelectedIndex = 0
     @State private var historyIndex: Int = -1
     @State private var pendingSend = false
+    @State private var pendingNewline = false
     @State private var textFieldLayoutID = 0
     @State private var queuePreviewHeight: CGFloat = 0
+    @State private var measuredInputHeight: CGFloat = 20
 
     var body: some View {
         VStack(spacing: 0) {
@@ -188,6 +190,14 @@ struct InputBarView: View {
             .onKeyPress(keys: [.init("v")], phases: .down) { handlePasteKey($0) }
             .onKeyPress(.escape, phases: .down) { _ in handleEscapeKey() }
             .id(textFieldLayoutID)
+            .frame(minHeight: clampedInputHeight)
+            .background(InputHeightMeasurer(text: windowState.inputText, measuredHeight: $measuredInputHeight))
+    }
+
+    private var clampedInputHeight: CGFloat {
+        let oneLine: CGFloat = 20
+        let maxLines: CGFloat = 10
+        return min(max(measuredInputHeight, oneLine), oneLine * maxLines)
     }
 
     private func handleInputTextChange(oldValue: String, newValue: String) {
@@ -218,6 +228,12 @@ struct InputBarView: View {
         if pendingSend {
             pendingSend = false
             sendMessage()
+        }
+        if pendingNewline {
+            pendingNewline = false
+            Task { @MainActor in
+                windowState.inputText.append("\n")
+            }
         }
     }
 
@@ -596,6 +612,13 @@ struct InputBarView: View {
 
     private func handleReturnKey(_ keyPress: KeyPress) -> KeyPress.Result {
         if keyPress.modifiers.contains(.shift) {
+            // Mirror the plain-Enter IME path: commit composing Hangul first, then append \n
+            // once the committed text has propagated to inputText via onChange.
+            if NSTextInputContext.current?.client.hasMarkedText() == true {
+                NSTextInputContext.current?.client.unmarkText()
+                pendingNewline = true
+                return .handled
+            }
             windowState.inputText.append("\n")
             return .handled
         }
@@ -678,5 +701,43 @@ struct InputBarView: View {
                 windowState.addAttachment(attachment)
             }
         }
+    }
+}
+
+// TextField(axis:.vertical) underreports height for soft-wrapped lines on macOS — it only grows
+// with hard \n. A hidden Text at the same width/font reports the true wrapped height.
+// Extracted as its own View so the long modifier chain on TextField doesn't push SourceKit's
+// type-checker past its time budget.
+private struct InputHeightMeasurer: View {
+    let text: String
+    @Binding var measuredHeight: CGFloat
+
+    var body: some View {
+        GeometryReader { geo in
+            Text(measuringText)
+                .font(.system(size: 14))
+                .frame(width: geo.size.width, alignment: .leading)
+                .fixedSize(horizontal: false, vertical: true)
+                .background(heightReporter)
+                .hidden()
+                .allowsHitTesting(false)
+        }
+    }
+
+    private var heightReporter: some View {
+        GeometryReader { inner in
+            Color.clear
+                .onAppear { measuredHeight = inner.size.height }
+                .onChange(of: inner.size.height) { _, h in
+                    measuredHeight = h
+                }
+        }
+    }
+
+    // A trailing \n has zero intrinsic height when rendered through Text, so append a space to
+    // force the empty final line to be measured.
+    private var measuringText: String {
+        if text.isEmpty { return " " }
+        return text.hasSuffix("\n") ? text + " " : text
     }
 }
