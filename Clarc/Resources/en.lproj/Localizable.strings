@@ -22,6 +22,7 @@
 "Notifications" = "Notifications";
 "Notify when response completes" = "Notify when response completes";
 "Sends a system notification while Clarc is in the background." = "Sends a system notification while Clarc is in the background.";
+"Open Source" = "Open Source";
 "Response complete" = "Response complete";
 
 // MARK: - MainView / ProjectWindowView

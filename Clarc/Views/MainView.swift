@@ -575,12 +575,14 @@ struct ChatToolbarControls: View {
     var body: some View {
         HStack(spacing: 4) {
             Menu {
-                ForEach(PermissionMode.allCases, id: \.self) { mode in
-                    Button {
-                        appState.setSessionPermissionMode(mode, in: windowState)
-                    } label: {
-                        Label(LocalizedStringKey(mode.displayName), systemImage: mode.systemImage)
-                        if effectiveMode == mode { Image(systemName: "checkmark") }
+                Section("Permission Mode") {
+                    ForEach(PermissionMode.allCases, id: \.self) { mode in
+                        Button {
+                            appState.setSessionPermissionMode(mode, in: windowState)
+                        } label: {
+                            Label(LocalizedStringKey(mode.displayName), systemImage: mode.systemImage)
+                            if effectiveMode == mode { Image(systemName: "checkmark") }
+                        }
                     }
                 }
             } label: {
@@ -594,12 +596,14 @@ struct ChatToolbarControls: View {
             .help("Permission mode: \(effectiveMode.displayName)")
 
             Menu {
-                ForEach(AppState.availableModels, id: \.self) { model in
-                    Button {
-                        appState.setSessionModel(model, in: windowState)
-                    } label: {
-                        Text(AppState.modelDisplayName(model))
-                        if effectiveModel == model { Image(systemName: "checkmark") }
+                Section("Model Picker") {
+                    ForEach(AppState.availableModels, id: \.self) { model in
+                        Button {
+                            appState.setSessionModel(model, in: windowState)
+                        } label: {
+                            Text(AppState.modelDisplayName(model))
+                            if effectiveModel == model { Image(systemName: "checkmark") }
+                        }
                     }
                 }
             } label: {
@@ -613,19 +617,21 @@ struct ChatToolbarControls: View {
             .help("Model: \(AppState.modelDisplayName(effectiveModel))")
 
             Menu {
-                Button {
-                    appState.setSessionEffort(nil, in: windowState)
-                } label: {
-                    Text("Auto Effort")
-                    if windowState.sessionEffort == nil { Image(systemName: "checkmark") }
-                }
-                Divider()
-                ForEach(AppState.availableEfforts, id: \.self) { effort in
+                Section("Effort Picker") {
                     Button {
-                        appState.setSessionEffort(effort, in: windowState)
+                        appState.setSessionEffort(nil, in: windowState)
                     } label: {
-                        Text(LocalizedStringKey(effortDisplayName(effort)))
-                        if windowState.sessionEffort == effort { Image(systemName: "checkmark") }
+                        Text("Auto Effort")
+                        if windowState.sessionEffort == nil { Image(systemName: "checkmark") }
+                    }
+                    Divider()
+                    ForEach(AppState.availableEfforts, id: \.self) { effort in
+                        Button {
+                            appState.setSessionEffort(effort, in: windowState)
+                        } label: {
+                            Text(LocalizedStringKey(effortDisplayName(effort)))
+                            if windowState.sessionEffort == effort { Image(systemName: "checkmark") }
+                        }
                     }
                 }
             } label: {

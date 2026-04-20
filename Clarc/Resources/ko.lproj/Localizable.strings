@@ -22,6 +22,7 @@
 "Notifications" = "알림";
 "Notify when response completes" = "응답 완료 시 알림";
 "Sends a system notification while Clarc is in the background." = "Clarc가 백그라운드에 있을 때 시스템 알림을 보냅니다.";
+"Open Source" = "오픈 소스";
 "Response complete" = "응답 완료";
 
 // MARK: - MainView / ProjectWindowView

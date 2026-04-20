@@ -75,6 +75,7 @@ struct GeneralSettingsTab: View {
                 VStack(alignment: .leading, spacing: 8) {
                     skillMarketSection
                     helpSection
+                    sourceCodeSection
                 }
             }
             .padding(24)
@@ -191,6 +192,39 @@ struct GeneralSettingsTab: View {
         .sheet(isPresented: $showSkillMarket) {
             SkillMarketView(isEmbedded: false)
         }
+    }
+
+    // MARK: - Source Code Section
+
+    private var sourceCodeSection: some View {
+        Link(destination: URL(string: "https://github.com/ttnear/Clarc")!) {
+            HStack(spacing: 10) {
+                Image(systemName: "chevron.left.forwardslash.chevron.right")
+                    .font(.system(size: 14))
+                    .frame(width: 20)
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("Open Source")
+                        .font(.system(size: 13))
+                        .foregroundStyle(.primary)
+                    Text(verbatim: "github.com/ttnear/Clarc")
+                        .font(.system(size: 11))
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                Image(systemName: "arrow.up.right.square")
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .background(Color(NSColor.controlBackgroundColor))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(Color(NSColor.separatorColor), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Help Section
