@@ -27,12 +27,44 @@ META_FILE="build/.sparkle_meta"
 echo "▶ Starting Clarc ${TAG} release"
 echo ""
 
-# ── 1. Build + notarize ──────────────────────
+# ── 1. Bump version in pbxproj ───────────────
+PBXPROJ="Clarc.xcodeproj/project.pbxproj"
+APPCAST="appcast.xml"
+
+CURRENT_BUILD=$(grep -m1 "CURRENT_PROJECT_VERSION = " "$PBXPROJ" | sed 's/.*= \([0-9]*\);/\1/')
+if ! [[ "$CURRENT_BUILD" =~ ^[0-9]+$ ]]; then
+    echo "❌ Could not read CURRENT_PROJECT_VERSION from $PBXPROJ"
+    exit 1
+fi
+
+APPCAST_MAX=0
+if [ -f "$APPCAST" ]; then
+    APPCAST_MAX=$(grep -oE "<sparkle:version>[0-9]+</sparkle:version>" "$APPCAST" \
+        | grep -oE "[0-9]+" | sort -rn | head -1)
+    APPCAST_MAX=${APPCAST_MAX:-0}
+fi
+
+if [ "$APPCAST_MAX" -gt "$CURRENT_BUILD" ]; then
+    BASE_BUILD=$APPCAST_MAX
+else
+    BASE_BUILD=$CURRENT_BUILD
+fi
+NEW_BUILD=$((BASE_BUILD + 1))
+
+echo "🔢 Bumping version"
+echo "   MARKETING_VERSION     → ${VERSION}"
+echo "   CURRENT_PROJECT_VERSION → ${NEW_BUILD}  (pbxproj=${CURRENT_BUILD}, appcast=${APPCAST_MAX})"
+
+sed -i '' -E "s/CURRENT_PROJECT_VERSION = [0-9]+;/CURRENT_PROJECT_VERSION = ${NEW_BUILD};/g" "$PBXPROJ"
+sed -i '' -E "s/MARKETING_VERSION = [0-9][0-9.]*;/MARKETING_VERSION = ${VERSION};/g" "$PBXPROJ"
+echo ""
+
+# ── 2. Build + notarize ──────────────────────
 echo "📦 Building and notarizing..."
 ./scripts/build_zip.sh "$VERSION"
 echo ""
 
-# ── 2. Update appcast.xml ────────────────────
+# ── 3. Update appcast.xml ────────────────────
 if [ -f "$META_FILE" ]; then
     echo "📡 Updating appcast.xml..."
     source "$META_FILE"
@@ -40,8 +72,7 @@ if [ -f "$META_FILE" ]; then
     REPO_URL="https://github.com/$(gh repo view --json nameWithOwner -q .nameWithOwner)"
     DOWNLOAD_URL="${REPO_URL}/releases/download/${TAG}/${SPARKLE_ZIP}"
     PUB_DATE=$(date -u "+%a, %d %b %Y %H:%M:%S +0000")
-    BUILD_NUMBER=$(xcodebuild -project Clarc.xcodeproj -showBuildSettings 2>/dev/null \
-        | grep CURRENT_PROJECT_VERSION | awk '{print $3}')
+    BUILD_NUMBER=$NEW_BUILD
 
     NEW_ITEM="    <item>
       <title>Clarc ${TAG}</title>
@@ -72,26 +103,26 @@ else
 fi
 echo ""
 
-# ── 3. Commit appcast.xml + push current branch ──
+# ── 4. Commit version bump + appcast.xml + push current branch ──
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 if [ -f "$META_FILE" ]; then
-    echo "📤 Committing appcast.xml on ${CURRENT_BRANCH}..."
-    git add appcast.xml
-    git commit -m "chore(release): update appcast.xml for ${TAG}"
+    echo "📤 Committing version bump + appcast.xml on ${CURRENT_BRANCH}..."
+    git add "$PBXPROJ" "$APPCAST"
+    git commit -m "chore(release): ${TAG} (build ${NEW_BUILD})"
 fi
 
 echo "🔀 Pushing ${CURRENT_BRANCH}..."
 git push origin "$CURRENT_BRANCH"
 echo ""
 
-# ── 4. Create tag ────────────────────────────
+# ── 5. Create tag ────────────────────────────
 echo "🏷  Creating tag ${TAG}..."
 git tag "$TAG"
 git push origin "$TAG"
 echo ""
 
-# ── 5. Create GitHub Release + upload ZIP ────
+# ── 6. Create GitHub Release + upload ZIP ────
 echo "🚀 Creating GitHub Release..."
 gh release create "$TAG" "$ZIP" \
     --title "Clarc ${TAG}" \
