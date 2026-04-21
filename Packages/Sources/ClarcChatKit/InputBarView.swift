@@ -201,14 +201,21 @@ struct InputBarView: View {
     }
 
     private func handleInputTextChange(oldValue: String, newValue: String) {
-        // Safety net for paste routes onKeyPress doesn't intercept. delta > 1 filters out
-        // single-keystroke typing; IME commits produce non-path text so detection no-ops.
+        // Safety net for paste routes onKeyPress doesn't intercept (context menu, Edit menu).
+        // delta > 1 filters out single-keystroke typing; IME commits are too short to hit
+        // the longTextThreshold, so false positives are not a concern.
         if newValue.count - oldValue.count > 1,
-           let inserted = insertedSubstring(oldValue: oldValue, newValue: newValue),
-           let attachment = attachmentFromPastedText(inserted) {
-            windowState.addAttachment(attachment)
-            windowState.inputText = oldValue
-            return
+           let inserted = insertedSubstring(oldValue: oldValue, newValue: newValue) {
+            if let attachment = attachmentFromPastedText(inserted) {
+                windowState.addAttachment(attachment)
+                windowState.inputText = oldValue
+                return
+            }
+            if inserted.count >= AttachmentFactory.longTextThreshold {
+                windowState.addAttachment(AttachmentFactory.fromLongText(inserted))
+                windowState.inputText = oldValue
+                return
+            }
         }
 
         let trimmed = newValue.trimmingCharacters(in: .whitespaces)
