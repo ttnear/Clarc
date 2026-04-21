@@ -6,6 +6,19 @@
     <language>en</language>
 
     <item>
+      <title>Clarc v1.1.8</title>
+      <sparkle:version>14</sparkle:version>
+      <sparkle:shortVersionString>1.1.8</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <pubDate>Tue, 22 Apr 2026 00:00:00 +0000</pubDate>
+      <enclosure
+        url="https://github.com/ttnear/Clarc/releases/download/v1.1.8/Clarc-1.1.8.zip"
+        length="5832319"
+        type="application/octet-stream"
+        sparkle:edSignature="6UYBHjOmlkhLhtivEdxnnPnwu1QZYRtDi+u5Udhp/BlNg+gIlveEKTImaXM4b5mXTQ5N86VY2GeE4XL182RuCw==" />
+    </item>
+
+    <item>
       <title>Clarc v1.1.4</title>
       <sparkle:version>9</sparkle:version>
       <sparkle:shortVersionString>1.1.4</sparkle:shortVersionString>
