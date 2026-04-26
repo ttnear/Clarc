@@ -227,10 +227,10 @@ struct MarkdownContentView: View {
                 appendPrefixed(prefix: "  \(number). ", content: content, thinSep: isFirstOrdered, prefixFont: .system(size: 15).monospacedDigit())
 
             case .blockquote(let content):
-                // Flush any non-quote text before the first quote line so the quote becomes its own group
-                flush()
                 if quoteHasContent {
                     quoteBuffer.append(AttributedString("\n"))
+                } else {
+                    flush()
                 }
                 var itemText = inlineMarkdown(content)
                 itemText.foregroundColor = ClaudeTheme.textSecondary
@@ -593,15 +593,15 @@ private struct BlockquoteView: View {
     let content: AttributedString
 
     var body: some View {
-        HStack(alignment: .top, spacing: 10) {
-            RoundedRectangle(cornerRadius: 1.5)
-                .fill(ClaudeTheme.accent)
-                .frame(width: 3)
-            Text(content)
-                .textSelection(.enabled)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .fixedSize(horizontal: false, vertical: true)
+        Text(content)
+            .textSelection(.enabled)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.leading, 13)
+            .overlay(alignment: .leading) {
+                RoundedRectangle(cornerRadius: 1.5)
+                    .fill(ClaudeTheme.accent)
+                    .frame(width: 3)
+            }
     }
 }
 
