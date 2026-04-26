@@ -59,6 +59,8 @@ struct MarkdownContentView: View {
                     Text(attrStr)
                         .textSelection(.enabled)
                         .frame(maxWidth: .infinity, alignment: .leading)
+                case .blockquote(let attrStr):
+                    BlockquoteView(content: attrStr)
                 case .codeBlock(let language, let code):
                     CodeBlockView(language: language, code: code)
                         .padding(.vertical, 8)
@@ -104,7 +106,26 @@ struct MarkdownContentView: View {
         // → prevents drag selection from breaking between paragraphs and bullets
         var afterSpacer = false
 
+        // Buffer for consecutive blockquote lines; rendered as a single group with a continuous left bar
+        var quoteBuffer = AttributedString()
+        var quoteHasContent = false
+
+        func flushQuote() {
+            guard quoteHasContent else { return }
+            var trimmed = quoteBuffer
+            while trimmed.characters.last == "\n" {
+                let lastIdx = trimmed.characters.index(before: trimmed.endIndex)
+                trimmed.removeSubrange(lastIdx..<trimmed.endIndex)
+            }
+            if !trimmed.characters.isEmpty {
+                groups.append(.blockquote(trimmed))
+            }
+            quoteBuffer = AttributedString()
+            quoteHasContent = false
+        }
+
         func flush() {
+            flushQuote()
             guard hasContent else {
                 afterSpacer = false
                 return
@@ -144,6 +165,11 @@ struct MarkdownContentView: View {
         }
 
         for block in blocks {
+            // Any non-blockquote block ends an in-progress quote group
+            if case .blockquote = block {} else if case .spacer = block {} else {
+                flushQuote()
+            }
+
             switch block {
             case .codeBlock(let lang, let code):
                 flush()
@@ -201,17 +227,24 @@ struct MarkdownContentView: View {
                 appendPrefixed(prefix: "  \(number). ", content: content, thinSep: isFirstOrdered, prefixFont: .system(size: 15).monospacedDigit())
 
             case .blockquote(let content):
-                if hasContent && afterSpacer && inListOrQuote {
-                    current.append(AttributedString("\n"))
+                // Flush any non-quote text before the first quote line so the quote becomes its own group
+                flush()
+                if quoteHasContent {
+                    quoteBuffer.append(AttributedString("\n"))
                 }
-                let isFirstQuote = hasContent && !inListOrQuote
-                afterSpacer = false
-                inListOrQuote = true
-                appendPrefixed(prefix: "┃ ", content: content, contentColor: ClaudeTheme.textSecondary, thinSep: isFirstQuote)
+                var itemText = inlineMarkdown(content)
+                itemText.foregroundColor = ClaudeTheme.textSecondary
+                quoteBuffer.append(itemText)
+                quoteHasContent = true
 
             case .spacer:
-                // Just set a flag instead of flushing → handled as \n\n in the next block
-                afterSpacer = hasContent
+                if quoteHasContent {
+                    // Empty line inside a quote run: keep it as a paragraph break within the same quote group
+                    quoteBuffer.append(AttributedString("\n"))
+                } else {
+                    // Just set a flag instead of flushing → handled as \n\n in the next block
+                    afterSpacer = hasContent
+                }
             }
         }
 
@@ -463,6 +496,7 @@ struct MarkdownContentView: View {
 
 private enum RenderGroup {
     case attributedText(AttributedString)
+    case blockquote(AttributedString)
     case codeBlock(language: String, code: String)
     case table(headers: [String], rows: [[String]])
     case horizontalRule
@@ -551,6 +585,24 @@ private enum MarkdownBlock {
     case table(headers: [String], rows: [[String]])
     case horizontalRule
     case spacer
+}
+
+// MARK: - Blockquote View
+
+private struct BlockquoteView: View {
+    let content: AttributedString
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            RoundedRectangle(cornerRadius: 1.5)
+                .fill(ClaudeTheme.accent)
+                .frame(width: 3)
+            Text(content)
+                .textSelection(.enabled)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .fixedSize(horizontal: false, vertical: true)
+    }
 }
 
 // MARK: - Table View
