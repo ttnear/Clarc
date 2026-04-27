@@ -174,24 +174,35 @@ struct InputBarView: View {
 
     @ViewBuilder
     private var inputTextField: some View {
-        TextField(String(localized: "Type a message...", bundle: .module), text: Bindable(windowState).inputText, axis: .vertical)
-            .textFieldStyle(.plain)
-            .font(.system(size: ClaudeTheme.size(14)))
-            .foregroundStyle(ClaudeTheme.textPrimary)
-            .lineLimit(1...10)
-            .focused($isInputFocused)
-            .onChange(of: windowState.inputText) { oldValue, newValue in
-                handleInputTextChange(oldValue: oldValue, newValue: newValue)
+        ZStack(alignment: .topLeading) {
+            TextEditor(text: Bindable(windowState).inputText)
+                .textEditorStyle(.plain)
+                .scrollContentBackground(.hidden)
+                .font(.system(size: ClaudeTheme.size(14)))
+                .foregroundStyle(ClaudeTheme.textPrimary)
+                .focused($isInputFocused)
+                .onChange(of: windowState.inputText) { oldValue, newValue in
+                    handleInputTextChange(oldValue: oldValue, newValue: newValue)
+                }
+                .onKeyPress(.return, phases: .down) { handleReturnKey($0) }
+                .onKeyPress(.upArrow, phases: .down) { _ in handleUpArrow() }
+                .onKeyPress(.downArrow, phases: .down) { _ in handleDownArrow() }
+                .onKeyPress(.tab, phases: .down) { _ in handleTab() }
+                .onKeyPress(keys: [.init("v")], phases: .down) { handlePasteKey($0) }
+                .onKeyPress(.escape, phases: .down) { _ in handleEscapeKey() }
+                .id(textFieldLayoutID)
+
+            if windowState.inputText.isEmpty {
+                Text("Type a message...", bundle: .module)
+                    .font(.system(size: ClaudeTheme.size(14)))
+                    .foregroundStyle(.secondary)
+                    // Match NSTextView.lineFragmentPadding so the placeholder lines up with the cursor.
+                    .padding(.leading, 5)
+                    .allowsHitTesting(false)
             }
-            .onKeyPress(.return, phases: .down) { handleReturnKey($0) }
-            .onKeyPress(.upArrow, phases: .down) { _ in handleUpArrow() }
-            .onKeyPress(.downArrow, phases: .down) { _ in handleDownArrow() }
-            .onKeyPress(.tab, phases: .down) { _ in handleTab() }
-            .onKeyPress(keys: [.init("v")], phases: .down) { handlePasteKey($0) }
-            .onKeyPress(.escape, phases: .down) { _ in handleEscapeKey() }
-            .id(textFieldLayoutID)
-            .frame(minHeight: clampedInputHeight)
-            .background(InputHeightMeasurer(text: windowState.inputText, measuredHeight: $measuredInputHeight))
+        }
+        .frame(height: clampedInputHeight)
+        .background(InputHeightMeasurer(text: windowState.inputText, measuredHeight: $measuredInputHeight))
     }
 
     private var clampedInputHeight: CGFloat {
@@ -317,8 +328,9 @@ struct InputBarView: View {
         }
 
         if let url = (pb.readObjects(forClasses: [NSURL.self]) as? [URL])?.first(where: \.isFileURL) {
-            if chatBridge.autoPreviewSettings.filePath,
-               let attachment = AttachmentFactory.fromFileURL(url) {
+            let isImage = AttachmentFactory.imageExtensions.contains(url.pathExtension.lowercased())
+            let allowed = isImage ? chatBridge.autoPreviewSettings.image : chatBridge.autoPreviewSettings.filePath
+            if allowed, let attachment = AttachmentFactory.fromFileURL(url) {
                 windowState.addAttachment(attachment)
             } else {
                 insertAtCursor(url.path)
@@ -346,9 +358,11 @@ struct InputBarView: View {
     private func attachmentFromPastedText(_ text: String) -> Attachment? {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmed.isEmpty { return nil }
-        if chatBridge.autoPreviewSettings.filePath,
-           let attachment = attachmentFromPathText(trimmed) {
-            return attachment
+        if let attachment = attachmentFromPathText(trimmed) {
+            let allowed = attachment.type == .image
+                ? chatBridge.autoPreviewSettings.image
+                : chatBridge.autoPreviewSettings.filePath
+            if allowed { return attachment }
         }
         if chatBridge.autoPreviewSettings.url,
            !trimmed.contains(" "), !trimmed.contains("\n"),
@@ -545,17 +559,13 @@ struct InputBarView: View {
                         .font(.system(size: ClaudeTheme.size(10)))
                         .foregroundStyle(ClaudeTheme.textSecondary.opacity(0.7))
 
-                    Text(queued.text.isEmpty ? String(localized: "(attachment)", bundle: .module) : queued.text)
+                    Text(queuedDisplayText(queued))
                         .font(.system(size: ClaudeTheme.size(13)))
                         .foregroundStyle(ClaudeTheme.textSecondary)
-                        .lineLimit(1)
+                        .lineLimit(3)
                         .truncationMode(.tail)
-
-                    if !queued.attachments.isEmpty {
-                        Image(systemName: "paperclip")
-                            .font(.system(size: ClaudeTheme.size(10)))
-                            .foregroundStyle(ClaudeTheme.textSecondary.opacity(0.7))
-                    }
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
 
                     Button {
                         withAnimation(.easeOut(duration: 0.15)) {
@@ -580,6 +590,13 @@ struct InputBarView: View {
         }
         .padding(.trailing, 24)
         .padding(.bottom, 4)
+    }
+
+    private func queuedDisplayText(_ queued: QueuedMessage) -> String {
+        let parts = queued.attachments.map { $0.path.isEmpty ? $0.name : $0.path }
+        if queued.text.isEmpty { return parts.joined(separator: "\n") }
+        if parts.isEmpty { return queued.text }
+        return ([queued.text] + parts).joined(separator: "\n")
     }
 
     // MARK: - Attachment Previews
@@ -723,10 +740,9 @@ struct InputBarView: View {
     }
 }
 
-// TextField(axis:.vertical) underreports height for soft-wrapped lines on macOS — it only grows
-// with hard \n. A hidden Text at the same width/font reports the true wrapped height.
-// Extracted as its own View so the long modifier chain on TextField doesn't push SourceKit's
-// type-checker past its time budget.
+// TextEditor doesn't expose its intrinsic content height (it scrolls instead), so a hidden Text
+// at the same width/font reports the wrapped height that drives clampedInputHeight. Extracted
+// to keep TextEditor's modifier chain inside SourceKit's type-check budget.
 private struct InputHeightMeasurer: View {
     let text: String
     @Binding var measuredHeight: CGFloat
@@ -754,9 +770,12 @@ private struct InputHeightMeasurer: View {
     }
 
     // A trailing \n has zero intrinsic height when rendered through Text, so append a space to
-    // force the empty final line to be measured.
+    // force the empty final line to be measured. Cap input length: clampedInputHeight saturates
+    // at 10 lines (~200pt), so once the text definitely exceeds that we don't need exact height
+    // and can avoid laying out arbitrarily large pasted buffers on every keystroke.
     private var measuringText: String {
         if text.isEmpty { return " " }
-        return text.hasSuffix("\n") ? text + " " : text
+        let capped = text.count > 2000 ? String(text.prefix(2000)) : text
+        return capped.hasSuffix("\n") ? capped + " " : capped
     }
 }

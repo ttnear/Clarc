@@ -12,7 +12,7 @@
 "Enable Focus Mode" = "Enable Focus Mode";
 "focus.mode.desc" = "Hide streaming bubbles and show only completed responses in history.";
 "Auto-preview Attachments" = "Auto-preview Attachments";
-"auto.preview.desc" = "When enabled, pasting the following content types automatically creates an attachment preview. When disabled, the content is inserted as plain text (images are silently skipped, as they have no text representation).";
+"auto.preview.desc" = "When enabled, pasting the following content types automatically creates an attachment preview. When disabled, the content is inserted as plain text.";
 "URL links" = "URL links";
 "File paths" = "File paths";
 "Images" = "Images";

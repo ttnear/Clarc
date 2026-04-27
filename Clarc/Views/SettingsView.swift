@@ -456,31 +456,13 @@ struct ChatSettingsTab: View {
                 .font(.system(size: ClaudeTheme.size(11)))
                 .foregroundStyle(.secondary)
 
-            VStack(alignment: .leading, spacing: 8) {
-                Toggle(isOn: $appState.autoPreviewSettings.url) {
-                    Text("URL links")
-                }
-                .toggleStyle(.switch)
-                .fixedSize()
-
-                Toggle(isOn: $appState.autoPreviewSettings.filePath) {
-                    Text("File paths")
-                }
-                .toggleStyle(.switch)
-                .fixedSize()
-
-                Toggle(isOn: $appState.autoPreviewSettings.image) {
-                    Text("Images")
-                }
-                .toggleStyle(.switch)
-                .fixedSize()
-
-                Toggle(isOn: $appState.autoPreviewSettings.longText) {
-                    Text("Long text (200+ characters)")
-                }
-                .toggleStyle(.switch)
-                .fixedSize()
+            VStack(alignment: .leading, spacing: 6) {
+                Toggle("URL links", isOn: $appState.autoPreviewSettings.url)
+                Toggle("File paths", isOn: $appState.autoPreviewSettings.filePath)
+                Toggle("Images", isOn: $appState.autoPreviewSettings.image)
+                Toggle("Long text (200+ characters)", isOn: $appState.autoPreviewSettings.longText)
             }
+            .toggleStyle(.checkbox)
         }
     }
 
