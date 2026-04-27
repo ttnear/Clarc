@@ -171,5 +171,33 @@
         type="application/octet-stream"
         sparkle:edSignature="hMHvH5E/XYiVNoqrCHt+Zb7JvQhqo3PirNfk6WAx/Tw0QxqyGkxQhc4au4maOmMYELDQ7ocTgjGTjBEfsJi3AQ==" />
     </item>
+    <item>
+      <title>Clarc v1.2.0</title>
+      <sparkle:version>16</sparkle:version>
+      <sparkle:shortVersionString>1.2.0</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <pubDate>Mon, 27 Apr 2026 08:01:55 +0000</pubDate>
+      <description><![CDATA[
+<h3>New</h3>
+<ul>
+  <li>Independent font size controls for the interface and the message area — adjust each separately in Settings.</li>
+  <li>Auto-preview toggles for pasted images and dropped files, so you can decide when attachments preview automatically.</li>
+</ul>
+<h3>Improved</h3>
+<ul>
+  <li>Blockquotes now render as a single continuous vertical bar instead of breaking between lines.</li>
+  <li>Links open directly in your default browser, skipping the macOS link popup.</li>
+</ul>
+<h3>Fixed</h3>
+<ul>
+  <li>An error bubble now appears when a response stream ends without producing any visible output, so failed turns are no longer silent.</li>
+</ul>
+      ]]></description>
+      <enclosure
+        url="https://github.com/ttnear/Clarc/releases/download/v1.2.0/Clarc-1.2.0.zip"
+        length="5889200"
+        type="application/octet-stream"
+        sparkle:edSignature="Azp3incOAtkpQZ485tHtd0t8eIRICWEva8bLGI6yC6jmos3S10o91wtsd2Fm7WX/UrL+tJnD189uAzH6QdoUAw==" />
+    </item>
   </channel>
 </rss>
