@@ -321,7 +321,6 @@ struct InputBarView: View {
                let attachment = AttachmentFactory.fromFileURL(url) {
                 windowState.addAttachment(attachment)
             } else {
-                // filePath preview disabled, or factory couldn't create an attachment — fall back to plain path
                 insertAtCursor(url.path)
             }
             return .handled

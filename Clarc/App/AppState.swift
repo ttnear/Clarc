@@ -202,8 +202,10 @@ final class AppState {
 
     // MARK: - Attachment Auto-Preview Settings
 
+    private static let autoPreviewSettingsKey = "attachmentAutoPreviewSettings"
+
     var autoPreviewSettings: AttachmentAutoPreviewSettings = {
-        guard let data = UserDefaults.standard.data(forKey: "attachmentAutoPreviewSettings"),
+        guard let data = UserDefaults.standard.data(forKey: AppState.autoPreviewSettingsKey),
               let settings = try? JSONDecoder().decode(AttachmentAutoPreviewSettings.self, from: data) else {
             return AttachmentAutoPreviewSettings()
         }
@@ -211,7 +213,7 @@ final class AppState {
     }() {
         didSet {
             if let data = try? JSONEncoder().encode(autoPreviewSettings) {
-                UserDefaults.standard.set(data, forKey: "attachmentAutoPreviewSettings")
+                UserDefaults.standard.set(data, forKey: AppState.autoPreviewSettingsKey)
             }
         }
     }
@@ -504,7 +506,9 @@ final class AppState {
     /// Runs a reactive observation loop: reads AppState + WindowState properties into the bridge,
     /// then re-registers after each change. Stops when the bridge or window is deallocated.
     private func startBridgeObservation(_ bridge: ChatBridge, for window: WindowState) {
-        func observe() {
+        // Streaming state and global settings are observed in separate loops so that frequent
+        // streaming updates don't trigger settings re-pushes (and vice versa).
+        func observeStream() {
             withObservationTracking {
                 let state = streamState(in: window)
                 bridge.messages = state.messages
@@ -522,12 +526,19 @@ final class AppState {
                     durationMs: state.durationMs,
                     turns: state.turns
                 )
-                bridge.autoPreviewSettings = self.autoPreviewSettings
             } onChange: {
-                Task { @MainActor in observe() }
+                Task { @MainActor in observeStream() }
             }
         }
-        Task { @MainActor in observe() }
+        func observeSettings() {
+            withObservationTracking {
+                bridge.autoPreviewSettings = self.autoPreviewSettings
+            } onChange: {
+                Task { @MainActor in observeSettings() }
+            }
+        }
+        Task { @MainActor in observeStream() }
+        Task { @MainActor in observeSettings() }
     }
 
     // MARK: - Edit & Resend
