@@ -50,9 +50,9 @@ public struct ChatView: View {
                     } label: {
                         HStack(spacing: 5) {
                             if shortcut.isTerminalCommand {
-                                Image(systemName: "terminal").font(.system(size: 10, weight: .medium))
+                                Image(systemName: "terminal").font(.system(size: ClaudeTheme.size(10), weight: .medium))
                             }
-                            Text(shortcut.name).font(.system(size: 12, weight: .medium))
+                            Text(shortcut.name).font(.system(size: ClaudeTheme.size(12), weight: .medium))
                         }
                         .foregroundStyle(ClaudeTheme.accent)
                         .padding(.horizontal, 10)

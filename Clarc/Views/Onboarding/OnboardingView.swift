@@ -33,7 +33,7 @@ struct OnboardingView: View {
     private var cliCheckStep: some View {
         VStack(spacing: 20) {
             Image(systemName: "terminal")
-                .font(.system(size: 48))
+                .font(.system(size: ClaudeTheme.size(48)))
                 .foregroundStyle(ClaudeTheme.accent)
 
             Text("Claude CLI Installation Check")

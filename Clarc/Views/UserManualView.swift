@@ -1,4 +1,5 @@
 import SwiftUI
+import ClarcCore
 
 struct UserManualView: View {
     @Environment(\.dismiss) private var dismiss
@@ -17,7 +18,7 @@ struct UserManualView: View {
             .overlay(alignment: .topTrailing) {
                 Button { dismiss() } label: {
                     Image(systemName: "xmark")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.system(size: ClaudeTheme.size(12), weight: .semibold))
                         .foregroundStyle(.secondary)
                         .frame(width: 24, height: 24)
                         .background(Color(NSColor.controlBackgroundColor))
@@ -120,12 +121,12 @@ private struct ManualKeyValueRow: View {
         HStack(alignment: .center, spacing: 12) {
             if let symbolName {
                 Image(systemName: symbolName)
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.system(size: ClaudeTheme.size(14), weight: .medium))
                     .foregroundStyle(symbolColor ?? .primary)
                     .frame(width: 28, height: 20)
             } else {
                 Text(key)
-                    .font(.system(size: 12, weight: .medium, design: .monospaced))
+                    .font(.system(size: ClaudeTheme.size(12), weight: .medium, design: .monospaced))
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
                     .background(Color(NSColor.controlBackgroundColor))
@@ -133,7 +134,7 @@ private struct ManualKeyValueRow: View {
                     .fixedSize()
             }
             Text(LocalizedStringKey(value))
-                .font(.system(size: 13))
+                .font(.system(size: ClaudeTheme.size(13)))
                 .foregroundStyle(.secondary)
         }
     }

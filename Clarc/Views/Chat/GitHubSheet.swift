@@ -77,7 +77,7 @@ struct GitHubSheet: View {
             Spacer()
 
             Image(systemName: "link.badge.plus")
-                .font(.system(size: 40))
+                .font(.system(size: ClaudeTheme.size(40)))
                 .foregroundStyle(ClaudeTheme.accent)
 
             Text("Connect GitHub to\nimport repos instantly")

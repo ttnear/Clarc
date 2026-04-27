@@ -64,6 +64,8 @@ struct GeneralSettingsTab: View {
             VStack(alignment: .leading, spacing: 24) {
                 themeSection
                 Divider()
+                fontSizeSection
+                Divider()
                 notificationsSection(appState: $appState.notificationsEnabled)
                 Divider()
                 VStack(alignment: .leading, spacing: 8) {
@@ -77,19 +79,81 @@ struct GeneralSettingsTab: View {
         }
     }
 
+    // MARK: - Font Size Section
+
+    private var fontSizeSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Font Size")
+                .font(.system(size: ClaudeTheme.size(13), weight: .semibold))
+            fontSizeRow(
+                label: "Interface",
+                value: appState.fontSizeAdjustment,
+                onDecrease: { appState.decreaseFontSize() },
+                onIncrease: { appState.increaseFontSize() },
+                onReset: { appState.fontSizeAdjustment = 0 }
+            )
+            fontSizeRow(
+                label: "Messages",
+                value: appState.messageFontSizeAdjustment,
+                onDecrease: { appState.decreaseMessageFontSize() },
+                onIncrease: { appState.increaseMessageFontSize() },
+                onReset: { appState.messageFontSizeAdjustment = 0 }
+            )
+            Text("font.size.hint")
+                .font(.system(size: ClaudeTheme.size(11)))
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    private func fontSizeRow(label: LocalizedStringKey, value: Int, onDecrease: @escaping () -> Void, onIncrease: @escaping () -> Void, onReset: @escaping () -> Void) -> some View {
+        HStack(spacing: 10) {
+            Text(label)
+                .font(.system(size: ClaudeTheme.size(12)))
+                .foregroundStyle(.secondary)
+                .frame(width: 72, alignment: .leading)
+            Button(action: onDecrease) {
+                Image(systemName: "minus")
+                    .frame(width: 26, height: 26)
+                    .background(Color(NSColor.controlBackgroundColor))
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                    .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(Color(NSColor.separatorColor), lineWidth: 1))
+            }
+            .buttonStyle(.plain)
+            .disabled(value <= ThemeStore.minFontSizeAdjustment)
+            Text(value == 0 ? "Default" : (value > 0 ? "+\(value)" : "\(value)"))
+                .font(.system(size: ClaudeTheme.size(13), weight: .medium))
+                .frame(minWidth: 48, alignment: .center)
+            Button(action: onIncrease) {
+                Image(systemName: "plus")
+                    .frame(width: 26, height: 26)
+                    .background(Color(NSColor.controlBackgroundColor))
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                    .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(Color(NSColor.separatorColor), lineWidth: 1))
+            }
+            .buttonStyle(.plain)
+            .disabled(value >= ThemeStore.maxFontSizeAdjustment)
+            if value != 0 {
+                Button("Reset", action: onReset)
+                    .buttonStyle(.plain)
+                    .font(.system(size: ClaudeTheme.size(12)))
+                    .foregroundStyle(ClaudeTheme.accent)
+            }
+        }
+    }
+
     // MARK: - Notifications Section
 
     private func notificationsSection(appState: Binding<Bool>) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Notifications")
-                .font(.system(size: 13, weight: .semibold))
+                .font(.system(size: ClaudeTheme.size(13), weight: .semibold))
 
             Toggle(isOn: appState) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Notify when response completes")
-                        .font(.system(size: 13))
+                        .font(.system(size: ClaudeTheme.size(13)))
                     Text("Sends a system notification while Clarc is in the background.")
-                        .font(.system(size: 11))
+                        .font(.system(size: ClaudeTheme.size(11)))
                         .foregroundStyle(.secondary)
                 }
             }
@@ -102,7 +166,7 @@ struct GeneralSettingsTab: View {
     private var themeSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Theme")
-                .font(.system(size: 13, weight: .semibold))
+                .font(.system(size: ClaudeTheme.size(13), weight: .semibold))
 
             Button {
                 showThemePicker.toggle()
@@ -112,11 +176,11 @@ struct GeneralSettingsTab: View {
                         .fill(appState.selectedTheme.colors.accent)
                         .frame(width: 10, height: 10)
                     Text(appState.selectedTheme.displayName)
-                        .font(.system(size: 13))
+                        .font(.system(size: ClaudeTheme.size(13)))
                         .foregroundStyle(.primary)
                     Spacer(minLength: 0)
                     Image(systemName: "chevron.up.chevron.down")
-                        .font(.system(size: 10))
+                        .font(.system(size: ClaudeTheme.size(10)))
                         .foregroundStyle(.secondary)
                 }
                 .padding(.horizontal, 12)
@@ -158,19 +222,19 @@ struct GeneralSettingsTab: View {
         } label: {
             HStack(spacing: 10) {
                 Image(systemName: "brain.head.profile")
-                    .font(.system(size: 14))
+                    .font(.system(size: ClaudeTheme.size(14)))
                     .frame(width: 20)
                 VStack(alignment: .leading, spacing: 1) {
                     Text("Skill Marketplace")
-                        .font(.system(size: 13))
+                        .font(.system(size: ClaudeTheme.size(13)))
                         .foregroundStyle(.primary)
                     Text("Browse and manage Claude Code skills")
-                        .font(.system(size: 11))
+                        .font(.system(size: ClaudeTheme.size(11)))
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
                 Image(systemName: "arrow.up.right.square")
-                    .font(.system(size: 11))
+                    .font(.system(size: ClaudeTheme.size(11)))
                     .foregroundStyle(.secondary)
             }
             .padding(.horizontal, 12)
@@ -194,19 +258,19 @@ struct GeneralSettingsTab: View {
         Link(destination: URL(string: "https://github.com/ttnear/Clarc")!) {
             HStack(spacing: 10) {
                 Image(systemName: "chevron.left.forwardslash.chevron.right")
-                    .font(.system(size: 14))
+                    .font(.system(size: ClaudeTheme.size(14)))
                     .frame(width: 20)
                 VStack(alignment: .leading, spacing: 1) {
                     Text("Open Source")
-                        .font(.system(size: 13))
+                        .font(.system(size: ClaudeTheme.size(13)))
                         .foregroundStyle(.primary)
                     Text(verbatim: "github.com/ttnear/Clarc")
-                        .font(.system(size: 11))
+                        .font(.system(size: ClaudeTheme.size(11)))
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
                 Image(systemName: "arrow.up.right.square")
-                    .font(.system(size: 11))
+                    .font(.system(size: ClaudeTheme.size(11)))
                     .foregroundStyle(.secondary)
             }
             .padding(.horizontal, 12)
@@ -229,14 +293,14 @@ struct GeneralSettingsTab: View {
         } label: {
             HStack(spacing: 10) {
                 Image(systemName: "book.fill")
-                    .font(.system(size: 14))
+                    .font(.system(size: ClaudeTheme.size(14)))
                     .frame(width: 20)
                 Text("User Guide")
-                    .font(.system(size: 13))
+                    .font(.system(size: ClaudeTheme.size(13)))
                     .foregroundStyle(.primary)
                 Spacer()
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 11))
+                    .font(.system(size: ClaudeTheme.size(11)))
                     .foregroundStyle(.secondary)
             }
             .padding(.horizontal, 12)
@@ -279,10 +343,10 @@ struct ChatSettingsTab: View {
     private func modelSection(selectedModel: Binding<String>) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Default Model")
-                .font(.system(size: 13, weight: .semibold))
+                .font(.system(size: ClaudeTheme.size(13), weight: .semibold))
 
             Text("Used for new sessions. You can override the model per session from the toolbar.")
-                .font(.system(size: 11))
+                .font(.system(size: ClaudeTheme.size(11)))
                 .foregroundStyle(.secondary)
 
             Picker("", selection: selectedModel) {
@@ -295,7 +359,7 @@ struct ChatSettingsTab: View {
             .fixedSize()
 
             Text(AppState.modelDescription(selectedModel.wrappedValue))
-                .font(.system(size: 11))
+                .font(.system(size: ClaudeTheme.size(11)))
                 .foregroundStyle(.secondary)
         }
     }
@@ -306,10 +370,10 @@ struct ChatSettingsTab: View {
         @Bindable var appState = appState
         return VStack(alignment: .leading, spacing: 12) {
             Text("Default Permission Mode")
-                .font(.system(size: 13, weight: .semibold))
+                .font(.system(size: ClaudeTheme.size(13), weight: .semibold))
 
             Text("Used for new sessions. You can override the permission mode per session from the toolbar.")
-                .font(.system(size: 11))
+                .font(.system(size: ClaudeTheme.size(11)))
                 .foregroundStyle(.secondary)
 
             Picker("", selection: $appState.permissionMode) {
@@ -322,7 +386,7 @@ struct ChatSettingsTab: View {
             .fixedSize()
 
             Text(AppState.permissionModeDescription(appState.permissionMode))
-                .font(.system(size: 11))
+                .font(.system(size: ClaudeTheme.size(11)))
                 .foregroundStyle(.secondary)
         }
     }
@@ -333,10 +397,10 @@ struct ChatSettingsTab: View {
         @Bindable var appState = appState
         return VStack(alignment: .leading, spacing: 12) {
             Text("Default Effort Level")
-                .font(.system(size: 13, weight: .semibold))
+                .font(.system(size: ClaudeTheme.size(13), weight: .semibold))
 
             Text("Used for new sessions. You can override the effort level per session from the toolbar.")
-                .font(.system(size: 11))
+                .font(.system(size: ClaudeTheme.size(11)))
                 .foregroundStyle(.secondary)
 
             Picker("", selection: $appState.selectedEffort) {
@@ -350,7 +414,7 @@ struct ChatSettingsTab: View {
             .fixedSize()
 
             Text(AppState.effortDescription(appState.selectedEffort))
-                .font(.system(size: 11))
+                .font(.system(size: ClaudeTheme.size(11)))
                 .foregroundStyle(.secondary)
         }
     }
@@ -361,10 +425,10 @@ struct ChatSettingsTab: View {
         @Bindable var appState = appState
         return VStack(alignment: .leading, spacing: 12) {
             Text("Focus Mode")
-                .font(.system(size: 13, weight: .semibold))
+                .font(.system(size: ClaudeTheme.size(13), weight: .semibold))
 
             Text("focus.mode.desc")
-                .font(.system(size: 11))
+                .font(.system(size: ClaudeTheme.size(11)))
                 .foregroundStyle(.secondary)
 
             Toggle(isOn: $appState.focusMode) {
@@ -403,12 +467,12 @@ private struct ThemePickerRow: View {
                     .fill(theme.colors.accent)
                     .frame(width: 10, height: 10)
                 Text(theme.displayName)
-                    .font(.system(size: 13))
+                    .font(.system(size: ClaudeTheme.size(13)))
                     .foregroundStyle(.primary)
                 Spacer(minLength: 0)
                 if isSelected {
                     Image(systemName: "checkmark")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.system(size: ClaudeTheme.size(11), weight: .semibold))
                         .foregroundStyle(.secondary)
                 }
             }

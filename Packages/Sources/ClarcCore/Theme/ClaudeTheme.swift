@@ -53,6 +53,15 @@ public enum ClaudeTheme {
     public static var inputBorder: Color      { ThemeStore.shared.colors.inputBorder }
     public static var inputPlaceholder: Color { ThemeStore.shared.colors.inputPlaceholder }
 
+    // MARK: - Font Size
+    public static func size(_ base: CGFloat) -> CGFloat {
+        base + CGFloat(ThemeStore.shared.fontSizeAdjustment)
+    }
+
+    public static func messageSize(_ base: CGFloat) -> CGFloat {
+        base + CGFloat(ThemeStore.shared.messageFontSizeAdjustment)
+    }
+
     // MARK: - Dimensions
     public static let cornerRadiusSmall: CGFloat = 8
     public static let cornerRadiusMedium: CGFloat = 12
@@ -194,7 +203,7 @@ public struct ClaudeSendButton: View {
     public var body: some View {
         Button(action: action) {
             Image(systemName: "arrow.up")
-                .font(.system(size: 14, weight: .semibold))
+                .font(.system(size: ClaudeTheme.size(14), weight: .semibold))
                 .foregroundStyle(.white)
                 .frame(width: 32, height: 32)
                 .background(isEnabled ? ClaudeTheme.accent : ClaudeTheme.textTertiary)

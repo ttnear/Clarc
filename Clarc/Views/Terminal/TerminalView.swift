@@ -146,7 +146,7 @@ struct InteractiveTerminalPopup: View {
                 Image(systemName: "terminal")
                     .foregroundStyle(ClaudeTheme.accent)
                 Text(state.title)
-                    .font(.system(size: 13, weight: .medium, design: .monospaced))
+                    .font(.system(size: ClaudeTheme.size(13), weight: .medium, design: .monospaced))
                     .foregroundStyle(ClaudeTheme.textPrimary)
 
                 Spacer()
@@ -154,10 +154,10 @@ struct InteractiveTerminalPopup: View {
                 if processExited {
                     HStack(spacing: 4) {
                         Image(systemName: exitCode == 0 ? "checkmark.circle.fill" : "exclamationmark.circle.fill")
-                            .font(.system(size: 11))
+                            .font(.system(size: ClaudeTheme.size(11)))
                             .foregroundStyle(exitCode == 0 ? ClaudeTheme.statusSuccess : ClaudeTheme.statusError)
                         Text(exitCode == 0 ? "exit 0" : "exit \(exitCode)")
-                            .font(.system(size: 12, design: .monospaced))
+                            .font(.system(size: ClaudeTheme.size(12), design: .monospaced))
                             .foregroundStyle(ClaudeTheme.textTertiary)
                     }
                 }
@@ -166,7 +166,7 @@ struct InteractiveTerminalPopup: View {
                     dismiss()
                 } label: {
                     Image(systemName: "xmark")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.system(size: ClaudeTheme.size(11), weight: .medium))
                         .frame(width: 20, height: 20)
                 }
                 .buttonStyle(.plain)

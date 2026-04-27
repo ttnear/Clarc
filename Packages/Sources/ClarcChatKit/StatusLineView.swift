@@ -39,7 +39,7 @@ struct StatusLineView: View {
 
             HStack(spacing: 4) {
                 Image(systemName: "memorychip")
-                    .font(.system(size: 10))
+                    .font(.system(size: ClaudeTheme.size(10)))
                 Text("context", bundle: .module)
                 if let ctxPct = contextPercentage {
                     miniBar(percent: ctxPct)
@@ -55,12 +55,12 @@ struct StatusLineView: View {
 
             HStack(spacing: 4) {
                 Image(systemName: "stopwatch")
-                    .font(.system(size: 10))
+                    .font(.system(size: ClaudeTheme.size(10)))
                 Text(formatTotalDuration(totalResponseDuration))
             }
             .foregroundStyle(ClaudeTheme.textTertiary)
         }
-        .font(.system(size: 12, weight: .medium, design: .monospaced))
+        .font(.system(size: ClaudeTheme.size(12), weight: .medium, design: .monospaced))
         .padding(.leading, 12)
         .padding(.trailing, 20)
         .frame(height: 28)
@@ -89,7 +89,7 @@ struct StatusLineView: View {
     private func segment(icon: String, text: String, color: Color) -> some View {
         HStack(spacing: 4) {
             Image(systemName: icon)
-                .font(.system(size: 10))
+                .font(.system(size: ClaudeTheme.size(10)))
             Text(text)
         }
         .foregroundStyle(color)
@@ -101,7 +101,7 @@ struct StatusLineView: View {
     private func rateLimitSegment(label: String, icon: String, percent: Double?, resetsAt: Date?) -> some View {
         HStack(spacing: 4) {
             Image(systemName: icon)
-                .font(.system(size: 10))
+                .font(.system(size: ClaudeTheme.size(10)))
             Text(label)
                 .foregroundStyle(ClaudeTheme.textTertiary)
             if let pct = percent {

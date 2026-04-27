@@ -327,4 +327,9 @@ public final class ThemeStore {
         }
     }
     public var colors: ThemeColors = .claude
+
+    public static let minFontSizeAdjustment: Int = -5
+    public static let maxFontSizeAdjustment: Int = 8
+    public var fontSizeAdjustment: Int = 0
+    public var messageFontSizeAdjustment: Int = 0
 }

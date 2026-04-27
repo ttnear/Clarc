@@ -101,7 +101,7 @@ struct MainView: View {
                                 showFilePicker = true
                             } label: {
                                 Image(systemName: "plus")
-                                    .font(.system(size: 16))
+                                    .font(.system(size: ClaudeTheme.size(16)))
                                     .foregroundStyle(ClaudeTheme.textSecondary)
                             }
                             .buttonStyle(.plain)
@@ -234,7 +234,7 @@ struct MainView: View {
             } else {
                 VStack(spacing: 16) {
                     Image(systemName: "sparkle")
-                        .font(.system(size: 48))
+                        .font(.system(size: ClaudeTheme.size(48)))
                         .foregroundStyle(ClaudeTheme.accent)
 
                     Text("Select a Project")
@@ -337,9 +337,9 @@ struct ProjectTabButton: View {
         } label: {
             HStack(spacing: 5) {
                 Image(systemName: "folder.fill")
-                    .font(.system(size: 11))
+                    .font(.system(size: ClaudeTheme.size(11)))
                 Text(project.name)
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.system(size: ClaudeTheme.size(13), weight: .medium))
                     .lineLimit(1)
             }
             .foregroundStyle(isSelected ? ClaudeTheme.textOnAccent : ClaudeTheme.textSecondary)
@@ -383,7 +383,7 @@ struct InspectorTabControl: View {
                     selection = tab
                 } label: {
                     Text(LocalizedStringKey(tab.rawValue))
-                        .font(.system(size: 13, weight: .medium))
+                        .font(.system(size: ClaudeTheme.size(13), weight: .medium))
                         .padding(.horizontal, 8)
                         .padding(.vertical, 5)
                         .contentShape(Rectangle())
@@ -431,7 +431,7 @@ struct InspectorPanel: View {
                     windowState.showInspector = false
                 } label: {
                     Image(systemName: "xmark")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.system(size: ClaudeTheme.size(11), weight: .medium))
                         .frame(width: 20, height: 20)
                 }
                 .buttonStyle(.plain)
@@ -475,7 +475,7 @@ private struct InspectorIconButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: "arrow.counterclockwise")
-                .font(.system(size: 11, weight: .medium))
+                .font(.system(size: ClaudeTheme.size(11), weight: .medium))
                 .frame(width: 20, height: 20)
         }
         .buttonStyle(.plain)
@@ -496,9 +496,9 @@ struct ClaudeSegmentedControl: View {
                 } label: {
                     HStack(spacing: 4) {
                         Image(systemName: tab.icon)
-                            .font(.system(size: 10, weight: .medium))
+                            .font(.system(size: ClaudeTheme.size(10), weight: .medium))
                         Text(LocalizedStringKey(tab.rawValue))
-                            .font(.system(size: 12, weight: .medium))
+                            .font(.system(size: ClaudeTheme.size(12), weight: .medium))
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 5)
@@ -645,7 +645,7 @@ struct ToolbarChipLabel: View {
 
     var body: some View {
         Text(LocalizedStringKey(title))
-            .font(.system(size: 12, weight: .medium))
+            .font(.system(size: ClaudeTheme.size(12), weight: .medium))
         .foregroundStyle(ClaudeTheme.textSecondary)
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
@@ -720,10 +720,10 @@ struct ModelPickerSheet: View {
                     HStack(alignment: .top) {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(AppState.modelDisplayName(model))
-                                .font(.system(size: 13, weight: .medium))
+                                .font(.system(size: ClaudeTheme.size(13), weight: .medium))
                                 .foregroundStyle(ClaudeTheme.textPrimary)
                             Text(AppState.modelDescription(model))
-                                .font(.system(size: 11))
+                                .font(.system(size: ClaudeTheme.size(11)))
                                 .foregroundStyle(ClaudeTheme.textSecondary)
                                 .fixedSize(horizontal: false, vertical: true)
                         }

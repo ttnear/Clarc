@@ -27,7 +27,7 @@ struct FileTreeView: View {
             // Header
             HStack {
                 Text("Files")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.system(size: ClaudeTheme.size(12), weight: .semibold))
                     .foregroundStyle(ClaudeTheme.textTertiary)
                     .textCase(.uppercase)
 
@@ -44,7 +44,7 @@ struct FileTreeView: View {
                     }
                 } label: {
                     Image(systemName: "magnifyingglass")
-                        .font(.system(size: 11))
+                        .font(.system(size: ClaudeTheme.size(11)))
                         .foregroundStyle(isSearching ? ClaudeTheme.accent : ClaudeTheme.textSecondary)
                 }
                 .buttonStyle(.borderless)
@@ -54,7 +54,7 @@ struct FileTreeView: View {
                     showHiddenFiles.toggle()
                 } label: {
                     Image(systemName: showHiddenFiles ? "eye" : "eye.slash")
-                        .font(.system(size: 11))
+                        .font(.system(size: ClaudeTheme.size(11)))
                         .foregroundStyle(showHiddenFiles ? ClaudeTheme.accent : ClaudeTheme.textSecondary)
                 }
                 .buttonStyle(.borderless)
@@ -64,7 +64,7 @@ struct FileTreeView: View {
                     refreshTick &+= 1
                 } label: {
                     Image(systemName: "arrow.clockwise")
-                        .font(.system(size: 11))
+                        .font(.system(size: ClaudeTheme.size(11)))
                         .foregroundStyle(ClaudeTheme.textSecondary)
                 }
                 .buttonStyle(.borderless)
@@ -77,11 +77,11 @@ struct FileTreeView: View {
             if isSearching {
                 HStack(spacing: 6) {
                     Image(systemName: "magnifyingglass")
-                        .font(.system(size: 11))
+                        .font(.system(size: ClaudeTheme.size(11)))
                         .foregroundStyle(ClaudeTheme.textTertiary)
 
                     TextField("Search filename...", text: $searchText)
-                        .font(.system(size: 12))
+                        .font(.system(size: ClaudeTheme.size(12)))
                         .textFieldStyle(.plain)
                         .focused($isSearchFieldFocused)
 
@@ -90,7 +90,7 @@ struct FileTreeView: View {
                             searchText = ""
                         } label: {
                             Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: 11))
+                                .font(.system(size: ClaudeTheme.size(11)))
                                 .foregroundStyle(ClaudeTheme.textTertiary)
                         }
                         .buttonStyle(.borderless)
@@ -120,10 +120,10 @@ struct FileTreeView: View {
                         VStack(spacing: 8) {
                             Spacer()
                             Image(systemName: "doc.questionmark")
-                                .font(.system(size: 24))
+                                .font(.system(size: ClaudeTheme.size(24)))
                                 .foregroundStyle(ClaudeTheme.textTertiary)
                             Text("No results for '\(searchText)'")
-                                .font(.system(size: 12))
+                                .font(.system(size: ClaudeTheme.size(12)))
                                 .foregroundStyle(ClaudeTheme.textTertiary)
                             Spacer()
                         }
@@ -131,7 +131,7 @@ struct FileTreeView: View {
                     } else {
                         treeScrollView {
                             Text("\(results.count) files")
-                                .font(.system(size: 10))
+                                .font(.system(size: ClaudeTheme.size(10)))
                                 .foregroundStyle(ClaudeTheme.textTertiary)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 4)
@@ -164,7 +164,7 @@ struct FileTreeView: View {
                     ProgressView()
                         .controlSize(.small)
                     Text("Loading...")
-                        .font(.system(size: 12))
+                        .font(.system(size: ClaudeTheme.size(12)))
                         .foregroundStyle(ClaudeTheme.textTertiary)
                     Spacer()
                 }
@@ -246,7 +246,7 @@ private struct FileNodeRow: View {
 
                     if node.isDirectory {
                         Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
-                            .font(.system(size: 8))
+                            .font(.system(size: ClaudeTheme.size(8)))
                             .foregroundStyle(ClaudeTheme.textTertiary)
                             .frame(width: 10)
                     } else {
@@ -255,18 +255,18 @@ private struct FileNodeRow: View {
                     }
 
                     Image(systemName: node.icon)
-                        .font(.system(size: 12))
+                        .font(.system(size: ClaudeTheme.size(12)))
                         .foregroundStyle(node.isDirectory ? ClaudeTheme.accent : node.iconColor)
                         .frame(width: 16)
 
                     Text(node.name)
-                        .font(.system(size: 13, design: node.isDirectory ? .default : .monospaced))
+                        .font(.system(size: ClaudeTheme.size(13), design: node.isDirectory ? .default : .monospaced))
                         .foregroundStyle(node.isDirectory ? ClaudeTheme.textPrimary : ClaudeTheme.textSecondary)
                         .lineLimit(1)
 
                     if node.isDirectory {
                         Text("\(node.children.count)")
-                            .font(.system(size: 9))
+                            .font(.system(size: ClaudeTheme.size(9)))
                             .foregroundStyle(ClaudeTheme.textTertiary)
                             .padding(.horizontal, 4)
                     }
@@ -322,18 +322,18 @@ private struct SearchResultRow: View {
         } label: {
             HStack(spacing: 6) {
                 Image(systemName: node.icon)
-                    .font(.system(size: 12))
+                    .font(.system(size: ClaudeTheme.size(12)))
                     .foregroundStyle(node.iconColor)
                     .frame(width: 16)
 
                 VStack(alignment: .leading, spacing: 1) {
                     Text(node.name)
-                        .font(.system(size: 13, design: .monospaced))
+                        .font(.system(size: ClaudeTheme.size(13), design: .monospaced))
                         .foregroundStyle(ClaudeTheme.textPrimary)
                         .lineLimit(1)
 
                     Text(parentFolder)
-                        .font(.system(size: 12))
+                        .font(.system(size: ClaudeTheme.size(12)))
                         .foregroundStyle(ClaudeTheme.textTertiary)
                         .lineLimit(1)
                 }

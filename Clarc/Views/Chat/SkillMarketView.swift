@@ -55,11 +55,11 @@ struct SkillMarketView: View {
     private var headerBar: some View {
         HStack(spacing: 10) {
             Image(systemName: "brain.head.profile")
-                .font(.system(size: 16))
+                .font(.system(size: ClaudeTheme.size(16)))
                 .foregroundStyle(Color.accentColor)
 
             Text("Skill Marketplace")
-                .font(.system(size: 15, weight: .semibold))
+                .font(.system(size: ClaudeTheme.size(15), weight: .semibold))
 
             Spacer()
 
@@ -67,7 +67,7 @@ struct SkillMarketView: View {
                 Task { await appState.loadMarketplace(forceRefresh: true) }
             } label: {
                 Image(systemName: "arrow.clockwise")
-                    .font(.system(size: 13))
+                    .font(.system(size: ClaudeTheme.size(13)))
                     .foregroundStyle(.secondary)
             }
             .buttonStyle(.borderless)
@@ -79,7 +79,7 @@ struct SkillMarketView: View {
                     dismiss()
                 } label: {
                     Image(systemName: "xmark")
-                        .font(.system(size: 13, weight: .medium))
+                        .font(.system(size: ClaudeTheme.size(13), weight: .medium))
                         .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.borderless)
@@ -96,12 +96,12 @@ struct SkillMarketView: View {
         VStack(spacing: 10) {
             HStack(spacing: 6) {
                 Image(systemName: "magnifyingglass")
-                    .font(.system(size: 12))
+                    .font(.system(size: ClaudeTheme.size(12)))
                     .foregroundStyle(.secondary)
 
                 TextField("Search skills...", text: $searchText)
                     .textFieldStyle(.plain)
-                    .font(.system(size: 13))
+                    .font(.system(size: ClaudeTheme.size(13)))
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
@@ -132,7 +132,7 @@ struct SkillMarketView: View {
             selectedFilter = label
         } label: {
             Text(LocalizedStringKey(label))
-                .font(.system(size: 11, weight: selectedFilter == label ? .semibold : .regular))
+                .font(.system(size: ClaudeTheme.size(11), weight: selectedFilter == label ? .semibold : .regular))
                 .foregroundStyle(selectedFilter == label ? Color.white : Color.secondary)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 4)
@@ -151,17 +151,17 @@ struct SkillMarketView: View {
                     ProgressView()
                         .controlSize(.regular)
                     Text("Loading catalog...")
-                        .font(.system(size: 13))
+                        .font(.system(size: ClaudeTheme.size(13)))
                         .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else if filteredPlugins.isEmpty {
                 VStack(spacing: 8) {
                     Image(systemName: "magnifyingglass")
-                        .font(.system(size: 24))
+                        .font(.system(size: ClaudeTheme.size(24)))
                         .foregroundStyle(.secondary)
                     Text("No results found")
-                        .font(.system(size: 13))
+                        .font(.system(size: ClaudeTheme.size(13)))
                         .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -235,7 +235,7 @@ struct PluginCard: View {
             // Tags
             HStack(spacing: 4) {
                 Text(plugin.categoryLabel)
-                    .font(.system(size: 10, weight: .medium))
+                    .font(.system(size: ClaudeTheme.size(10), weight: .medium))
                     .foregroundStyle(Color.accentColor)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
@@ -243,7 +243,7 @@ struct PluginCard: View {
                     .clipShape(Capsule())
 
                 Text(plugin.marketplaceLabel)
-                    .font(.system(size: 10))
+                    .font(.system(size: ClaudeTheme.size(10)))
                     .foregroundStyle(.secondary)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
@@ -255,21 +255,21 @@ struct PluginCard: View {
 
             // Name
             Text(plugin.name)
-                .font(.system(size: 14, weight: .semibold))
+                .font(.system(size: ClaudeTheme.size(14), weight: .semibold))
 
             // Description
             Text(plugin.description)
-                .font(.system(size: 12))
+                .font(.system(size: ClaudeTheme.size(12)))
                 .foregroundStyle(.secondary)
                 .lineLimit(3)
 
             // Bottom info
             HStack(spacing: 6) {
                 Image(systemName: "person")
-                    .font(.system(size: 10))
+                    .font(.system(size: ClaudeTheme.size(10)))
                     .foregroundStyle(.secondary)
                 Text(plugin.author)
-                    .font(.system(size: 11))
+                    .font(.system(size: ClaudeTheme.size(11)))
                     .foregroundStyle(.secondary)
 
                 Spacer()
@@ -298,7 +298,7 @@ struct PluginCard: View {
                         .fill(Color.green)
                         .frame(width: 6, height: 6)
                     Text("Installed")
-                        .font(.system(size: 10, weight: .medium))
+                        .font(.system(size: ClaudeTheme.size(10), weight: .medium))
                         .foregroundStyle(Color.green)
                 }
             }
@@ -307,25 +307,25 @@ struct PluginCard: View {
                 ProgressView()
                     .controlSize(.mini)
                 Text("Installing...")
-                    .font(.system(size: 10))
+                    .font(.system(size: ClaudeTheme.size(10)))
                     .foregroundStyle(.secondary)
             }
         case .installed:
             HStack(spacing: 4) {
                 Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 10))
+                    .font(.system(size: ClaudeTheme.size(10)))
                     .foregroundStyle(Color.green)
                 Text("Installed")
-                    .font(.system(size: 10, weight: .medium))
+                    .font(.system(size: ClaudeTheme.size(10), weight: .medium))
                     .foregroundStyle(Color.green)
             }
         case .failed(let message):
             HStack(spacing: 4) {
                 Image(systemName: "exclamationmark.circle.fill")
-                    .font(.system(size: 10))
+                    .font(.system(size: ClaudeTheme.size(10)))
                     .foregroundStyle(Color.red)
                 Text("Failed")
-                    .font(.system(size: 10, weight: .medium))
+                    .font(.system(size: ClaudeTheme.size(10), weight: .medium))
                     .foregroundStyle(Color.red)
             }
             .help(message)
@@ -356,9 +356,9 @@ struct PluginDetailView: View {
                 } label: {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
-                            .font(.system(size: 12, weight: .medium))
+                            .font(.system(size: ClaudeTheme.size(12), weight: .medium))
                         Text("Back")
-                            .font(.system(size: 13))
+                            .font(.system(size: ClaudeTheme.size(13)))
                     }
                     .foregroundStyle(.secondary)
                 }
@@ -380,7 +380,7 @@ struct PluginDetailView: View {
                     // Category
                     HStack(spacing: 6) {
                         Text(plugin.categoryLabel)
-                            .font(.system(size: 11, weight: .medium))
+                            .font(.system(size: ClaudeTheme.size(11), weight: .medium))
                             .foregroundStyle(Color.accentColor)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 3)
@@ -388,7 +388,7 @@ struct PluginDetailView: View {
                             .clipShape(Capsule())
 
                         Text(plugin.sourceType.rawValue)
-                            .font(.system(size: 11))
+                            .font(.system(size: ClaudeTheme.size(11)))
                             .foregroundStyle(.secondary)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 3)
@@ -398,11 +398,11 @@ struct PluginDetailView: View {
 
                     // Name
                     Text(plugin.name)
-                        .font(.system(size: 22, weight: .bold))
+                        .font(.system(size: ClaudeTheme.size(22), weight: .bold))
 
                     // Description
                     Text(plugin.description)
-                        .font(.system(size: 14))
+                        .font(.system(size: ClaudeTheme.size(14)))
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
 
@@ -423,10 +423,10 @@ struct PluginDetailView: View {
                     // Install command
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Install Command")
-                            .font(.system(size: 12, weight: .semibold))
+                            .font(.system(size: ClaudeTheme.size(12), weight: .semibold))
 
                         Text(plugin.installCommand)
-                            .font(.system(size: 12, design: .monospaced))
+                            .font(.system(size: ClaudeTheme.size(12), design: .monospaced))
                             .foregroundStyle(.secondary)
                             .padding(10)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -450,11 +450,11 @@ struct PluginDetailView: View {
     private func infoRow(label: String, value: String) -> some View {
         GridRow {
             Text(label)
-                .font(.system(size: 12))
+                .font(.system(size: ClaudeTheme.size(12)))
                 .foregroundStyle(.secondary)
                 .frame(width: 60, alignment: .leading)
             Text(value)
-                .font(.system(size: 12, weight: .medium))
+                .font(.system(size: ClaudeTheme.size(12), weight: .medium))
                 .textSelection(.enabled)
         }
     }
@@ -470,7 +470,7 @@ struct PluginDetailView: View {
                 reportToChat: false
             )
         }
-        .font(.system(size: 12, weight: .medium))
+        .font(.system(size: ClaudeTheme.size(12), weight: .medium))
         .foregroundStyle(Color.red)
         .padding(.horizontal, 14)
         .padding(.vertical, 6)
@@ -486,7 +486,7 @@ struct PluginDetailView: View {
                 ProgressView()
                     .controlSize(.small)
                 Text("Installing...")
-                    .font(.system(size: 13))
+                    .font(.system(size: ClaudeTheme.size(13)))
                     .foregroundStyle(.secondary)
             }
         case .installed:

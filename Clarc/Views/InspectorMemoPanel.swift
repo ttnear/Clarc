@@ -130,7 +130,7 @@ private struct MemoFormattingToolbar: View {
     private func toolbarTextBtn(_ text: String, label: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(text)
-                .font(.system(size: 11, weight: .semibold))
+                .font(.system(size: ClaudeTheme.size(11), weight: .semibold))
                 .frame(width: 26, height: 22)
                 .contentShape(Rectangle())
         }

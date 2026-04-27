@@ -37,11 +37,11 @@ public struct FileDiffView: View {
     private var header: some View {
         HStack(spacing: 6) {
             Image(systemName: "arrow.left.arrow.right")
-                .font(.system(size: 13))
+                .font(.system(size: ClaudeTheme.messageSize(13)))
                 .foregroundStyle(ClaudeTheme.accent)
 
             Text(fileName)
-                .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                .font(.system(size: ClaudeTheme.messageSize(13), weight: .semibold, design: .monospaced))
                 .foregroundStyle(ClaudeTheme.textPrimary)
                 .lineLimit(1)
                 .truncationMode(.middle)
@@ -49,7 +49,7 @@ public struct FileDiffView: View {
             Spacer()
 
             Text("Diff", bundle: .module)
-                .font(.system(size: 10, weight: .medium))
+                .font(.system(size: ClaudeTheme.messageSize(10), weight: .medium))
                 .foregroundStyle(ClaudeTheme.textTertiary)
                 .padding(.horizontal, 5)
                 .padding(.vertical, 2)
@@ -61,7 +61,7 @@ public struct FileDiffView: View {
                     copyToClipboard(raw, feedback: $isCopied)
                 } label: {
                     Image(systemName: isCopied ? "checkmark" : "doc.on.doc")
-                        .font(.system(size: 12))
+                        .font(.system(size: ClaudeTheme.messageSize(12)))
                         .foregroundStyle(isCopied ? ClaudeTheme.statusSuccess : ClaudeTheme.textSecondary)
                 }
                 .buttonStyle(.borderless)
@@ -71,7 +71,7 @@ public struct FileDiffView: View {
 
             Button { windowState.diffFile = nil } label: {
                 Image(systemName: "xmark")
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.system(size: ClaudeTheme.messageSize(11), weight: .medium))
                     .foregroundStyle(ClaudeTheme.textSecondary)
                     .frame(width: 22, height: 22)
                     .background(ClaudeTheme.surfaceSecondary, in: Circle())
@@ -93,7 +93,7 @@ public struct FileDiffView: View {
                 Spacer()
                 ProgressView().controlSize(.small)
                 Text("loading...", bundle: .module)
-                    .font(.system(size: 12))
+                    .font(.system(size: ClaudeTheme.messageSize(12)))
                     .foregroundStyle(ClaudeTheme.textTertiary)
                 Spacer()
             }
@@ -103,10 +103,10 @@ public struct FileDiffView: View {
             VStack(spacing: 8) {
                 Spacer()
                 Image(systemName: "checkmark.circle")
-                    .font(.system(size: 24))
+                    .font(.system(size: ClaudeTheme.messageSize(24)))
                     .foregroundStyle(ClaudeTheme.statusSuccess)
                 Text("No changes", bundle: .module)
-                    .font(.system(size: 13))
+                    .font(.system(size: ClaudeTheme.messageSize(13)))
                     .foregroundStyle(ClaudeTheme.textSecondary)
                 Spacer()
             }
@@ -126,7 +126,7 @@ public struct FileDiffView: View {
                     ForEach(Array(diffLines.enumerated()), id: \.offset) { index, line in
                         HStack(spacing: 0) {
                             Text(line.kind == .meta ? "" : "\(index + 1)")
-                                .font(.system(size: 12, design: .monospaced))
+                                .font(.system(size: ClaudeTheme.messageSize(12), design: .monospaced))
                                 .foregroundStyle(ClaudeTheme.textTertiary.opacity(0.6))
                                 .frame(width: lineNumberWidth, height: 19, alignment: .trailing)
                                 .padding(.trailing, 6)
@@ -135,7 +135,7 @@ public struct FileDiffView: View {
                                 .fill(ClaudeTheme.border.opacity(0.5))
                                 .frame(width: 1, height: 19)
                             Text(line.text.isEmpty ? " " : line.text)
-                                .font(.system(size: 12, design: .monospaced))
+                                .font(.system(size: ClaudeTheme.messageSize(12), design: .monospaced))
                                 .foregroundStyle(line.kind.foregroundColor)
                                 .frame(height: 19)
                                 .frame(maxWidth: .infinity, alignment: .leading)

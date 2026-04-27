@@ -15,7 +15,7 @@ struct GitHubLoginView: View {
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "person.crop.circle.badge.checkmark")
-                .font(.system(size: 48))
+                .font(.system(size: ClaudeTheme.size(48)))
                 .foregroundStyle(ClaudeTheme.accent)
 
             Text("Connect GitHub")

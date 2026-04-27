@@ -42,9 +42,9 @@ struct MessageListView: View {
                                     Text("Collapse earlier messages", bundle: .module)
                                 }
                             }
-                            .font(.system(size: 12, weight: .medium))
+                            .font(.system(size: ClaudeTheme.size(12), weight: .medium))
                             Image(systemName: isOlderCollapsed ? "chevron.down" : "chevron.up")
-                                .font(.system(size: 10, weight: .medium))
+                                .font(.system(size: ClaudeTheme.size(10), weight: .medium))
                         }
                         .foregroundStyle(ClaudeTheme.textTertiary)
                         .frame(maxWidth: .infinity)
@@ -360,13 +360,13 @@ struct TransientGroupSummaryView: View {
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "eye.slash")
-                            .font(.system(size: 11))
+                            .font(.system(size: ClaudeTheme.size(11)))
                             .foregroundStyle(ClaudeTheme.textTertiary)
                         Text(String(format: String(localized: "%lld tools executed", bundle: .module), allToolCalls.count))
-                            .font(.system(size: 12))
+                            .font(.system(size: ClaudeTheme.size(12)))
                             .foregroundStyle(ClaudeTheme.textTertiary)
                         Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                            .font(.system(size: 9))
+                            .font(.system(size: ClaudeTheme.size(9)))
                             .foregroundStyle(ClaudeTheme.textTertiary)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -391,11 +391,11 @@ struct EmptySessionView: View {
     var body: some View {
         VStack(spacing: 12) {
             Image(systemName: "bubble.left.and.text.bubble.right")
-                .font(.system(size: 36))
+                .font(.system(size: ClaudeTheme.size(36)))
                 .foregroundStyle(ClaudeTheme.textTertiary)
 
             Text("How can I help you?", bundle: .module)
-                .font(.system(size: 18, weight: .medium))
+                .font(.system(size: ClaudeTheme.size(18), weight: .medium))
                 .foregroundStyle(ClaudeTheme.textPrimary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -420,7 +420,7 @@ struct StreamingIndicatorView: View {
                     Text("Generating response...", bundle: .module)
                 }
             }
-            .font(.system(size: 13))
+            .font(.system(size: ClaudeTheme.size(13)))
             .foregroundStyle(ClaudeTheme.textSecondary)
 
             Spacer()
@@ -445,7 +445,7 @@ struct ElapsedTimeView: View {
 
     var body: some View {
         Text(elapsed.formattedDuration)
-            .font(.system(size: 12, design: .monospaced))
+            .font(.system(size: ClaudeTheme.size(12), design: .monospaced))
             .foregroundStyle(ClaudeTheme.textTertiary)
             .onAppear {
                 elapsed = Date().timeIntervalSince(startDate)

@@ -101,6 +101,24 @@ final class AppState {
         fontSizeAdjustment -= 1
     }
 
+    var messageFontSizeAdjustment: Int = (UserDefaults.standard.object(forKey: "messageFontSizeAdjustment") as? Int) ?? 0 {
+        didSet {
+            UserDefaults.standard.set(messageFontSizeAdjustment, forKey: "messageFontSizeAdjustment")
+            ThemeStore.shared.messageFontSizeAdjustment = messageFontSizeAdjustment
+            themeRevision += 1
+        }
+    }
+
+    func increaseMessageFontSize() {
+        guard messageFontSizeAdjustment < ThemeStore.maxFontSizeAdjustment else { return }
+        messageFontSizeAdjustment += 1
+    }
+
+    func decreaseMessageFontSize() {
+        guard messageFontSizeAdjustment > ThemeStore.minFontSizeAdjustment else { return }
+        messageFontSizeAdjustment -= 1
+    }
+
     // MARK: - Model
 
     static let availableModels = ["default", "best", "opus", "opus[1m]", "opusplan", "sonnet", "sonnet[1m]", "haiku"]
@@ -352,6 +370,7 @@ final class AppState {
     func initialize() async {
         ThemeStore.shared.current = selectedTheme
         ThemeStore.shared.fontSizeAdjustment = fontSizeAdjustment
+        ThemeStore.shared.messageFontSizeAdjustment = messageFontSizeAdjustment
 
         let binary = await claude.findClaudeBinary()
         claudeInstalled = binary != nil

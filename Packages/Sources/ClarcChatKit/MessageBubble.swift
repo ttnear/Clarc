@@ -86,11 +86,11 @@ struct MessageBubble: View {
                     HStack(spacing: 4) {
                         if message.isResponseComplete {
                             Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 11))
+                                .font(.system(size: ClaudeTheme.messageSize(11)))
                                 .foregroundStyle(ClaudeTheme.statusSuccess)
                         }
                         Text(duration.formattedDuration)
-                            .font(.system(size: 11, design: .monospaced))
+                            .font(.system(size: ClaudeTheme.messageSize(11), design: .monospaced))
                             .foregroundStyle(ClaudeTheme.textTertiary)
                     }
                 }
@@ -107,10 +107,10 @@ struct MessageBubble: View {
     private var compactBoundaryBubble: some View {
         HStack(spacing: 8) {
             Image(systemName: "arrow.trianglehead.2.clockwise")
-                .font(.system(size: 12, weight: .medium))
+                .font(.system(size: ClaudeTheme.messageSize(12), weight: .medium))
                 .foregroundStyle(ClaudeTheme.textTertiary)
             Text(message.content)
-                .font(.system(size: 13, weight: .medium))
+                .font(.system(size: ClaudeTheme.messageSize(13), weight: .medium))
                 .foregroundStyle(ClaudeTheme.textTertiary)
         }
         .frame(maxWidth: .infinity)
@@ -131,10 +131,10 @@ struct MessageBubble: View {
     private var errorBubble: some View {
         HStack(spacing: 8) {
             Image(systemName: "exclamationmark.triangle.fill")
-                .font(.system(size: 13))
+                .font(.system(size: ClaudeTheme.messageSize(13)))
                 .foregroundStyle(ClaudeTheme.statusWarning)
             Text(message.content)
-                .font(.system(size: 14))
+                .font(.system(size: ClaudeTheme.messageSize(14)))
                 .foregroundStyle(ClaudeTheme.textPrimary)
                 .textSelection(.enabled)
         }
@@ -149,7 +149,7 @@ struct MessageBubble: View {
             VStack(alignment: .trailing, spacing: 8) {
                 TextField(String(localized: "Edit message...", bundle: .module), text: $editText, axis: .vertical)
                     .textFieldStyle(.plain)
-                    .font(.system(size: 14))
+                    .font(.system(size: ClaudeTheme.messageSize(14)))
                     .foregroundStyle(ClaudeTheme.userBubbleText)
                     .focused($isEditFocused)
                     .padding(.horizontal, 14)
@@ -174,14 +174,14 @@ struct MessageBubble: View {
                         isEditing = false
                     }
                     .buttonStyle(.borderless)
-                    .font(.system(size: 12))
+                    .font(.system(size: ClaudeTheme.messageSize(12)))
                     .foregroundStyle(ClaudeTheme.textSecondary)
 
                     Button(String(localized: "Send", bundle: .module)) {
                         submitEdit()
                     }
                     .buttonStyle(.borderless)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.system(size: ClaudeTheme.messageSize(12), weight: .medium))
                     .foregroundStyle(ClaudeTheme.accent)
                 }
             }
@@ -189,7 +189,7 @@ struct MessageBubble: View {
             VStack(alignment: .trailing, spacing: 6) {
                 let isLong = message.content.count > Self.longTextThreshold
                 Text(message.content)
-                    .font(.system(size: 14))
+                    .font(.system(size: ClaudeTheme.messageSize(14)))
                     .foregroundStyle(ClaudeTheme.userBubbleText)
                     .textSelection(.enabled)
                     .lineLimit(isLong && !isLongTextExpanded ? 5 : nil)
@@ -205,7 +205,7 @@ struct MessageBubble: View {
                             Text("Show more", bundle: .module)
                         }
                     }
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.system(size: ClaudeTheme.messageSize(12), weight: .medium))
                     .foregroundStyle(ClaudeTheme.accent)
                     .buttonStyle(.plain)
                 }
@@ -239,7 +239,7 @@ struct MessageBubble: View {
         return HStack(alignment: .bottom, spacing: 0) {
             if message.isStreaming && isLastBlock {
                 Text(text)
-                    .font(.system(size: 15))
+                    .font(.system(size: ClaudeTheme.messageSize(15)))
                     .lineSpacing(4)
                     .textSelection(.enabled)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -249,7 +249,7 @@ struct MessageBubble: View {
             }
             if message.isStreaming && isLastBlock {
                 Text("|")
-                    .font(.system(size: 15, weight: .light))
+                    .font(.system(size: ClaudeTheme.messageSize(15), weight: .light))
                     .foregroundStyle(ClaudeTheme.accent)
                     .opacity(cursorVisible ? 1 : 0)
                     .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: cursorVisible)
@@ -291,7 +291,7 @@ struct MessageBubble: View {
             copyToClipboard(text, feedback: $isCopied)
         } label: {
             Image(systemName: isCopied ? "checkmark" : "doc.on.doc")
-                .font(.system(size: 11, weight: .medium))
+                .font(.system(size: ClaudeTheme.messageSize(11), weight: .medium))
                 .foregroundStyle(ClaudeTheme.textSecondary)
                 .frame(width: 26, height: 26)
                 .background(ClaudeTheme.surfaceSecondary, in: RoundedRectangle(cornerRadius: 6))
@@ -347,13 +347,13 @@ struct MessageBubble: View {
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: "eye.slash")
-                        .font(.system(size: 11))
+                        .font(.system(size: ClaudeTheme.messageSize(11)))
                         .foregroundStyle(ClaudeTheme.textTertiary)
                     Text(String(format: String(localized: "%lld tools executed", bundle: .module), hidden.count))
-                        .font(.system(size: 12))
+                        .font(.system(size: ClaudeTheme.messageSize(12)))
                         .foregroundStyle(ClaudeTheme.textTertiary)
                     Image(systemName: showTransientTools ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 9))
+                        .font(.system(size: ClaudeTheme.messageSize(9)))
                         .foregroundStyle(ClaudeTheme.textTertiary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -408,7 +408,7 @@ struct MessageBubble: View {
                             .clipShape(RoundedRectangle(cornerRadius: ClaudeTheme.cornerRadiusSmall))
                     } else {
                         Image(systemName: info.isImage ? "photo" : "doc")
-                            .font(.system(size: 14))
+                            .font(.system(size: ClaudeTheme.messageSize(14)))
                             .foregroundStyle(ClaudeTheme.accent)
                     }
                     Text(info.name)

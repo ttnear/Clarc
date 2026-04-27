@@ -87,9 +87,9 @@ public struct SlashCommandManagerView: View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Slash Command Manager", bundle: .module)
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.system(size: ClaudeTheme.size(15), weight: .semibold))
                 Text(String(format: String(localized: "%lld commands", bundle: .module), commandList.count))
-                    .font(.system(size: 12))
+                    .font(.system(size: ClaudeTheme.size(12)))
                     .foregroundStyle(.secondary)
             }
 
@@ -99,7 +99,7 @@ public struct SlashCommandManagerView: View {
                 showResetAlert = true
             } label: {
                 Label(String(localized: "Reset Defaults", bundle: .module), systemImage: "arrow.counterclockwise")
-                    .font(.system(size: 12))
+                    .font(.system(size: ClaudeTheme.size(12)))
             }
             .buttonStyle(.borderless)
             .foregroundStyle(.secondary)
@@ -107,7 +107,7 @@ public struct SlashCommandManagerView: View {
 
             Button { exportCommands() } label: {
                 Label(String(localized: "Export", bundle: .module), systemImage: "square.and.arrow.up")
-                    .font(.system(size: 12))
+                    .font(.system(size: ClaudeTheme.size(12)))
             }
             .buttonStyle(.borderless)
             .foregroundStyle(.secondary)
@@ -115,7 +115,7 @@ public struct SlashCommandManagerView: View {
 
             Button { importCommands() } label: {
                 Label(String(localized: "Import", bundle: .module), systemImage: "square.and.arrow.down")
-                    .font(.system(size: 12))
+                    .font(.system(size: ClaudeTheme.size(12)))
             }
             .buttonStyle(.borderless)
             .foregroundStyle(.secondary)
@@ -125,7 +125,7 @@ public struct SlashCommandManagerView: View {
                 isAddingNew = true
             } label: {
                 Label(String(localized: "New Command", bundle: .module), systemImage: "plus")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.system(size: ClaudeTheme.size(12), weight: .medium))
             }
             .buttonStyle(.borderless)
             .foregroundStyle(Color.accentColor)
@@ -134,7 +134,7 @@ public struct SlashCommandManagerView: View {
                 dismiss()
             } label: {
                 Image(systemName: "xmark.circle.fill")
-                    .font(.system(size: 16))
+                    .font(.system(size: ClaudeTheme.size(16)))
                     .foregroundStyle(.secondary)
             }
             .buttonStyle(.borderless)
@@ -148,7 +148,7 @@ public struct SlashCommandManagerView: View {
     private var embeddedToolbar: some View {
         HStack(spacing: 12) {
             Text(String(format: String(localized: "%lld commands", bundle: .module), commandList.count))
-                .font(.system(size: 12))
+                .font(.system(size: ClaudeTheme.size(12)))
                 .foregroundStyle(.secondary)
 
             Spacer()
@@ -157,21 +157,21 @@ public struct SlashCommandManagerView: View {
                 showResetAlert = true
             } label: {
                 Label(String(localized: "Reset Defaults", bundle: .module), systemImage: "arrow.counterclockwise")
-                    .font(.system(size: 12))
+                    .font(.system(size: ClaudeTheme.size(12)))
             }
             .buttonStyle(.borderless)
             .foregroundStyle(.secondary)
 
             Button { exportCommands() } label: {
                 Label(String(localized: "Export", bundle: .module), systemImage: "square.and.arrow.up")
-                    .font(.system(size: 12))
+                    .font(.system(size: ClaudeTheme.size(12)))
             }
             .buttonStyle(.borderless)
             .foregroundStyle(.secondary)
 
             Button { importCommands() } label: {
                 Label(String(localized: "Import", bundle: .module), systemImage: "square.and.arrow.down")
-                    .font(.system(size: 12))
+                    .font(.system(size: ClaudeTheme.size(12)))
             }
             .buttonStyle(.borderless)
             .foregroundStyle(.secondary)
@@ -180,7 +180,7 @@ public struct SlashCommandManagerView: View {
                 isAddingNew = true
             } label: {
                 Label(String(localized: "New Command", bundle: .module), systemImage: "plus")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.system(size: ClaudeTheme.size(12), weight: .medium))
             }
             .buttonStyle(.borderless)
             .foregroundStyle(Color.accentColor)
@@ -194,11 +194,11 @@ public struct SlashCommandManagerView: View {
     private var searchBar: some View {
         HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
-                .font(.system(size: 12))
+                .font(.system(size: ClaudeTheme.size(12)))
                 .foregroundStyle(.secondary)
             TextField(String(localized: "Search commands...", bundle: .module), text: $searchText)
                 .textFieldStyle(.plain)
-                .font(.system(size: 13))
+                .font(.system(size: ClaudeTheme.size(13)))
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
@@ -236,12 +236,12 @@ public struct SlashCommandManagerView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 6) {
                         Text(cmd.command)
-                            .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                            .font(.system(size: ClaudeTheme.size(13), weight: .semibold, design: .monospaced))
                             .foregroundStyle(isEnabled ? Color.primary : Color.secondary)
 
                         if isDefaultCmd {
                             Text("default", bundle: .module)
-                                .font(.system(size: 9))
+                                .font(.system(size: ClaudeTheme.size(9)))
                                 .foregroundStyle(.secondary)
                                 .padding(.horizontal, 5)
                                 .padding(.vertical, 1)
@@ -250,7 +250,7 @@ public struct SlashCommandManagerView: View {
 
                         if cmd.acceptsInput {
                             Text("accepts input", bundle: .module)
-                                .font(.system(size: 9))
+                                .font(.system(size: ClaudeTheme.size(9)))
                                 .foregroundStyle(.secondary)
                                 .padding(.horizontal, 5)
                                 .padding(.vertical, 1)
@@ -259,7 +259,7 @@ public struct SlashCommandManagerView: View {
 
                         if cmd.isInteractive {
                             Text("terminal", bundle: .module)
-                                .font(.system(size: 9))
+                                .font(.system(size: ClaudeTheme.size(9)))
                                 .foregroundStyle(Color.accentColor)
                                 .padding(.horizontal, 5)
                                 .padding(.vertical, 1)
@@ -268,7 +268,7 @@ public struct SlashCommandManagerView: View {
                     }
 
                     Text(LocalizedStringKey(cmd.description), bundle: .module)
-                        .font(.system(size: 12))
+                        .font(.system(size: ClaudeTheme.size(12)))
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                 }
@@ -288,7 +288,7 @@ public struct SlashCommandManagerView: View {
                 .help(isEnabled ? "Disable" : "Enable")
 
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 10))
+                    .font(.system(size: ClaudeTheme.size(10)))
                     .foregroundStyle(.secondary)
             }
             .padding(.horizontal, 20)
@@ -305,13 +305,13 @@ public struct SlashCommandManagerView: View {
         VStack(spacing: 12) {
             Spacer()
             Image(systemName: "command")
-                .font(.system(size: 32))
+                .font(.system(size: ClaudeTheme.size(32)))
                 .foregroundStyle(.secondary)
             Text("No results found", bundle: .module)
-                .font(.system(size: 14, weight: .medium))
+                .font(.system(size: ClaudeTheme.size(14), weight: .medium))
                 .foregroundStyle(.secondary)
             Text("Try a different keyword", bundle: .module)
-                .font(.system(size: 12))
+                .font(.system(size: ClaudeTheme.size(12)))
                 .foregroundStyle(.secondary)
             Spacer()
         }
@@ -417,13 +417,13 @@ struct SlashCommandEditView: View {
                 Group {
                     if isEditing { Text("Edit Command", bundle: .module) } else { Text("Add New Command", bundle: .module) }
                 }
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.system(size: ClaudeTheme.size(15), weight: .semibold))
                 Spacer()
                 Button {
                     dismiss()
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 16))
+                        .font(.system(size: ClaudeTheme.size(16)))
                         .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.borderless)
@@ -440,11 +440,11 @@ struct SlashCommandEditView: View {
                     fieldSection("Name") {
                         HStack(spacing: 4) {
                             Text("/")
-                                .font(.system(size: 14, weight: .medium, design: .monospaced))
+                                .font(.system(size: ClaudeTheme.size(14), weight: .medium, design: .monospaced))
                                 .foregroundStyle(.secondary)
                             TextField(String(localized: "Command name (e.g. my-command)", bundle: .module), text: $name)
                                 .textFieldStyle(.plain)
-                                .font(.system(size: 14, design: .monospaced))
+                                .font(.system(size: ClaudeTheme.size(14), design: .monospaced))
                                 .disabled(isDefault)
                         }
                         .padding(.horizontal, 12)
@@ -458,7 +458,7 @@ struct SlashCommandEditView: View {
                     fieldSection("Description") {
                         TextField(String(localized: "Short description", bundle: .module), text: $desc)
                             .textFieldStyle(.plain)
-                            .font(.system(size: 14))
+                            .font(.system(size: ClaudeTheme.size(14)))
                             .padding(.horizontal, 12)
                             .padding(.vertical, 8)
                             .background(Color(NSColor.textBackgroundColor))
@@ -469,7 +469,7 @@ struct SlashCommandEditView: View {
                     // Detail description
                     fieldSection("Detail Description (optional)") {
                         TextEditor(text: $detailDesc)
-                            .font(.system(size: 13))
+                            .font(.system(size: ClaudeTheme.size(13)))
                             .scrollContentBackground(.hidden)
                             .frame(minHeight: 80, maxHeight: 150)
                             .padding(8)
@@ -483,9 +483,9 @@ struct SlashCommandEditView: View {
                         HStack {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Accepts Input", bundle: .module)
-                                    .font(.system(size: 13, weight: .medium))
+                                    .font(.system(size: ClaudeTheme.size(13), weight: .medium))
                                 Text("Allows additional text to be entered after the command", bundle: .module)
-                                    .font(.system(size: 11))
+                                    .font(.system(size: ClaudeTheme.size(11)))
                                     .foregroundStyle(.secondary)
                             }
                             Spacer()
@@ -497,9 +497,9 @@ struct SlashCommandEditView: View {
                         HStack {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Interactive (Terminal)", bundle: .module)
-                                    .font(.system(size: 13, weight: .medium))
+                                    .font(.system(size: ClaudeTheme.size(13), weight: .medium))
                                 Text("Commands requiring TUI will run in the inline terminal", bundle: .module)
-                                    .font(.system(size: 11))
+                                    .font(.system(size: ClaudeTheme.size(11)))
                                     .foregroundStyle(.secondary)
                             }
                             Spacer()
@@ -525,7 +525,7 @@ struct SlashCommandEditView: View {
                         dismiss()
                     } label: {
                         Text("Restore Default", bundle: .module)
-                            .font(.system(size: 13))
+                            .font(.system(size: ClaudeTheme.size(13)))
                     }
                     .buttonStyle(.borderless)
                     .foregroundStyle(.secondary)
@@ -537,7 +537,7 @@ struct SlashCommandEditView: View {
                         dismiss()
                     } label: {
                         Text("Delete", bundle: .module)
-                            .font(.system(size: 13))
+                            .font(.system(size: ClaudeTheme.size(13)))
                     }
                     .buttonStyle(.borderless)
                     .foregroundStyle(.red)
@@ -583,7 +583,7 @@ struct SlashCommandEditView: View {
     private func fieldSection<Content: View>(_ title: LocalizedStringKey, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(title, bundle: .module)
-                .font(.system(size: 12, weight: .medium))
+                .font(.system(size: ClaudeTheme.size(12), weight: .medium))
                 .foregroundStyle(.secondary)
             content()
         }

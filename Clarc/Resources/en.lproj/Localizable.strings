@@ -19,6 +19,12 @@
 "Used for new sessions. You can override the permission mode per session from the toolbar." = "Used for new sessions. You can override the permission mode per session from the toolbar.";
 "Default Effort Level" = "Default Effort Level";
 "Used for new sessions. You can override the effort level per session from the toolbar." = "Used for new sessions. You can override the effort level per session from the toolbar.";
+"Font Size" = "Font Size";
+"Interface" = "Interface";
+"Messages" = "Messages";
+"Default" = "Default";
+"Reset" = "Reset";
+"font.size.hint" = "Adjust interface and message font sizes independently.";
 "Notifications" = "Notifications";
 "Notify when response completes" = "Notify when response completes";
 "Sends a system notification while Clarc is in the background." = "Sends a system notification while Clarc is in the background.";

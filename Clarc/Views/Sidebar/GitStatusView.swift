@@ -20,7 +20,7 @@ struct GitStatusView: View {
                     ProgressView()
                         .controlSize(.mini)
                     Text("Checking...")
-                        .font(.system(size: 12))
+                        .font(.system(size: ClaudeTheme.size(12)))
                         .foregroundStyle(ClaudeTheme.textTertiary)
                     Spacer()
                 }
@@ -28,10 +28,10 @@ struct GitStatusView: View {
             case .notARepo:
                 HStack(spacing: 8) {
                     Image(systemName: "folder")
-                        .font(.system(size: 12))
+                        .font(.system(size: ClaudeTheme.size(12)))
                         .foregroundStyle(ClaudeTheme.textTertiary)
                     Text("Not a Git repository")
-                        .font(.system(size: 12))
+                        .font(.system(size: ClaudeTheme.size(12)))
                         .foregroundStyle(ClaudeTheme.textTertiary)
                     Spacer()
                 }
@@ -46,10 +46,10 @@ struct GitStatusView: View {
                 // Second row: status
                 HStack(spacing: 6) {
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 10))
+                        .font(.system(size: ClaudeTheme.size(10)))
                         .foregroundStyle(ClaudeTheme.statusSuccess)
                     Text("No changes")
-                        .font(.system(size: 11))
+                        .font(.system(size: ClaudeTheme.size(11)))
                         .foregroundStyle(ClaudeTheme.textSecondary)
                 }
 
@@ -66,7 +66,7 @@ struct GitStatusView: View {
                         .fill(ClaudeTheme.accent)
                         .frame(width: 6, height: 6)
                     Text("\(changes.total) changed")
-                        .font(.system(size: 11))
+                        .font(.system(size: ClaudeTheme.size(11)))
                         .foregroundStyle(ClaudeTheme.accent)
 
                     if changes.modified > 0 {
@@ -83,10 +83,10 @@ struct GitStatusView: View {
             case .error:
                 HStack(spacing: 8) {
                     Image(systemName: "exclamationmark.triangle")
-                        .font(.system(size: 12))
+                        .font(.system(size: ClaudeTheme.size(12)))
                         .foregroundStyle(ClaudeTheme.textTertiary)
                     Text("Failed to check status")
-                        .font(.system(size: 12))
+                        .font(.system(size: ClaudeTheme.size(12)))
                         .foregroundStyle(ClaudeTheme.textTertiary)
                     Spacer()
                     refreshButton
@@ -128,7 +128,7 @@ struct GitStatusView: View {
             refresh()
         } label: {
             Image(systemName: "arrow.clockwise")
-                .font(.system(size: 10))
+                .font(.system(size: ClaudeTheme.size(10)))
                 .foregroundStyle(ClaudeTheme.textTertiary)
         }
         .buttonStyle(.borderless)
@@ -180,11 +180,11 @@ struct GitStatusView: View {
         } label: {
             HStack(spacing: 4) {
                 Image(systemName: "arrow.triangle.branch")
-                    .font(.system(size: 10))
+                    .font(.system(size: ClaudeTheme.size(10)))
                 Text(currentBranch)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.system(size: ClaudeTheme.size(12), weight: .medium))
                 Image(systemName: "chevron.down")
-                    .font(.system(size: 8, weight: .semibold))
+                    .font(.system(size: ClaudeTheme.size(8), weight: .semibold))
             }
             .foregroundStyle(ClaudeTheme.textPrimary)
             .padding(.horizontal, 6)
@@ -220,7 +220,7 @@ struct GitStatusView: View {
 
     private func badge(_ text: String, color: Color) -> some View {
         Text(text)
-            .font(.system(size: 10))
+            .font(.system(size: ClaudeTheme.size(10)))
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
             .background(color.opacity(0.15))

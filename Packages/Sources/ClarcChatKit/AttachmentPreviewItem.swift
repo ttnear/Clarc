@@ -33,7 +33,7 @@ struct AttachmentPreviewItem: View {
                     onRemove()
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 18))
+                        .font(.system(size: ClaudeTheme.size(18)))
                         .foregroundStyle(.white)
                         .shadow(color: .black.opacity(0.5), radius: 2, x: 0, y: 1)
                 }
@@ -80,12 +80,12 @@ struct AttachmentPreviewItem: View {
                 ClaudeTheme.surfaceSecondary
                     .frame(width: cardWidth, height: cardHeight)
                 Image(systemName: "photo")
-                    .font(.system(size: 22))
+                    .font(.system(size: ClaudeTheme.size(22)))
                     .foregroundStyle(ClaudeTheme.textTertiary)
             }
 
             Text(attachment.name)
-                .font(.system(size: 10))
+                .font(.system(size: ClaudeTheme.size(10)))
                 .foregroundStyle(.white)
                 .lineLimit(1)
                 .padding(.horizontal, 6)
@@ -115,10 +115,10 @@ struct AttachmentPreviewItem: View {
         VStack(spacing: 8) {
             Spacer()
             Image(systemName: "doc.fill")
-                .font(.system(size: 30))
+                .font(.system(size: ClaudeTheme.size(30)))
                 .foregroundStyle(ClaudeTheme.accent)
             Text(attachment.name)
-                .font(.system(size: 11))
+                .font(.system(size: ClaudeTheme.size(11)))
                 .foregroundStyle(ClaudeTheme.textSecondary)
                 .lineLimit(2)
                 .multilineTextAlignment(.center)
@@ -135,7 +135,7 @@ struct AttachmentPreviewItem: View {
         VStack(alignment: .leading, spacing: 0) {
             if let text = attachment.textContent {
                 Text(text.prefix(300))
-                    .font(.system(size: 7, design: .monospaced))
+                    .font(.system(size: ClaudeTheme.size(7), design: .monospaced))
                     .foregroundStyle(ClaudeTheme.textTertiary)
                     .lineLimit(nil)
                     .padding(6)
@@ -144,9 +144,9 @@ struct AttachmentPreviewItem: View {
 
             HStack(spacing: 3) {
                 Image(systemName: "doc.text")
-                    .font(.system(size: 9))
+                    .font(.system(size: ClaudeTheme.size(9)))
                 Text(shortTextName)
-                    .font(.system(size: 9))
+                    .font(.system(size: ClaudeTheme.size(9)))
                     .lineLimit(1)
             }
             .foregroundStyle(ClaudeTheme.textSecondary)
@@ -185,7 +185,7 @@ struct AttachmentPreviewItem: View {
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                 } else {
                     Image(systemName: "link")
-                        .font(.system(size: 26))
+                        .font(.system(size: ClaudeTheme.size(26)))
                         .foregroundStyle(ClaudeTheme.accent)
                 }
             }
@@ -194,13 +194,13 @@ struct AttachmentPreviewItem: View {
 
             VStack(spacing: 3) {
                 Text(attachment.name)
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: ClaudeTheme.size(11), weight: .semibold))
                     .foregroundStyle(ClaudeTheme.textPrimary)
                     .lineLimit(1)
 
                 if let title = linkTitle {
                     Text(title)
-                        .font(.system(size: 9))
+                        .font(.system(size: ClaudeTheme.size(9)))
                         .foregroundStyle(ClaudeTheme.textSecondary)
                         .lineLimit(2)
                         .multilineTextAlignment(.center)

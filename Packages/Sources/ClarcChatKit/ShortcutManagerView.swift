@@ -66,9 +66,9 @@ public struct ShortcutManagerView: View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Shortcut Manager", bundle: .module)
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.system(size: ClaudeTheme.size(15), weight: .semibold))
                 Text(String(format: String(localized: "%lld shortcuts", bundle: .module), shortcutList.count))
-                    .font(.system(size: 12))
+                    .font(.system(size: ClaudeTheme.size(12)))
                     .foregroundStyle(.secondary)
             }
 
@@ -76,7 +76,7 @@ public struct ShortcutManagerView: View {
 
             Button { exportShortcuts() } label: {
                 Label(String(localized: "Export", bundle: .module), systemImage: "square.and.arrow.up")
-                    .font(.system(size: 12))
+                    .font(.system(size: ClaudeTheme.size(12)))
             }
             .buttonStyle(.borderless)
             .foregroundStyle(.secondary)
@@ -84,7 +84,7 @@ public struct ShortcutManagerView: View {
 
             Button { importShortcuts() } label: {
                 Label(String(localized: "Import", bundle: .module), systemImage: "square.and.arrow.down")
-                    .font(.system(size: 12))
+                    .font(.system(size: ClaudeTheme.size(12)))
             }
             .buttonStyle(.borderless)
             .foregroundStyle(.secondary)
@@ -94,7 +94,7 @@ public struct ShortcutManagerView: View {
                 isAddingNew = true
             } label: {
                 Label(String(localized: "New Shortcut", bundle: .module), systemImage: "plus")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.system(size: ClaudeTheme.size(12), weight: .medium))
             }
             .buttonStyle(.borderless)
             .foregroundStyle(Color.accentColor)
@@ -103,7 +103,7 @@ public struct ShortcutManagerView: View {
                 dismiss()
             } label: {
                 Image(systemName: "xmark.circle.fill")
-                    .font(.system(size: 16))
+                    .font(.system(size: ClaudeTheme.size(16)))
                     .foregroundStyle(.secondary)
             }
             .buttonStyle(.borderless)
@@ -117,21 +117,21 @@ public struct ShortcutManagerView: View {
     private var embeddedToolbar: some View {
         HStack(spacing: 12) {
             Text(String(format: String(localized: "%lld shortcuts", bundle: .module), shortcutList.count))
-                .font(.system(size: 12))
+                .font(.system(size: ClaudeTheme.size(12)))
                 .foregroundStyle(.secondary)
 
             Spacer()
 
             Button { exportShortcuts() } label: {
                 Label(String(localized: "Export", bundle: .module), systemImage: "square.and.arrow.up")
-                    .font(.system(size: 12))
+                    .font(.system(size: ClaudeTheme.size(12)))
             }
             .buttonStyle(.borderless)
             .foregroundStyle(.secondary)
 
             Button { importShortcuts() } label: {
                 Label(String(localized: "Import", bundle: .module), systemImage: "square.and.arrow.down")
-                    .font(.system(size: 12))
+                    .font(.system(size: ClaudeTheme.size(12)))
             }
             .buttonStyle(.borderless)
             .foregroundStyle(.secondary)
@@ -140,7 +140,7 @@ public struct ShortcutManagerView: View {
                 isAddingNew = true
             } label: {
                 Label(String(localized: "New Shortcut", bundle: .module), systemImage: "plus")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.system(size: ClaudeTheme.size(12), weight: .medium))
             }
             .buttonStyle(.borderless)
             .foregroundStyle(Color.accentColor)
@@ -170,10 +170,10 @@ public struct ShortcutManagerView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 4) {
                         Text(shortcut.name)
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.system(size: ClaudeTheme.size(13), weight: .semibold))
                         if shortcut.isTerminalCommand {
                             Text("terminal", bundle: .module)
-                                .font(.system(size: 9, weight: .medium))
+                                .font(.system(size: ClaudeTheme.size(9), weight: .medium))
                                 .foregroundStyle(.secondary)
                                 .padding(.horizontal, 4)
                                 .padding(.vertical, 1)
@@ -182,7 +182,7 @@ public struct ShortcutManagerView: View {
                     }
 
                     Text(shortcut.message)
-                        .font(.system(size: 12, design: shortcut.isTerminalCommand ? .monospaced : .default))
+                        .font(.system(size: ClaudeTheme.size(12), design: shortcut.isTerminalCommand ? .monospaced : .default))
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                 }
@@ -194,14 +194,14 @@ public struct ShortcutManagerView: View {
                     refreshList()
                 } label: {
                     Image(systemName: "trash")
-                        .font(.system(size: 11))
+                        .font(.system(size: ClaudeTheme.size(11)))
                         .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.borderless)
                 .help("Delete")
 
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 10))
+                    .font(.system(size: ClaudeTheme.size(10)))
                     .foregroundStyle(.secondary)
             }
             .padding(.horizontal, 20)
@@ -217,19 +217,19 @@ public struct ShortcutManagerView: View {
         VStack(spacing: 12) {
             Spacer()
             Image(systemName: "bolt")
-                .font(.system(size: 32))
+                .font(.system(size: ClaudeTheme.size(32)))
                 .foregroundStyle(.secondary)
             Text("No shortcuts", bundle: .module)
-                .font(.system(size: 14, weight: .medium))
+                .font(.system(size: ClaudeTheme.size(14), weight: .medium))
                 .foregroundStyle(.secondary)
             Text("Register frequently used messages as shortcuts", bundle: .module)
-                .font(.system(size: 12))
+                .font(.system(size: ClaudeTheme.size(12)))
                 .foregroundStyle(.secondary)
             Button {
                 isAddingNew = true
             } label: {
                 Label(String(localized: "Add First Shortcut", bundle: .module), systemImage: "plus")
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.system(size: ClaudeTheme.size(13), weight: .medium))
             }
             .buttonStyle(.borderedProminent)
             Spacer()
@@ -304,13 +304,13 @@ struct ShortcutEditView: View {
                 Group {
                     if isEditing { Text("Edit Shortcut", bundle: .module) } else { Text("Add New Shortcut", bundle: .module) }
                 }
-                .font(.system(size: 15, weight: .semibold))
+                .font(.system(size: ClaudeTheme.size(15), weight: .semibold))
                 Spacer()
                 Button {
                     dismiss()
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 16))
+                        .font(.system(size: ClaudeTheme.size(16)))
                         .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.borderless)
@@ -327,7 +327,7 @@ struct ShortcutEditView: View {
                     fieldSection("Name") {
                         TextField(String(localized: "Name shown on the button", bundle: .module), text: $name)
                             .textFieldStyle(.plain)
-                            .font(.system(size: 14))
+                            .font(.system(size: ClaudeTheme.size(14)))
                             .padding(.horizontal, 12)
                             .padding(.vertical, 8)
                             .background(Color(NSColor.textBackgroundColor))
@@ -338,7 +338,7 @@ struct ShortcutEditView: View {
                     // Message
                     fieldSection(isTerminalCommand ? LocalizedStringKey("Command") : LocalizedStringKey("Message")) {
                         TextEditor(text: $message)
-                            .font(.system(size: 13, design: isTerminalCommand ? .monospaced : .default))
+                            .font(.system(size: ClaudeTheme.size(13), design: isTerminalCommand ? .monospaced : .default))
                             .scrollContentBackground(.hidden)
                             .frame(minHeight: 80, maxHeight: 150)
                             .padding(8)
@@ -352,7 +352,7 @@ struct ShortcutEditView: View {
                                 Text("This message will be sent when the button is clicked", bundle: .module)
                             }
                         }
-                        .font(.system(size: 11))
+                        .font(.system(size: ClaudeTheme.size(11)))
                         .foregroundStyle(.secondary)
                     }
 
@@ -361,14 +361,14 @@ struct ShortcutEditView: View {
                         Toggle(isOn: $isTerminalCommand) {
                             HStack(spacing: 6) {
                                 Image(systemName: "terminal")
-                                    .font(.system(size: 12))
+                                    .font(.system(size: ClaudeTheme.size(12)))
                                 Text("Run as terminal command", bundle: .module)
-                                    .font(.system(size: 13))
+                                    .font(.system(size: ClaudeTheme.size(13)))
                             }
                         }
                         .toggleStyle(.switch)
                         Text("When enabled, the command runs in the terminal instead of chat", bundle: .module)
-                            .font(.system(size: 11))
+                            .font(.system(size: ClaudeTheme.size(11)))
                             .foregroundStyle(.secondary)
                     }
 
@@ -418,7 +418,7 @@ struct ShortcutEditView: View {
     private func fieldSection<Content: View>(_ title: LocalizedStringKey, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(title, bundle: .module)
-                .font(.system(size: 12, weight: .medium))
+                .font(.system(size: ClaudeTheme.size(12), weight: .medium))
                 .foregroundStyle(.secondary)
             content()
         }

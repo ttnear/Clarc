@@ -76,11 +76,11 @@ struct FileInspectorView: View {
     private var header: some View {
         HStack(spacing: 6) {
             Image(systemName: iconForExtension)
-                .font(.system(size: 13))
+                .font(.system(size: ClaudeTheme.size(13)))
                 .foregroundStyle(iconColorForExtension)
 
             Text(fileName)
-                .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                .font(.system(size: ClaudeTheme.size(13), weight: .semibold, design: .monospaced))
                 .foregroundStyle(ClaudeTheme.textPrimary)
                 .lineLimit(1)
                 .truncationMode(.middle)
@@ -88,7 +88,7 @@ struct FileInspectorView: View {
             Spacer()
 
             Text(languageLabel)
-                .font(.system(size: 10, weight: .medium))
+                .font(.system(size: ClaudeTheme.size(10), weight: .medium))
                 .foregroundStyle(ClaudeTheme.textTertiary)
                 .padding(.horizontal, 5)
                 .padding(.vertical, 2)
@@ -102,7 +102,7 @@ struct FileInspectorView: View {
                     isEditing.toggle()
                 } label: {
                     Image(systemName: isEditing ? "checkmark.circle" : "pencil")
-                        .font(.system(size: 12))
+                        .font(.system(size: ClaudeTheme.size(12)))
                         .foregroundStyle(isEditing ? ClaudeTheme.statusSuccess : ClaudeTheme.textSecondary)
                         .frame(width: 22, height: 22)
                         .contentShape(Rectangle())
@@ -116,7 +116,7 @@ struct FileInspectorView: View {
                     copyToClipboard(content, feedback: $isCopied)
                 } label: {
                     Image(systemName: isCopied ? "checkmark" : "doc.on.doc")
-                        .font(.system(size: 12))
+                        .font(.system(size: ClaudeTheme.size(12)))
                         .foregroundStyle(isCopied ? ClaudeTheme.statusSuccess : ClaudeTheme.textSecondary)
                 }
                 .buttonStyle(.borderless)
@@ -125,7 +125,7 @@ struct FileInspectorView: View {
 
             Button { windowState.inspectorFile = nil } label: {
                 Image(systemName: "xmark")
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.system(size: ClaudeTheme.size(11), weight: .medium))
                     .foregroundStyle(ClaudeTheme.textSecondary)
                     .frame(width: 22, height: 22)
                     .background(ClaudeTheme.surfaceSecondary, in: Circle())
@@ -150,7 +150,7 @@ struct FileInspectorView: View {
                     VStack(alignment: .trailing, spacing: 0) {
                         ForEach(0..<lineCount, id: \.self) { index in
                             Text("\(index + 1)")
-                                .font(.system(size: 12, design: .monospaced))
+                                .font(.system(size: ClaudeTheme.size(12), design: .monospaced))
                                 .foregroundStyle(ClaudeTheme.textTertiary.opacity(0.6))
                                 .frame(height: 19)
                         }
@@ -165,7 +165,7 @@ struct FileInspectorView: View {
                         .frame(width: 1)
 
                     Text(highlighted)
-                        .font(.system(size: 12, design: .monospaced))
+                        .font(.system(size: ClaudeTheme.size(12), design: .monospaced))
                         .textSelection(.enabled)
                         .padding(.leading, 10)
                         .padding(.trailing, 12)
@@ -183,9 +183,9 @@ struct FileInspectorView: View {
             if let error = saveError {
                 HStack(spacing: 4) {
                     Image(systemName: "exclamationmark.circle")
-                        .font(.system(size: 11))
+                        .font(.system(size: ClaudeTheme.size(11)))
                     Text(error)
-                        .font(.system(size: 11))
+                        .font(.system(size: ClaudeTheme.size(11)))
                 }
                 .foregroundStyle(ClaudeTheme.statusError)
                 .padding(.horizontal, 12)
@@ -195,7 +195,7 @@ struct FileInspectorView: View {
                 ClaudeThemeDivider()
             }
             TextEditor(text: $editingContent)
-                .font(.system(size: 12, design: .monospaced))
+                .font(.system(size: ClaudeTheme.size(12), design: .monospaced))
                 .scrollContentBackground(.hidden)
                 .background(ClaudeTheme.codeBackground)
                 .padding(.leading, 10)
@@ -214,7 +214,7 @@ struct FileInspectorView: View {
             ProgressView()
                 .controlSize(.small)
             Text("loading...")
-                .font(.system(size: 12))
+                .font(.system(size: ClaudeTheme.size(12)))
                 .foregroundStyle(ClaudeTheme.textTertiary)
             Spacer()
         }
@@ -225,10 +225,10 @@ struct FileInspectorView: View {
         VStack(spacing: 8) {
             Spacer()
             Image(systemName: "exclamationmark.triangle")
-                .font(.system(size: 24))
+                .font(.system(size: ClaudeTheme.size(24)))
                 .foregroundStyle(ClaudeTheme.statusWarning)
             Text(message)
-                .font(.system(size: 13))
+                .font(.system(size: ClaudeTheme.size(13)))
                 .foregroundStyle(ClaudeTheme.textSecondary)
                 .multilineTextAlignment(.center)
             Spacer()

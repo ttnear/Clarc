@@ -13,7 +13,7 @@ struct TextPreviewSheet: View {
                 Image(systemName: "doc.text.fill")
                     .foregroundStyle(ClaudeTheme.accent)
                 Text(attachment.name)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.system(size: ClaudeTheme.size(14), weight: .semibold))
                     .foregroundStyle(ClaudeTheme.textPrimary)
 
                 Spacer()
@@ -25,7 +25,7 @@ struct TextPreviewSheet: View {
                     }
                 } label: {
                     Image(systemName: "doc.on.doc")
-                        .font(.system(size: 12))
+                        .font(.system(size: ClaudeTheme.size(12)))
                 }
                 .buttonStyle(.borderless)
                 .help("Copy")
@@ -34,7 +34,7 @@ struct TextPreviewSheet: View {
                     dismiss()
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 16))
+                        .font(.system(size: ClaudeTheme.size(16)))
                         .foregroundStyle(ClaudeTheme.textTertiary)
                 }
                 .buttonStyle(.borderless)
@@ -48,7 +48,7 @@ struct TextPreviewSheet: View {
             ScrollView {
                 if let text = attachment.textContent {
                     Text(text)
-                        .font(.system(size: 13, design: .monospaced))
+                        .font(.system(size: ClaudeTheme.size(13), design: .monospaced))
                         .foregroundStyle(ClaudeTheme.textPrimary)
                         .textSelection(.enabled)
                         .frame(maxWidth: .infinity, alignment: .leading)

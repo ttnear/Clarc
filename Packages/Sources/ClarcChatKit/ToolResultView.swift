@@ -57,21 +57,21 @@ struct ToolResultView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     HStack(spacing: 8) {
                         Image(systemName: sfSymbol)
-                            .font(.system(size: 13, weight: .medium))
+                            .font(.system(size: ClaudeTheme.messageSize(13), weight: .medium))
                             .foregroundStyle(iconColor)
                             .frame(width: 16, height: 16)
 
                         if toolNameLower == "agent" {
                             Text(agentDisplayTitle)
-                                .font(.system(size: 13, weight: .medium))
+                                .font(.system(size: ClaudeTheme.messageSize(13), weight: .medium))
                                 .foregroundStyle(ClaudeTheme.textPrimary)
                         } else if let skillName = skillName {
                             Text(skillName)
-                                .font(.system(size: 13, weight: .medium))
+                                .font(.system(size: ClaudeTheme.messageSize(13), weight: .medium))
                                 .foregroundStyle(ClaudeTheme.textPrimary)
                         } else {
                             Text(toolCall.name)
-                                .font(.system(size: 13, weight: .medium))
+                                .font(.system(size: ClaudeTheme.messageSize(13), weight: .medium))
                                 .foregroundStyle(ClaudeTheme.textPrimary)
                         }
 
@@ -186,7 +186,7 @@ struct ToolResultView: View {
             ForEach(Array(visibleLines.enumerated()), id: \.offset) { _, item in
                 let (prefix, text, isAdded) = item
                 Text(prefix + " " + text)
-                    .font(.system(size: 12, design: .monospaced))
+                    .font(.system(size: ClaudeTheme.messageSize(12), design: .monospaced))
                     .foregroundStyle(isAdded ? ClaudeTheme.statusSuccess : ClaudeTheme.statusError)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 8)
@@ -206,9 +206,9 @@ struct ToolResultView: View {
                                 Text("Show more", bundle: .module)
                             }
                         }
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.system(size: ClaudeTheme.messageSize(12), weight: .medium))
                         Image(systemName: isDiffExpanded ? "chevron.up" : "chevron.down")
-                            .font(.system(size: 10, weight: .medium))
+                            .font(.system(size: ClaudeTheme.messageSize(10), weight: .medium))
                     }
                     .foregroundStyle(ClaudeTheme.textTertiary)
                     .frame(maxWidth: .infinity)
@@ -263,7 +263,7 @@ struct ToolResultView: View {
     private func fileActionLink(label: String, color: Color = ClaudeTheme.textSecondary, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(label)
-                .font(.system(size: 12))
+                .font(.system(size: ClaudeTheme.messageSize(12)))
                 .foregroundStyle(color)
                 .underline()
         }
@@ -278,7 +278,7 @@ struct ToolResultView: View {
             let fileName = URL(fileURLWithPath: filePath).lastPathComponent
             HStack(spacing: 0) {
                 Text("\(toolDescriptionPrefix) — ")
-                    .font(.system(size: 12))
+                    .font(.system(size: ClaudeTheme.messageSize(12)))
                     .foregroundStyle(ClaudeTheme.textSecondary)
                 fileActionLink(label: fileName, color: ClaudeTheme.accent) {
                     windowState.inspectorFile = PreviewFile(path: filePath, name: fileName)
@@ -287,7 +287,7 @@ struct ToolResultView: View {
                     let hunks = editHunksFromToolInput()
                     if !hunks.isEmpty {
                         Text(" · ")
-                            .font(.system(size: 12))
+                            .font(.system(size: ClaudeTheme.messageSize(12)))
                             .foregroundStyle(ClaudeTheme.textTertiary)
                         fileActionLink(label: "diff") {
                             windowState.diffFile = PreviewFile(
@@ -301,7 +301,7 @@ struct ToolResultView: View {
             }
         } else {
             Text(inputSummary)
-                .font(.system(size: 12))
+                .font(.system(size: ClaudeTheme.messageSize(12)))
                 .foregroundStyle(ClaudeTheme.textSecondary)
         }
     }

@@ -144,7 +144,7 @@ struct InputBarView: View {
                 showFilePicker = true
             } label: {
                 Image(systemName: "paperclip")
-                    .font(.system(size: 14))
+                    .font(.system(size: ClaudeTheme.size(14)))
                     .foregroundStyle(ClaudeTheme.textSecondary)
             }
             .buttonStyle(.borderless)
@@ -176,7 +176,7 @@ struct InputBarView: View {
     private var inputTextField: some View {
         TextField(String(localized: "Type a message...", bundle: .module), text: Bindable(windowState).inputText, axis: .vertical)
             .textFieldStyle(.plain)
-            .font(.system(size: 14))
+            .font(.system(size: ClaudeTheme.size(14)))
             .foregroundStyle(ClaudeTheme.textPrimary)
             .lineLimit(1...10)
             .focused($isInputFocused)
@@ -535,18 +535,18 @@ struct InputBarView: View {
             ForEach(windowState.messageQueue) { queued in
                 HStack(spacing: 6) {
                     Image(systemName: "clock")
-                        .font(.system(size: 10))
+                        .font(.system(size: ClaudeTheme.size(10)))
                         .foregroundStyle(ClaudeTheme.textSecondary.opacity(0.7))
 
                     Text(queued.text.isEmpty ? String(localized: "(attachment)", bundle: .module) : queued.text)
-                        .font(.system(size: 13))
+                        .font(.system(size: ClaudeTheme.size(13)))
                         .foregroundStyle(ClaudeTheme.textSecondary)
                         .lineLimit(1)
                         .truncationMode(.tail)
 
                     if !queued.attachments.isEmpty {
                         Image(systemName: "paperclip")
-                            .font(.system(size: 10))
+                            .font(.system(size: ClaudeTheme.size(10)))
                             .foregroundStyle(ClaudeTheme.textSecondary.opacity(0.7))
                     }
 
@@ -556,7 +556,7 @@ struct InputBarView: View {
                         }
                     } label: {
                         Image(systemName: "xmark")
-                            .font(.system(size: 9, weight: .semibold))
+                            .font(.system(size: ClaudeTheme.size(9), weight: .semibold))
                             .foregroundStyle(ClaudeTheme.textSecondary)
                             .padding(3)
                             .background(ClaudeTheme.textSecondary.opacity(0.1), in: Circle())
@@ -727,7 +727,7 @@ private struct InputHeightMeasurer: View {
     var body: some View {
         GeometryReader { geo in
             Text(measuringText)
-                .font(.system(size: 14))
+                .font(.system(size: ClaudeTheme.size(14)))
                 .frame(width: geo.size.width, alignment: .leading)
                 .fixedSize(horizontal: false, vertical: true)
                 .background(heightReporter)

@@ -109,9 +109,9 @@ struct ProjectWindowView: View {
             if let project = windowState.selectedProject {
                 HStack(spacing: 5) {
                     Image(systemName: "folder.fill")
-                        .font(.system(size: 11))
+                        .font(.system(size: ClaudeTheme.size(11)))
                     Text(project.name)
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.system(size: ClaudeTheme.size(13), weight: .semibold))
                         .lineLimit(1)
                 }
                 .foregroundStyle(ClaudeTheme.textOnAccent)

@@ -37,12 +37,12 @@ struct AskUserQuestionView: View {
     private func header(_ question: AskUserQuestion.Question) -> some View {
         HStack(spacing: 8) {
             Image(systemName: "questionmark.circle")
-                .font(.system(size: 13, weight: .medium))
+                .font(.system(size: ClaudeTheme.messageSize(13), weight: .medium))
                 .foregroundStyle(ClaudeTheme.accent)
                 .frame(width: 16, height: 16)
 
             Text(question.header ?? String(localized: "Question", bundle: .module))
-                .font(.system(size: 13, weight: .medium))
+                .font(.system(size: ClaudeTheme.messageSize(13), weight: .medium))
                 .foregroundStyle(ClaudeTheme.textPrimary)
 
             Spacer()
@@ -58,7 +58,7 @@ struct AskUserQuestionView: View {
     @ViewBuilder
     private func questionText(_ question: AskUserQuestion.Question) -> some View {
         Text(question.question)
-            .font(.system(size: 13))
+            .font(.system(size: ClaudeTheme.messageSize(13)))
             .foregroundStyle(ClaudeTheme.textPrimary)
             .fixedSize(horizontal: false, vertical: true)
     }
@@ -67,7 +67,7 @@ struct AskUserQuestionView: View {
     private var answerBadge: some View {
         if let answer = toolCall.result, !answer.isEmpty {
             Text(answer)
-                .font(.system(size: 12, weight: .medium))
+                .font(.system(size: ClaudeTheme.messageSize(12), weight: .medium))
                 .foregroundStyle(ClaudeTheme.accent)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
@@ -84,12 +84,12 @@ struct AskUserQuestionView: View {
                 } label: {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(option.label)
-                            .font(.system(size: 13, weight: .medium))
+                            .font(.system(size: ClaudeTheme.messageSize(13), weight: .medium))
                             .foregroundStyle(ClaudeTheme.textPrimary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         if let desc = option.description, !desc.isEmpty {
                             Text(desc)
-                                .font(.system(size: 11))
+                                .font(.system(size: ClaudeTheme.messageSize(11)))
                                 .foregroundStyle(ClaudeTheme.textSecondary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }

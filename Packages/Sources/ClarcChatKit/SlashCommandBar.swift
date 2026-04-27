@@ -371,14 +371,14 @@ struct SlashCommandPopup: View {
                 // Header
                 HStack {
                     Image(systemName: "command")
-                        .font(.system(size: 10))
+                        .font(.system(size: ClaudeTheme.size(10)))
                         .foregroundStyle(ClaudeTheme.textTertiary)
                     Text("Slash Commands", bundle: .module)
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.system(size: ClaudeTheme.size(11), weight: .medium))
                         .foregroundStyle(ClaudeTheme.textTertiary)
                     Spacer()
                     Text("\(filtered.count)")
-                        .font(.system(size: 10))
+                        .font(.system(size: ClaudeTheme.size(10)))
                         .foregroundStyle(ClaudeTheme.textTertiary)
                 }
                 .padding(.horizontal, 12)
@@ -429,12 +429,12 @@ struct SlashCommandPopup: View {
                     VStack(alignment: .leading, spacing: 2) {
                         HStack(spacing: 6) {
                             Text(cmd.command)
-                                .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                                .font(.system(size: ClaudeTheme.size(13), weight: .semibold, design: .monospaced))
                                 .foregroundStyle(isSelected ? ClaudeTheme.accent : ClaudeTheme.textPrimary)
 
                             if cmd.acceptsInput {
                                 Text("accepts input", bundle: .module)
-                                    .font(.system(size: 9))
+                                    .font(.system(size: ClaudeTheme.size(9)))
                                     .foregroundStyle(ClaudeTheme.textTertiary)
                                     .padding(.horizontal, 5)
                                     .padding(.vertical, 1)
@@ -443,7 +443,7 @@ struct SlashCommandPopup: View {
                         }
 
                         Text(LocalizedStringKey(cmd.description), bundle: .module)
-                            .font(.system(size: 11))
+                            .font(.system(size: ClaudeTheme.size(11)))
                             .foregroundStyle(ClaudeTheme.textSecondary)
                             .lineLimit(1)
                     }
@@ -459,7 +459,7 @@ struct SlashCommandPopup: View {
                     detailCommand = cmd
                 } label: {
                     Image(systemName: "info.circle")
-                        .font(.system(size: 13))
+                        .font(.system(size: ClaudeTheme.size(13)))
                         .foregroundStyle(ClaudeTheme.textTertiary)
                         .frame(width: 24, height: 24)
                         .contentShape(Rectangle())
@@ -493,11 +493,11 @@ struct CommandDetailSheet: View {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(command.command)
-                        .font(.system(size: 16, weight: .bold, design: .monospaced))
+                        .font(.system(size: ClaudeTheme.size(16), weight: .bold, design: .monospaced))
                         .foregroundStyle(ClaudeTheme.textPrimary)
 
                     Text(LocalizedStringKey(command.description), bundle: .module)
-                        .font(.system(size: 13))
+                        .font(.system(size: ClaudeTheme.size(13)))
                         .foregroundStyle(ClaudeTheme.textSecondary)
                 }
 
@@ -511,7 +511,7 @@ struct CommandDetailSheet: View {
             ScrollView {
                 if let detail = command.detailDescription {
                     Text(LocalizedStringKey(detail))
-                        .font(.system(size: 13))
+                        .font(.system(size: ClaudeTheme.size(13)))
                         .foregroundStyle(ClaudeTheme.textPrimary)
                         .lineSpacing(4)
                         .textSelection(.enabled)
@@ -571,7 +571,7 @@ struct CommandMenuButton: View {
             }
         } label: {
             Image(systemName: "ellipsis.circle")
-                .font(.system(size: 14))
+                .font(.system(size: ClaudeTheme.size(14)))
                 .foregroundStyle(ClaudeTheme.textSecondary)
         }
         .buttonStyle(.borderless)
@@ -601,7 +601,7 @@ struct UsagePopoverView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Session Usage", bundle: .module)
-                .font(.system(size: 13, weight: .semibold))
+                .font(.system(size: ClaudeTheme.size(13), weight: .semibold))
                 .foregroundStyle(ClaudeTheme.textPrimary)
 
             Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 6) {
@@ -623,15 +623,15 @@ struct UsagePopoverView: View {
         GridRow {
             HStack(spacing: 6) {
                 Image(systemName: icon)
-                    .font(.system(size: 11))
+                    .font(.system(size: ClaudeTheme.size(11)))
                     .foregroundStyle(ClaudeTheme.textTertiary)
                     .frame(width: 14)
                 Text(label)
-                    .font(.system(size: 12))
+                    .font(.system(size: ClaudeTheme.size(12)))
                     .foregroundStyle(ClaudeTheme.textSecondary)
             }
             Text(value)
-                .font(.system(size: 12, weight: .medium, design: .monospaced))
+                .font(.system(size: ClaudeTheme.size(12), weight: .medium, design: .monospaced))
                 .foregroundStyle(ClaudeTheme.textPrimary)
         }
     }
@@ -673,14 +673,14 @@ struct AtFilePopup: View {
             // Header
             HStack {
                 Image(systemName: "doc.text.magnifyingglass")
-                    .font(.system(size: 10))
+                    .font(.system(size: ClaudeTheme.size(10)))
                     .foregroundStyle(ClaudeTheme.textTertiary)
                 Text("File Search", bundle: .module)
-                    .font(.system(size: 11, weight: .medium))
+                    .font(.system(size: ClaudeTheme.size(11), weight: .medium))
                     .foregroundStyle(ClaudeTheme.textTertiary)
                 Spacer()
                 Text("\(entries.count)")
-                    .font(.system(size: 10))
+                    .font(.system(size: ClaudeTheme.size(10)))
                     .foregroundStyle(ClaudeTheme.textTertiary)
             }
             .padding(.horizontal, 12)
@@ -723,18 +723,18 @@ struct AtFilePopup: View {
         } label: {
             HStack(spacing: 10) {
                 Image(systemName: entry.icon)
-                    .font(.system(size: 13))
+                    .font(.system(size: ClaudeTheme.size(13)))
                     .foregroundStyle(isSelected ? ClaudeTheme.accent : entry.iconColor)
                     .frame(width: 20)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(entry.name)
-                        .font(.system(size: 13, weight: .medium))
+                        .font(.system(size: ClaudeTheme.size(13), weight: .medium))
                         .foregroundStyle(isSelected ? ClaudeTheme.accent : ClaudeTheme.textPrimary)
 
                     if !entry.directory.isEmpty {
                         Text(entry.directory)
-                            .font(.system(size: 11))
+                            .font(.system(size: ClaudeTheme.size(11)))
                             .foregroundStyle(ClaudeTheme.textTertiary)
                             .lineLimit(1)
                     }
