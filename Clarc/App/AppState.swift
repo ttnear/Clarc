@@ -199,6 +199,23 @@ final class AppState {
     var focusMode: Bool = (UserDefaults.standard.object(forKey: "focusMode") as? Bool) ?? false {
         didSet { UserDefaults.standard.set(focusMode, forKey: "focusMode") }
     }
+
+    // MARK: - Attachment Auto-Preview Settings
+
+    var autoPreviewSettings: AttachmentAutoPreviewSettings = {
+        guard let data = UserDefaults.standard.data(forKey: "attachmentAutoPreviewSettings"),
+              let settings = try? JSONDecoder().decode(AttachmentAutoPreviewSettings.self, from: data) else {
+            return AttachmentAutoPreviewSettings()
+        }
+        return settings
+    }() {
+        didSet {
+            if let data = try? JSONEncoder().encode(autoPreviewSettings) {
+                UserDefaults.standard.set(data, forKey: "attachmentAutoPreviewSettings")
+            }
+        }
+    }
+
     /// Pending session to navigate to when a project window opens or is already open.
     /// Keyed by projectId; consumed once applied.
     var pendingNotificationSession: [UUID: String] = [:]
