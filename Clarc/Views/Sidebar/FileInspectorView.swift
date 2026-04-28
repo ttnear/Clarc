@@ -242,7 +242,7 @@ struct FileInspectorView: View {
                 let url = URL(fileURLWithPath: filePath)
                 let attr = try FileManager.default.attributesOfItem(atPath: filePath)
                 let size = (attr[.size] as? Int) ?? 0
-                if size > 1_000_000 {
+                if size > 5_000_000 {
                     throw FileInspectorError.tooLarge
                 }
                 return try Data(contentsOf: url)
@@ -260,7 +260,7 @@ struct FileInspectorView: View {
                 errorMessage = "Binary file — preview not available"
             }
         } catch is FileInspectorError {
-            errorMessage = "File is too large (>1MB)"
+            errorMessage = "File is too large (>5MB)"
         } catch {
             errorMessage = "Read failed: \(error.localizedDescription)"
         }
