@@ -17,6 +17,22 @@ Clarc is a lightweight native macOS desktop client for Claude Code. It brings th
 
 ---
 
+## Why Clarc?
+
+The terminal is a wall. For most people who aren't developers, it's a closed door — install a CLI, generate SSH keys, approve every tool call without a real preview of what it's about to do. None of that is hard for engineers; all of it is hard for everyone else. The terminal was for the few, and it still is.
+
+Clarc was built so my non-developer coworkers could use Claude Code without learning a shell first. It doesn't reinvent the agent. It spawns the real `claude` CLI underneath, so your `CLAUDE.md`, skills, MCP servers, and slash commands keep working as-is. What sits on top is a native Mac app:
+
+- Approval modals that surface the actual diff before any tool runs, with risk-aware Allow / Allow Session / Deny options.
+- Per-project windows you can run in parallel — switch tabs, double-click to spin off a window, keep streams alive in the background.
+- Drag-and-drop attachments, smart paste for images, file paths, URLs, and long text.
+- GitHub OAuth that handles SSH key setup for you, so `git clone` just works.
+- An inspector with a file tree, Git status, embedded terminal, and a per-project memo pad.
+
+Same engine, no terminal required.
+
+---
+
 ## Key Features vs. Claude Desktop
 
 | Clarc feature | Why it matters |
