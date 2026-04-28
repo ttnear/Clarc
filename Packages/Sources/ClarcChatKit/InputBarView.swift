@@ -36,13 +36,13 @@ struct InputBarView<Accessory: View, TopAccessory: View>: View {
                     .transition(.offset(y: 10).combined(with: .opacity))
             }
 
-            topAccessory
-
             if !windowState.messageQueue.isEmpty {
                 queuedMessagePreviews
                     .frame(maxWidth: .infinity, alignment: .trailing)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
+
+            topAccessory
 
             inputComposer
             .padding(.horizontal, 14)
@@ -602,7 +602,7 @@ struct InputBarView<Accessory: View, TopAccessory: View>: View {
                 .opacity(0.9)
             }
         }
-        .padding(.trailing, 24)
+        .padding(.trailing, 14)
         .padding(.bottom, 4)
     }
 
