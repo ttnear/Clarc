@@ -5,7 +5,7 @@ import ClarcCore
 struct InputBarView<Accessory: View, TopAccessory: View>: View {
     @Environment(ChatBridge.self) private var chatBridge
     @Environment(WindowState.self) private var windowState
-    @FocusState private var isInputFocused: Bool
+    @State private var isInputFocused: Bool = false
 
     private let accessory: Accessory
     private let topAccessory: TopAccessory
@@ -19,9 +19,9 @@ struct InputBarView<Accessory: View, TopAccessory: View>: View {
     @State private var showAtFilePopup = false
     @State private var atFileSelectedIndex = 0
     @State private var historyIndex: Int = -1
-    @State private var inputHasMarkedText = false
     @State private var textFieldLayoutID = 0
     @State private var measuredInputHeight: CGFloat = 20
+    @State private var inputHasMarkedText = false
 
     init(accessory: Accessory, @ViewBuilder topAccessory: () -> TopAccessory) {
         self.accessory = accessory
@@ -193,26 +193,24 @@ struct InputBarView<Accessory: View, TopAccessory: View>: View {
     @ViewBuilder
     private var inputTextField: some View {
         ZStack(alignment: .topLeading) {
-            TextEditor(text: Bindable(windowState).inputText)
-                .textEditorStyle(.plain)
-                .scrollContentBackground(.hidden)
-                .font(.system(size: ClaudeTheme.size(14)))
-                .foregroundStyle(ClaudeTheme.textPrimary)
-                .focused($isInputFocused)
-                .onChange(of: windowState.inputText) { oldValue, newValue in
-                    handleInputTextChange(oldValue: oldValue, newValue: newValue)
-                }
-                .onKeyPress(phases: .down) { _ in
-                    refreshMarkedTextStateSoon()
-                    return .ignored
-                }
-                .onKeyPress(.return, phases: .down) { handleReturnKey($0) }
-                .onKeyPress(.upArrow, phases: .down) { _ in handleUpArrow() }
-                .onKeyPress(.downArrow, phases: .down) { _ in handleDownArrow() }
-                .onKeyPress(.tab, phases: .down) { _ in handleTab() }
-                .onKeyPress(keys: [.init("v")], phases: .down) { handlePasteKey($0) }
-                .onKeyPress(.escape, phases: .down) { _ in handleEscapeKey() }
-                .id(textFieldLayoutID)
+            IMETextView(
+                text: Bindable(windowState).inputText,
+                isFocused: $isInputFocused,
+                hasMarkedText: $inputHasMarkedText,
+                font: .systemFont(ofSize: ClaudeTheme.size(14)),
+                textColor: NSColor(ClaudeTheme.textPrimary),
+                onReturn: handleReturnKey,
+                onShiftReturn: handleShiftReturnKey,
+                onUpArrow: { handleUpArrow() == .handled },
+                onDownArrow: { handleDownArrow() == .handled },
+                onTab: { handleTab() == .handled },
+                onEscape: handleEscapeKey,
+                onPasteCommandV: handlePaste
+            )
+            .id(textFieldLayoutID)
+            .onChange(of: windowState.inputText) { oldValue, newValue in
+                handleInputTextChange(oldValue: oldValue, newValue: newValue)
+            }
 
             if windowState.inputText.isEmpty && !inputHasMarkedText {
                 Text("Type a message...", bundle: .module)
@@ -266,8 +264,6 @@ struct InputBarView<Accessory: View, TopAccessory: View>: View {
             withAnimation(.easeOut(duration: 0.15)) { showAtFilePopup = shouldShowAt }
         }
         if shouldShowAt { atFileSelectedIndex = 0 }
-
-        refreshMarkedTextState()
     }
 
     private func handleUpArrow() -> KeyPress.Result {
@@ -329,16 +325,15 @@ struct InputBarView<Accessory: View, TopAccessory: View>: View {
         return .handled
     }
 
-    // Always returns .handled so NSTextField doesn't run a native paste in parallel.
-    private func handlePasteKey(_ press: KeyPress) -> KeyPress.Result {
-        guard press.modifiers == .command else { return .ignored }
+    // Returns true to suppress NSTextView's native paste; false lets the default plain-text paste run.
+    private func handlePaste() -> Bool {
         let pb = NSPasteboard.general
 
         if let attachment = imageAttachmentFromPasteboard(pb) {
             if chatBridge.autoPreviewSettings.image {
                 windowState.addAttachment(attachment)
             }
-            return .handled
+            return true
         }
 
         if let url = (pb.readObjects(forClasses: [NSURL.self]) as? [URL])?.first(where: \.isFileURL) {
@@ -349,24 +344,24 @@ struct InputBarView<Accessory: View, TopAccessory: View>: View {
             } else {
                 insertAtCursor(url.path)
             }
-            return .handled
+            return true
         }
 
-        guard let text = pb.string(forType: .string), !text.isEmpty else { return .handled }
+        guard let text = pb.string(forType: .string), !text.isEmpty else { return true }
 
         if let attachment = attachmentFromPastedText(text) {
             windowState.addAttachment(attachment)
-            return .handled
+            return true
         }
 
         if chatBridge.autoPreviewSettings.longText,
            text.count >= AttachmentFactory.longTextThreshold {
             windowState.addAttachment(AttachmentFactory.fromLongText(text))
-            return .handled
+            return true
         }
 
         insertAtCursor(text)
-        return .handled
+        return true
     }
 
     private func attachmentFromPastedText(_ text: String) -> Attachment? {
@@ -470,30 +465,26 @@ struct InputBarView<Accessory: View, TopAccessory: View>: View {
         return nil
     }
 
-    // Recreate the text field to reset IME state; prevents ghost Hangul leaking into the next input.
+    // Recreate the text field to clear NSTextView state (e.g. after sending) and reassert focus.
     private func resetIMEState() {
         textFieldLayoutID += 1
-        inputHasMarkedText = false
         DispatchQueue.main.async { isInputFocused = true }
     }
 
-    private func handleEscapeKey() -> KeyPress.Result {
+    private func handleEscapeKey() -> Bool {
         if showAtFilePopup {
             withAnimation(.easeOut(duration: 0.15)) { showAtFilePopup = false }
-            return .handled
+            return true
         }
         if showSlashPopup {
             withAnimation(.easeOut(duration: 0.15)) { showSlashPopup = false }
-            return .handled
+            return true
         }
         if chatBridge.isStreaming {
-            // Without this the last composing Hangul character leaks into the next input as a ghost prefix.
-            NSTextInputContext.current?.client.unmarkText()
-            resetIMEState()
             Task { await chatBridge.cancelStreaming() }
-            return .handled
+            return true
         }
-        return .ignored
+        return false
     }
 
     // MARK: - Slash / At Queries
@@ -640,9 +631,6 @@ struct InputBarView<Accessory: View, TopAccessory: View>: View {
     // MARK: - Send / Return
 
     private func sendMessage() {
-        if hasMarkedText() {
-            commitMarkedText()
-        }
         guard !windowState.inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                 || !windowState.attachments.isEmpty else { return }
         historyIndex = -1
@@ -668,81 +656,28 @@ struct InputBarView<Accessory: View, TopAccessory: View>: View {
         Task { await chatBridge.send() }
     }
 
-    private func handleReturnKey(_ keyPress: KeyPress) -> KeyPress.Result {
-        if keyPress.modifiers.contains(.shift) {
-            // Commit composing Hangul before inserting the newline so the final syllable is kept.
-            if hasMarkedText() {
-                commitMarkedText()
-                Task { @MainActor in
-                    syncInputTextFromActiveEditor()
-                    windowState.inputText.append("\n")
-                }
-                return .handled
-            }
-            windowState.inputText.append("\n")
-            return .handled
-        }
+    private func handleReturnKey() {
+        // IMETextView dispatches doCommand(insertNewline:) only after the IME has finalized any
+        // composing text, so windowState.inputText is already up-to-date here.
         if showSlashPopup && !slashFilteredCommands.isEmpty {
             let commands = slashFilteredCommands
             if slashSelectedIndex < commands.count {
-                if keyPress.modifiers.contains(.command) {
-                    let cmd = commands[slashSelectedIndex]
-                    if cmd.detailDescription != nil { slashDetailCommand = cmd }
-                } else {
-                    selectSlashCommand(commands[slashSelectedIndex])
-                }
+                selectSlashCommand(commands[slashSelectedIndex])
             }
-            return .handled
+            return
         }
         if showAtFilePopup && !atFileFilteredEntries.isEmpty {
             let entries = atFileFilteredEntries
             if atFileSelectedIndex < entries.count {
                 selectAtFile(entries[atFileSelectedIndex].relativePath)
             }
-            return .handled
-        }
-        // Commit composing Hangul before sending; SwiftUI's binding can lag behind NSTextView.
-        if hasMarkedText() {
-            commitMarkedText()
-            Task { @MainActor in
-                syncInputTextFromActiveEditor()
-                sendMessage()
-            }
-            return .handled
+            return
         }
         sendMessage()
-        return .handled
     }
 
-    private func hasMarkedText() -> Bool {
-        NSTextInputContext.current?.client.hasMarkedText() == true
-    }
-
-    private func refreshMarkedTextState() {
-        let markedTextActive = hasMarkedText()
-        if inputHasMarkedText != markedTextActive {
-            inputHasMarkedText = markedTextActive
-        }
-    }
-
-    private func refreshMarkedTextStateSoon() {
-        Task { @MainActor in
-            refreshMarkedTextState()
-        }
-    }
-
-    private func commitMarkedText() {
-        NSTextInputContext.current?.client.unmarkText()
-        syncInputTextFromActiveEditor()
-        refreshMarkedTextState()
-    }
-
-    private func syncInputTextFromActiveEditor() {
-        guard let editor = NSApp.keyWindow?.firstResponder as? NSText else { return }
-        let text = editor.string
-        if windowState.inputText != text {
-            windowState.inputText = text
-        }
+    private func handleShiftReturnKey() {
+        windowState.inputText.append("\n")
     }
 
     // MARK: - Paste & File Import
@@ -796,9 +731,8 @@ struct InputBarView<Accessory: View, TopAccessory: View>: View {
     }
 }
 
-// TextEditor doesn't expose its intrinsic content height (it scrolls instead), so a hidden Text
-// at the same width/font reports the wrapped height that drives clampedInputHeight. Extracted
-// to keep TextEditor's modifier chain inside SourceKit's type-check budget.
+// IMETextView's NSScrollView doesn't surface intrinsic height, so a hidden Text at the same
+// width/font reports the wrapped height that drives clampedInputHeight.
 private struct InputHeightMeasurer: View {
     let text: String
     @Binding var measuredHeight: CGFloat
