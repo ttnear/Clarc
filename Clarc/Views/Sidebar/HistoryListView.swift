@@ -6,7 +6,7 @@ struct HistoryListView: View {
     @Environment(WindowState.self) private var windowState
     @State private var renamingSession: ChatSession?
     @State private var renameText = ""
-    @State private var showAllProjects = true
+    @AppStorage("historyShowAllProjects") private var showAllProjects = true
     @State private var showDeleteAllAlert = false
 
     var body: some View {
