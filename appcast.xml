@@ -199,5 +199,34 @@
         type="application/octet-stream"
         sparkle:edSignature="Azp3incOAtkpQZ485tHtd0t8eIRICWEva8bLGI6yC6jmos3S10o91wtsd2Fm7WX/UrL+tJnD189uAzH6QdoUAw==" />
     </item>
+    <item>
+      <title>Clarc v1.2.1</title>
+      <sparkle:version>18</sparkle:version>
+      <sparkle:shortVersionString>1.2.1</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <pubDate>Tue, 28 Apr 2026 04:42:34 +0000</pubDate>
+      <description><![CDATA[
+<h3>New</h3>
+<ul>
+  <li>Move permission mode, model, and effort chips from the chat toolbar into the input composer for faster per-session control.</li>
+</ul>
+<h3>Improved</h3>
+<ul>
+  <li>Redesign the input bar so the attach (+) button and quick chips share a single action row beneath the text editor.</li>
+  <li>Restore hover and click behavior on attachment preview cards (now 96x104).</li>
+  <li>Persist the project filter toggle in history view across app restarts.</li>
+</ul>
+<h3>Fixed</h3>
+<ul>
+  <li>Handle Korean IME composition correctly when typing in the input bar.</li>
+  <li>Show the message queue preview above the shortcut bar, right-aligned with the input bar's edge.</li>
+</ul>
+      ]]></description>
+      <enclosure
+        url="https://github.com/ttnear/Clarc/releases/download/v1.2.1/Clarc-1.2.1.zip"
+        length="5919084"
+        type="application/octet-stream"
+        sparkle:edSignature="3sOvrfwTrqlGd0a3NwS4mW4RKKrk15IP7QdnJHjV9AwSeAV3bU3IGoloidpqkIV9I3J7EZ7n9nWFl6mDIIQwBA==" />
+    </item>
   </channel>
 </rss>
