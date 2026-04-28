@@ -5,14 +5,18 @@ import os
 actor PersistenceService {
 
     private let baseURL: URL
+    private let metaStore: SessionMetaStore
+    private let cliStore: CLISessionStore
     private let logger = Logger(subsystem: "com.claudework", category: "PersistenceService")
 
-    init() {
+    init(metaStore: SessionMetaStore, cliStore: CLISessionStore) {
         let appSupport = FileManager.default.urls(
             for: .applicationSupportDirectory,
             in: .userDomainMask
         ).first!
         self.baseURL = appSupport.appendingPathComponent("Clarc")
+        self.metaStore = metaStore
+        self.cliStore = cliStore
     }
 
     // MARK: - Projects
@@ -29,18 +33,36 @@ actor PersistenceService {
 
     // MARK: - Sessions
 
-    func saveSession(_ session: ChatSession) throws {
-        let dir = baseURL
-            .appendingPathComponent("sessions")
-            .appendingPathComponent(session.projectId.uuidString)
-        try ensureDirectory(dir)
+    func saveSession(_ session: ChatSession) async throws {
+        switch session.origin {
+        case .cliBacked:
+            // CLI owns the message log (jsonl). We only persist the Clarc-only
+            // sidecar — title/pin/model/effort/permissionMode.
+            await metaStore.save(
+                sessionId: session.id,
+                meta: SessionMetaStore.Meta(
+                    title: session.title,
+                    isPinned: session.isPinned,
+                    model: session.model,
+                    effort: session.effort,
+                    permissionMode: session.permissionMode,
+                    updatedAt: session.updatedAt
+                )
+            )
 
-        let url = dir.appendingPathComponent("\(session.id).json")
-        try encode(session, to: url)
+        case .legacyClarc:
+            let dir = baseURL
+                .appendingPathComponent("sessions")
+                .appendingPathComponent(session.projectId.uuidString)
+            try ensureDirectory(dir)
+            let url = dir.appendingPathComponent("\(session.id).json")
+            try encode(session, to: url)
+        }
     }
 
-    /// Lightweight load of session list for a project, without message content
-    func loadSessions(for projectId: UUID) -> [ChatSession] {
+    /// Lightweight load of legacy session list for a project. CLI-backed
+    /// summaries are loaded separately by `CLISessionStore.loadSummaries`.
+    func loadLegacySessions(for projectId: UUID) -> [ChatSession.Summary] {
         let dir = baseURL
             .appendingPathComponent("sessions")
             .appendingPathComponent(projectId.uuidString)
@@ -56,23 +78,26 @@ actor PersistenceService {
 
         return files
             .filter { $0.pathExtension == "json" }
-            .compactMap { url -> ChatSession? in
-                guard let summary = decode(ChatSession.Summary.self, from: url) else { return nil }
-                return ChatSession(
-                    id: summary.id,
-                    projectId: summary.projectId,
-                    title: summary.title,
-                    messages: [],
-                    createdAt: summary.createdAt,
-                    updatedAt: summary.updatedAt,
-                    isPinned: summary.isPinned
-                )
+            .compactMap { url -> ChatSession.Summary? in
+                guard var summary = decode(ChatSession.Summary.self, from: url) else { return nil }
+                // Files saved before this change may decode as `.legacyClarc`
+                // already (default), but be defensive.
+                if summary.origin != .legacyClarc {
+                    summary = ChatSession.Summary(
+                        id: summary.id, projectId: summary.projectId, title: summary.title,
+                        createdAt: summary.createdAt, updatedAt: summary.updatedAt,
+                        isPinned: summary.isPinned, model: summary.model,
+                        effort: summary.effort, permissionMode: summary.permissionMode,
+                        origin: .legacyClarc
+                    )
+                }
+                return summary
             }
             .sorted { $0.updatedAt > $1.updatedAt }
     }
 
-    /// Lightweight load of session metadata across all projects (excluding message content)
-    func loadAllSessionSummaries() -> [ChatSession.Summary] {
+    /// Lightweight load of legacy session summaries across all projects.
+    func loadAllLegacySessionSummaries() -> [ChatSession.Summary] {
         let sessionsDir = baseURL.appendingPathComponent("sessions")
         let fm = FileManager.default
 
@@ -102,19 +127,44 @@ actor PersistenceService {
         return summaries.sorted { $0.updatedAt > $1.updatedAt }
     }
 
-    func deleteSession(projectId: UUID, sessionId: String) throws {
-        let url = baseURL
-            .appendingPathComponent("sessions")
-            .appendingPathComponent(projectId.uuidString)
-            .appendingPathComponent("\(sessionId).json")
-        let fm = FileManager.default
-        if fm.fileExists(atPath: url.path) {
-            try fm.removeItem(at: url)
-            logger.debug("Deleted session \(sessionId, privacy: .public)")
+    func deleteSession(projectId: UUID, sessionId: String, origin: SessionOrigin) async throws {
+        switch origin {
+        case .cliBacked:
+            // Don't delete the CLI's jsonl — the user may still want it from
+            // the terminal. Just clear our sidecar.
+            await metaStore.delete(sessionId: sessionId)
+        case .legacyClarc:
+            let url = baseURL
+                .appendingPathComponent("sessions")
+                .appendingPathComponent(projectId.uuidString)
+                .appendingPathComponent("\(sessionId).json")
+            let fm = FileManager.default
+            if fm.fileExists(atPath: url.path) {
+                try fm.removeItem(at: url)
+                logger.debug("Deleted legacy session \(sessionId, privacy: .public)")
+            }
         }
     }
 
-    nonisolated func loadSession(projectId: UUID, sessionId: String) -> ChatSession? {
+    /// Loads the full message history. Routes by `origin`:
+    /// - `.cliBacked` → CLI jsonl
+    /// - `.legacyClarc` → Clarc's per-project json
+    func loadFullSession(summary: ChatSession.Summary, cwd: String) async -> ChatSession? {
+        switch summary.origin {
+        case .cliBacked:
+            return await cliStore.loadFullSession(
+                sid: summary.id,
+                cwd: cwd,
+                projectId: summary.projectId
+            )
+        case .legacyClarc:
+            return loadLegacySessionSync(projectId: summary.projectId, sessionId: summary.id)
+        }
+    }
+
+    /// Synchronous load for legacy json sessions. Kept available for the few
+    /// MainActor sites that still call it directly.
+    nonisolated func loadLegacySessionSync(projectId: UUID, sessionId: String) -> ChatSession? {
         let url = baseURL
             .appendingPathComponent("sessions")
             .appendingPathComponent(projectId.uuidString)

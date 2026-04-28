@@ -300,8 +300,17 @@ final class AppState {
     let claude = ClaudeService()
     let github = GitHubService()
     let permission = PermissionServer()
-    let persistence = PersistenceService()
+    let metaStore = SessionMetaStore()
+    let cliStore: CLISessionStore
+    let persistence: PersistenceService
     let marketplace = MarketplaceService()
+
+    init() {
+        let metaStore = self.metaStore
+        let cliStore = CLISessionStore(metaStore: metaStore)
+        self.cliStore = cliStore
+        self.persistence = PersistenceService(metaStore: metaStore, cliStore: cliStore)
+    }
 
     // MARK: - Private State
 
@@ -416,8 +425,11 @@ final class AppState {
             _ = await github.loadToken()
         }
 
-        // Load all session summaries (excluding message bodies)
-        allSessionSummaries = await persistence.loadAllSessionSummaries()
+        // Load all session summaries (excluding message bodies). Merges
+        // CLI-backed sessions (~/.claude/projects/...) with the legacy
+        // Clarc-owned JSON store, preferring CLI-backed when both exist for
+        // the same session id.
+        allSessionSummaries = await mergedSummariesAcrossProjects()
 
         if claudeInstalled && !onboardingCompleted {
             onboardingCompleted = true
@@ -570,6 +582,26 @@ final class AppState {
         let prompt = window.inputText.trimmingCharacters(in: .whitespacesAndNewlines)
         let currentAttachments = window.attachments
         guard !prompt.isEmpty || !currentAttachments.isEmpty else { return }
+
+        // S3: refuse to send into legacy Clarc-only sessions. They have no
+        // matching jsonl in `~/.claude/projects/`, so `--resume {sid}` would
+        // either spawn a new empty CLI session or error out — both lose
+        // context. The user should start a new chat to interoperate with the
+        // terminal CLI.
+        if let sid = window.currentSessionId,
+           allSessionSummaries.first(where: { $0.id == sid })?.origin == .legacyClarc {
+            logger.warning("Refusing to send to legacy session \(sid, privacy: .public): start a new chat to enable terminal sync")
+            return
+        }
+
+        // S2: warn (in logs) if another process touched the same jsonl very
+        // recently — likely a `claude` running in the terminal on the same
+        // session. We don't block, but the operator can spot it after the fact.
+        if let sid = window.currentSessionId,
+           let cwd = window.selectedProject?.path,
+           cliStore.detectExternalActivity(sid: sid, cwd: cwd, withinSeconds: 5) {
+            logger.warning("Session \(sid, privacy: .public) jsonl was modified within 5s — another claude process may be active")
+        }
 
         if currentAttachments.isEmpty, await handleNativeSlashCommand(prompt, in: window) {
             window.inputText = ""
@@ -792,7 +824,11 @@ final class AppState {
 
         if isNewSession {
             let titleText = prompt.count > 50 ? String(prompt.prefix(50)) + "..." : prompt
-            let placeholder = ChatSession(id: sessionKey, projectId: project.id, title: titleText, messages: [])
+            // S6: New sessions are CLI-backed from the moment they're placeholdered —
+            // CLI is already writing to ~/.claude/projects/{enc(cwd)}/{sid}.jsonl,
+            // so any subsequent saveSession must hit the sidecar, not the legacy
+            // per-project json store.
+            let placeholder = ChatSession(id: sessionKey, projectId: project.id, title: titleText, messages: [], origin: .cliBacked)
             allSessionSummaries.insert(placeholder.summary, at: 0)
         } else {
             await saveCurrentSession(in: window)
@@ -969,7 +1005,8 @@ final class AppState {
                                 title: old.title,
                                 messages: [],
                                 createdAt: old.createdAt,
-                                updatedAt: Date()
+                                updatedAt: Date(),
+                                origin: .cliBacked
                             )
                             allSessionSummaries.removeAll { $0.id == expectedPlaceholder || $0.id == sid }
                             allSessionSummaries.insert(replacement.summary, at: 0)
@@ -999,7 +1036,7 @@ final class AppState {
                                 } else {
                                     title = "New Session"
                                 }
-                                let newSession = ChatSession(id: sid, projectId: project.id, title: title, messages: [], updatedAt: Date())
+                                let newSession = ChatSession(id: sid, projectId: project.id, title: title, messages: [], updatedAt: Date(), origin: .cliBacked)
                                 allSessionSummaries.insert(newSession.summary, at: 0)
                             }
                         }
@@ -1581,13 +1618,47 @@ final class AppState {
 
     // MARK: - Session Management
 
+    /// Combined CLI-backed + legacy summaries for one project. CLI wins on duplicate id.
+    private func mergedSummaries(for project: Project) async -> [ChatSession.Summary] {
+        async let legacy = persistence.loadLegacySessions(for: project.id)
+        async let cli = cliStore.loadSummaries(cwd: project.path, projectId: project.id)
+        let (cliResult, legacyResult) = await (cli, legacy)
+        let cliIDs = Set(cliResult.map { $0.id })
+        return (cliResult + legacyResult.filter { !cliIDs.contains($0.id) })
+            .sorted { $0.updatedAt > $1.updatedAt }
+    }
+
+    /// Combined CLI-backed + legacy summaries across all known projects. Loads
+    /// the meta sidecar once and fans out per-project sniffing concurrently.
+    private func mergedSummariesAcrossProjects() async -> [ChatSession.Summary] {
+        async let legacyAcrossAll = persistence.loadAllLegacySessionSummaries()
+        async let metaCache = cliStore.loadMetaCache()
+        let (legacy, meta) = await (legacyAcrossAll, metaCache)
+
+        let snapshot = projects
+        let cli: [ChatSession.Summary] = await withTaskGroup(of: [ChatSession.Summary].self) { group in
+            for project in snapshot {
+                group.addTask {
+                    await self.cliStore.loadSummaries(cwd: project.path, projectId: project.id, metaCache: meta)
+                }
+            }
+            var collected: [ChatSession.Summary] = []
+            for await batch in group { collected.append(contentsOf: batch) }
+            return collected
+        }
+
+        let cliIDs = Set(cli.map { $0.id })
+        return (cli + legacy.filter { !cliIDs.contains($0.id) })
+            .sorted { $0.updatedAt > $1.updatedAt }
+    }
+
     /// Load/refresh the project's session list into allSessionSummaries
     func loadSessionHistory(in window: WindowState) async {
         guard let project = window.selectedProject else { return }
-        let sessions = await persistence.loadSessions(for: project.id)
+        let summaries = await mergedSummaries(for: project)
         // Replace that project's summaries with the latest data from disk
         allSessionSummaries.removeAll { $0.projectId == project.id }
-        allSessionSummaries.append(contentsOf: sessions.map(\.summary))
+        allSessionSummaries.append(contentsOf: summaries)
     }
 
     private func switchToSession(_ session: ChatSession, messages loadedMessages: [ChatMessage]? = nil, in window: WindowState) {
@@ -1612,7 +1683,7 @@ final class AppState {
                 // Switch with an empty state first; actual messages are loaded in the background and injected later
                 sessionStates[session.id] = state
                 if let project = window.selectedProject {
-                    loadMessagesInBackground(projectId: project.id, sessionId: session.id)
+                    loadMessagesInBackground(projectId: project.id, sessionId: session.id, cwd: project.path)
                 }
             }
         } else if sessionStates[session.id]?.messages.isEmpty == true,
@@ -1624,7 +1695,7 @@ final class AppState {
                 if state.permissionMode == nil { state.permissionMode = session.permissionMode }
                 sessionStates[session.id] = state
             }
-            loadMessagesInBackground(projectId: project.id, sessionId: session.id)
+            loadMessagesInBackground(projectId: project.id, sessionId: session.id, cwd: project.path)
         }
 
         if sessionStates[session.id]?.isStreaming == true {
@@ -1753,25 +1824,30 @@ final class AppState {
         if let si = allSessionSummaries.firstIndex(where: { $0.id == session.id }) {
             allSessionSummaries[si].title = newTitle
         }
-        // Load full session from disk to preserve existing messages (the caller
-        // may pass a summary-backed session with empty messages).
-        let base = persistence.loadSession(projectId: session.projectId, sessionId: session.id) ?? session
-        var updated = base
-        updated.title = newTitle
-        do { try await persistence.saveSession(updated) }
-        catch { logger.error("Failed to save renamed session: \(error.localizedDescription)") }
+        await updateSessionMetadata(session) { $0.title = newTitle }
     }
 
     func togglePinSession(_ session: ChatSession) async {
         guard let si = allSessionSummaries.firstIndex(where: { $0.id == session.id }) else { return }
         allSessionSummaries[si].isPinned.toggle()
         let newIsPinned = allSessionSummaries[si].isPinned
-        // Load full session from disk to preserve existing messages (session may have messages: [])
-        let base = persistence.loadSession(projectId: session.projectId, sessionId: session.id) ?? session
-        var updated = base
-        updated.isPinned = newIsPinned
+        await updateSessionMetadata(session) { $0.isPinned = newIsPinned }
+    }
+
+    /// Persist a metadata-only edit (title, pin, etc.) routing by session
+    /// origin. cliBacked sessions go to the sidecar; legacy sessions need the
+    /// full message log to be re-saved alongside the change.
+    private func updateSessionMetadata(_ session: ChatSession, mutate: (inout ChatSession) -> Void) async {
+        let summary = allSessionSummaries.first(where: { $0.id == session.id }) ?? session.summary
+        var updated: ChatSession = switch summary.origin {
+        case .cliBacked:
+            summary.makeSession()
+        case .legacyClarc:
+            persistence.loadLegacySessionSync(projectId: session.projectId, sessionId: session.id) ?? session
+        }
+        mutate(&updated)
         do { try await persistence.saveSession(updated) }
-        catch { logger.error("Failed to save pinned session: \(error.localizedDescription)") }
+        catch { logger.error("Failed to save session metadata: \(error.localizedDescription)") }
     }
 
     func renameProject(_ project: Project, to newName: String) async {
@@ -1814,8 +1890,9 @@ final class AppState {
         if window.currentSessionId == session.id {
             startNewChat(in: window)
         }
+        let origin = allSessionSummaries.first(where: { $0.id == session.id })?.origin ?? session.origin
         do {
-            try await persistence.deleteSession(projectId: session.projectId, sessionId: session.id)
+            try await persistence.deleteSession(projectId: session.projectId, sessionId: session.id, origin: origin)
         } catch {
             logger.error("Failed to delete session: \(error.localizedDescription)")
         }
@@ -1835,7 +1912,7 @@ final class AppState {
 
         for summary in toDelete {
             do {
-                try await persistence.deleteSession(projectId: summary.projectId, sessionId: summary.id)
+                try await persistence.deleteSession(projectId: summary.projectId, sessionId: summary.id, origin: summary.origin)
             } catch {
                 logger.error("Failed to delete session \(summary.id): \(error.localizedDescription)")
             }
@@ -1873,9 +1950,9 @@ final class AppState {
             selectProject(project, in: window)
             guard !Task.isCancelled else { return }
             if let s = allSessionSummaries.first(where: { $0.id == id }) {
-                let session = ChatSession(id: s.id, projectId: s.projectId, title: s.title, messages: [], isPinned: s.isPinned)
+                let session = s.makeSession()
                 if sessionStates[session.id] == nil,
-                   let full = persistence.loadSession(projectId: project.id, sessionId: id) {
+                   let full = await persistence.loadFullSession(summary: s, cwd: project.path) {
                     switchToSession(full, messages: full.messages, in: window)
                 } else {
                     switchToSession(session, in: window)
@@ -1967,10 +2044,20 @@ final class AppState {
 
     /// Load messages in the background and inject without blocking the main thread.
     /// Does not overwrite if currently streaming or if messages already exist.
-    private func loadMessagesInBackground(projectId: UUID, sessionId: String) {
+    /// `cwd` is needed so we can route to the CLI's jsonl when origin is `.cliBacked`.
+    private func loadMessagesInBackground(projectId: UUID, sessionId: String, cwd: String) {
+        // Snapshot the summary while we're on MainActor so the detached task
+        // can route by origin without awaiting back to us first.
+        let summary = allSessionSummaries.first(where: { $0.id == sessionId })
+            ?? ChatSession.Summary(
+                id: sessionId, projectId: projectId, title: "",
+                createdAt: Date(), updatedAt: Date(), isPinned: false,
+                origin: .legacyClarc
+            )
+
         Task.detached(priority: .userInitiated) { [weak self] in
             guard let self else { return }
-            let full = self.persistence.loadSession(projectId: projectId, sessionId: sessionId)
+            let full = await self.persistence.loadFullSession(summary: summary, cwd: cwd)
             guard let full else { return }
             let cleaned = await self.cleanLoadedMessages(full.messages)
             await MainActor.run {
@@ -2011,7 +2098,12 @@ final class AppState {
         let sessionModel = sessionStates[sessionId]?.model
         let sessionEffort = sessionStates[sessionId]?.effort
         let sessionPermissionMode = sessionStates[sessionId]?.permissionMode
-        let session = ChatSession(id: sessionId, projectId: projectId, title: title, messages: messages, updatedAt: lastResponseDate(from: messages), model: sessionModel, effort: sessionEffort, permissionMode: sessionPermissionMode)
+        // Preserve a session's existing origin if we know it; otherwise default
+        // to .cliBacked (S6 — every new session is CLI-backed since CLI owns the
+        // jsonl). Legacy sessions are read-only via UI gating, so a save call
+        // for one is unexpected but stays safe.
+        let origin = allSessionSummaries.first(where: { $0.id == sessionId })?.origin ?? .cliBacked
+        let session = ChatSession(id: sessionId, projectId: projectId, title: title, messages: messages, updatedAt: lastResponseDate(from: messages), model: sessionModel, effort: sessionEffort, permissionMode: sessionPermissionMode, origin: origin)
 
         do {
             try await persistence.saveSession(session)
