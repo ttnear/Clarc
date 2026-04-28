@@ -1,8 +1,25 @@
 import SwiftUI
+import AppKit
 
 // MARK: - Syntax Highlighter
 
 public enum SyntaxHighlighter {
+    public static func highlightNS(_ code: String, language: String, fontSize: CGFloat = 12) -> NSAttributedString {
+        let normalized = normalizeLanguage(language)
+        let tokens = tokenize(code, language: normalized)
+        let result = NSMutableAttributedString()
+        let regularFont = NSFont.monospacedSystemFont(ofSize: fontSize, weight: .regular)
+        let mediumFont = NSFont.monospacedSystemFont(ofSize: fontSize, weight: .medium)
+        for token in tokens {
+            let font = (token.kind == .keyword || token.kind == .builtinType) ? mediumFont : regularFont
+            result.append(NSAttributedString(string: token.text, attributes: [
+                .font: font,
+                .foregroundColor: NSColor(color(for: token.kind)),
+            ]))
+        }
+        return result
+    }
+
     public static func highlight(_ code: String, language: String, fontSize: CGFloat = 12) -> AttributedString {
         let normalized = normalizeLanguage(language)
         var result = AttributedString()

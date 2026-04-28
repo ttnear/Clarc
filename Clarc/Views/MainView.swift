@@ -585,6 +585,10 @@ struct ChatToolbarControls: View {
 
     var body: some View {
         HStack(spacing: placement == .composer ? 8 : 4) {
+            if placement == .composer {
+                Spacer(minLength: 12)
+            }
+
             Menu {
                 Section("Permission Mode") {
                     ForEach(PermissionMode.allCases, id: \.self) { mode in
@@ -605,10 +609,6 @@ struct ChatToolbarControls: View {
             .menuStyle(.borderlessButton)
             .fixedSize()
             .help("Permission mode: \(effectiveMode.displayName)")
-
-            if placement == .composer {
-                Spacer(minLength: 12)
-            }
 
             Menu {
                 Section("Model Picker") {

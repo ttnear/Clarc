@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 import ClarcCore
 
 /// Inspector panel for file preview with syntax highlighting
@@ -6,7 +7,7 @@ struct FileInspectorView: View {
     let filePath: String
     let fileName: String
     @State private var content: String?
-    @State private var highlightedContent: AttributedString?
+    @State private var highlightedContent: NSAttributedString?
     @State private var lineCount = 0
     @State private var isLoading = true
     @State private var errorMessage: String?
@@ -141,41 +142,12 @@ struct FileInspectorView: View {
     // MARK: - Content
 
     private func codeContentView(_ text: String) -> some View {
-        let lineNumberWidth = max(String(lineCount).count * 8 + 12, 32)
-        let highlighted = highlightedContent ?? AttributedString(text)
-
-        return GeometryReader { geometry in
-            ScrollView([.vertical, .horizontal]) {
-                HStack(alignment: .top, spacing: 0) {
-                    VStack(alignment: .trailing, spacing: 0) {
-                        ForEach(0..<lineCount, id: \.self) { index in
-                            Text("\(index + 1)")
-                                .font(.system(size: ClaudeTheme.size(12), design: .monospaced))
-                                .foregroundStyle(ClaudeTheme.textTertiary.opacity(0.6))
-                                .frame(height: 19)
-                        }
-                    }
-                    .frame(width: CGFloat(lineNumberWidth))
-                    .padding(.top, 10)
-                    .padding(.trailing, 6)
-                    .background(ClaudeTheme.codeBackground.opacity(0.5))
-
-                    Rectangle()
-                        .fill(ClaudeTheme.border.opacity(0.5))
-                        .frame(width: 1)
-
-                    Text(highlighted)
-                        .font(.system(size: ClaudeTheme.size(12), design: .monospaced))
-                        .textSelection(.enabled)
-                        .padding(.leading, 10)
-                        .padding(.trailing, 12)
-                        .padding(.vertical, 10)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .frame(minWidth: geometry.size.width, minHeight: geometry.size.height, alignment: .topLeading)
-            }
-        }
-        .background(ClaudeTheme.codeBackground)
+        let highlighted = highlightedContent ?? NSAttributedString(string: text, attributes: [
+            .font: NSFont.monospacedSystemFont(ofSize: 12, weight: .regular)
+        ])
+        return CodeTextRenderer(content: highlighted)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(ClaudeTheme.codeBackground)
     }
 
     private var editingView: some View {
@@ -209,13 +181,9 @@ struct FileInspectorView: View {
     }
 
     private var loadingView: some View {
-        VStack(spacing: 8) {
+        VStack {
             Spacer()
-            ProgressView()
-                .controlSize(.small)
-            Text("loading...")
-                .font(.system(size: ClaudeTheme.size(12)))
-                .foregroundStyle(ClaudeTheme.textTertiary)
+            ProgressView().controlSize(.small)
             Spacer()
         }
         .frame(maxWidth: .infinity)
@@ -249,10 +217,9 @@ struct FileInspectorView: View {
                 try textToSave.write(to: url, atomically: true, encoding: .utf8)
             }.value
             content = textToSave
-            // Recalculate syntax highlighting after saving
             let ext = fileExtension
             let highlighted = await Task.detached {
-                SyntaxHighlighter.highlight(textToSave, language: ext)
+                SyntaxHighlighter.highlightNS(textToSave, language: ext)
             }.value
             highlightedContent = highlighted
             isEditing = false
@@ -284,7 +251,7 @@ struct FileInspectorView: View {
             if let text = String(data: data, encoding: .utf8) {
                 let ext = fileExtension
                 let highlighted = await Task.detached {
-                    SyntaxHighlighter.highlight(text, language: ext)
+                    SyntaxHighlighter.highlightNS(text, language: ext)
                 }.value
                 content = text
                 highlightedContent = highlighted
@@ -337,4 +304,123 @@ struct FileInspectorView: View {
 
 private enum FileInspectorError: Error {
     case tooLarge
+}
+
+// MARK: - NSTextView-based Code Renderer (TextKit2)
+
+private struct CodeTextRenderer: NSViewRepresentable {
+    let content: NSAttributedString
+
+    func makeCoordinator() -> Coordinator { Coordinator() }
+
+    func makeNSView(context: Context) -> NSScrollView {
+        let scrollView = NSScrollView()
+        scrollView.hasVerticalScroller = true
+        scrollView.hasHorizontalScroller = true
+        scrollView.autohidesScrollers = true
+        scrollView.borderType = .noBorder
+        scrollView.drawsBackground = false
+
+        let textView = NSTextView()
+        textView.minSize = .zero
+        textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        textView.isVerticallyResizable = true
+        textView.isHorizontallyResizable = true
+        textView.autoresizingMask = [.height]
+        textView.textContainerInset = NSSize(width: 0, height: 10)
+        textView.isEditable = false
+        textView.isSelectable = true
+        textView.allowsUndo = false
+        textView.usesFontPanel = false
+        textView.drawsBackground = false
+        textView.isAutomaticQuoteSubstitutionEnabled = false
+        textView.isAutomaticDashSubstitutionEnabled = false
+        textView.isAutomaticTextReplacementEnabled = false
+        textView.isAutomaticLinkDetectionEnabled = false
+
+        if let container = textView.textContainer {
+            container.widthTracksTextView = false
+            container.heightTracksTextView = false
+            container.containerSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+            container.lineFragmentPadding = 0
+        }
+
+        scrollView.documentView = textView
+        context.coordinator.attach(textView: textView, content: content)
+        return scrollView
+    }
+
+    func updateNSView(_ scrollView: NSScrollView, context: Context) {
+        guard let textView = scrollView.documentView as? NSTextView else { return }
+        context.coordinator.update(textView: textView, content: content)
+    }
+
+    final class Coordinator {
+        private weak var textView: NSTextView?
+        private var lastContent: NSAttributedString = NSAttributedString()
+        nonisolated(unsafe) private var themeObserver: NSObjectProtocol?
+
+        deinit {
+            if let observer = themeObserver {
+                NotificationCenter.default.removeObserver(observer)
+            }
+        }
+
+        func attach(textView: NSTextView, content: NSAttributedString) {
+            self.textView = textView
+            apply(content: content, to: textView)
+            registerThemeObserver()
+        }
+
+        func update(textView: NSTextView, content: NSAttributedString) {
+            if content === lastContent, textView === self.textView { return }
+            self.textView = textView
+            apply(content: content, to: textView)
+        }
+
+        private func registerThemeObserver() {
+            guard themeObserver == nil else { return }
+            themeObserver = NotificationCenter.default.addObserver(
+                forName: .clarcThemeDidChange,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                MainActor.assumeIsolated {
+                    guard let self, let tv = self.textView else { return }
+                    self.apply(content: self.lastContent, to: tv)
+                }
+            }
+        }
+
+        private func apply(content: NSAttributedString, to textView: NSTextView) {
+            textView.textStorage?.setAttributedString(Self.buildWithGutter(content: content))
+            lastContent = content
+        }
+
+        private static func buildWithGutter(content: NSAttributedString) -> NSAttributedString {
+            let font = NSFont.monospacedSystemFont(ofSize: 12, weight: .regular)
+            let gutterColor = NSColor(ClaudeTheme.textTertiary).withAlphaComponent(0.6)
+            let nsString = content.string as NSString
+            let totalLines = max(nsString.components(separatedBy: "\n").count, 1)
+            let gutterDigits = max(String(totalLines).count, 2)
+            let result = NSMutableAttributedString()
+            var lineNumber = 0
+
+            nsString.enumerateSubstrings(
+                in: NSRange(location: 0, length: nsString.length),
+                options: [.byLines]
+            ) { _, substringRange, _, _ in
+                lineNumber += 1
+                let lineNum = String(lineNumber)
+                let prefix = String(repeating: " ", count: max(0, gutterDigits - lineNum.count)) + lineNum + "  "
+                result.append(NSAttributedString(string: prefix, attributes: [.font: font, .foregroundColor: gutterColor]))
+                if substringRange.length > 0 {
+                    result.append(content.attributedSubstring(from: substringRange))
+                }
+                result.append(NSAttributedString(string: "\n", attributes: [.font: font]))
+            }
+
+            return result
+        }
+    }
 }
