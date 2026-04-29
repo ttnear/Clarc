@@ -211,6 +211,7 @@ struct MessageBubble: View {
                 }
             }
             .bubbleStyle(.user)
+            .messageTextSelectionArea()
             .contextMenu {
                 Button {
                     copyToClipboard(message.content, feedback: $isCopied)
@@ -258,6 +259,7 @@ struct MessageBubble: View {
         }
         .foregroundStyle(ClaudeTheme.textPrimary)
         .bubbleStyle(.assistant)
+        .messageTextSelectionArea()
         .overlay(alignment: .bottomTrailing) {
             if hoveredBlockId == blockId && !message.isStreaming {
                 copyButton(for: text)
@@ -429,5 +431,13 @@ struct MessageBubble: View {
             markdown: autoLinked,
             options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)
         )) ?? AttributedString(text)
+    }
+}
+
+private extension View {
+    func messageTextSelectionArea() -> some View {
+        self
+            .contentShape(.interaction, Rectangle())
+            .textSelection(.enabled)
     }
 }

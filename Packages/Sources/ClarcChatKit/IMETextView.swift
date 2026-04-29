@@ -96,6 +96,11 @@ struct IMETextView: NSViewRepresentable {
                 hasMarkedText = active
             }
         }
+        textView.onFocusChange = { focused in
+            if isFocused != focused {
+                isFocused = focused
+            }
+        }
     }
 
     final class Coordinator: NSObject, NSTextViewDelegate {
@@ -129,6 +134,19 @@ fileprivate final class _IMETextView: NSTextView {
     var onEscape: () -> Bool = { false }
     var onPasteCommandV: () -> Bool = { false }
     var onMarkedTextChange: (Bool) -> Void = { _ in }
+    var onFocusChange: (Bool) -> Void = { _ in }
+
+    override func becomeFirstResponder() -> Bool {
+        let result = super.becomeFirstResponder()
+        if result { onFocusChange(true) }
+        return result
+    }
+
+    override func resignFirstResponder() -> Bool {
+        let result = super.resignFirstResponder()
+        if result { onFocusChange(false) }
+        return result
+    }
 
     var placeholder: String = "" {
         didSet { needsDisplay = true }
