@@ -86,7 +86,6 @@ public enum SlashCommandRegistry {
         SlashCommand(name: "copy", description: "Copy last response to clipboard", acceptsInput: true),
         SlashCommand(name: "export", description: "Export conversation as text", acceptsInput: true, isInteractive: true),
         SlashCommand(name: "branch", description: "Create a branch of current conversation", acceptsInput: true),
-        SlashCommand(name: "resume", description: "Resume a previous conversation", acceptsInput: true),
         SlashCommand(name: "rewind", description: "Rewind to a previous point", isInteractive: true),
         SlashCommand(name: "rename", description: "Rename session", acceptsInput: true),
         SlashCommand(name: "diff", description: "Diff viewer for uncommitted changes", isInteractive: true),

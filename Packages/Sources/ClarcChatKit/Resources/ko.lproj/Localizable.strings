@@ -155,7 +155,6 @@
 "Copy last response to clipboard" = "마지막 응답을 클립보드에 복사";
 "Export conversation as text" = "현재 대화를 텍스트로 내보내기";
 "Create a branch of current conversation" = "현재 대화의 브랜치 생성";
-"Resume a previous conversation" = "이전 대화 재개";
 "Rewind to a previous point" = "이전 시점으로 되돌리기";
 "Rename session" = "세션 이름 변경";
 "Diff viewer for uncommitted changes" = "미커밋 변경사항 diff 뷰어";
