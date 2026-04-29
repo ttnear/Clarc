@@ -1,22 +1,41 @@
+import CoreServices
 import Foundation
 import os
 
-/// Watches one or more directories for filesystem changes using
-/// `DispatchSource.makeFileSystemObjectSource`. Event-driven (no polling): the
-/// kernel pushes a notification only when something inside the directory
-/// changes. Bursts of writes are coalesced via a 300ms debounce before the
-/// caller's `onChange` fires.
+/// Watches one or more directories for filesystem changes using FSEventStream
+/// with `kFSEventStreamCreateFlagFileEvents`. Push-based: the kernel notifies
+/// us when files inside the watched root are created, modified, deleted, or
+/// extended (including in-place appends to existing jsonl). FSEventStream's
+/// own `latency` window coalesces bursts before the caller's `onChange` fires.
 public actor DirectoryWatcher {
 
+    /// Heap-allocated bridge between the C-style FSEventStream callback and
+    /// the actor. Retained via `Unmanaged.passRetained` for the duration the
+    /// stream is alive — that retain is what the `info` pointer aliases. The
+    /// `weak watcher` ref is read on the FSEvents dispatch queue; weak loads
+    /// are atomic so `@unchecked Sendable` is safe.
+    private final class StreamContext: @unchecked Sendable {
+        weak var watcher: DirectoryWatcher?
+        let url: URL
+        init(watcher: DirectoryWatcher, url: URL) {
+            self.watcher = watcher
+            self.url = url
+        }
+    }
+
     private struct Entry {
-        let source: any DispatchSourceFileSystemObject
+        let stream: FSEventStreamRef
+        let info: UnsafeMutableRawPointer
         let onChange: @Sendable () -> Void
-        var debounceTask: Task<Void, Never>?
     }
 
     private var entries: [URL: Entry] = [:]
+    private let queue = DispatchQueue(label: "com.claudework.DirectoryWatcher", qos: .utility)
     private let logger = Logger(subsystem: "com.claudework", category: "DirectoryWatcher")
-    private static let debounceNanoseconds: UInt64 = 300_000_000
+    /// FSEventStream coalesces events arriving within this window into a single
+    /// callback. 1s gives the CLI room to flush a multi-line append in one go
+    /// and removes the need for an additional debounce on our side.
+    private static let latencySeconds: CFTimeInterval = 1.0
 
     public init() {}
 
@@ -27,36 +46,72 @@ public actor DirectoryWatcher {
         let key = url.standardizedFileURL
         if entries[key] != nil { return }
 
-        let fd = open(key.path, O_EVTONLY)
-        guard fd >= 0 else {
-            logger.debug("Watch skipped (open failed) for \(key.path, privacy: .public)")
+        guard FileManager.default.fileExists(atPath: key.path) else {
+            logger.debug("Watch skipped (no such directory) for \(key.path, privacy: .public)")
             return
         }
 
-        let source = DispatchSource.makeFileSystemObjectSource(
-            fileDescriptor: fd,
-            eventMask: [.write, .delete, .rename, .extend],
-            queue: .global(qos: .utility)
+        let context = StreamContext(watcher: self, url: key)
+        let info = Unmanaged.passRetained(context).toOpaque()
+        var streamContext = FSEventStreamContext(
+            version: 0,
+            info: info,
+            retain: nil,
+            release: nil,
+            copyDescription: nil
         )
 
-        source.setEventHandler { [weak self] in
-            guard let self else { return }
-            Task { await self.handleEvent(url: key) }
-        }
-        source.setCancelHandler {
-            close(fd)
-        }
-        source.resume()
+        let callback: FSEventStreamCallback = { _, infoPtr, numEvents, _, eventFlags, _ in
+            guard let infoPtr else { return }
+            let ctx = Unmanaged<StreamContext>.fromOpaque(infoPtr).takeUnretainedValue()
+            guard let watcher = ctx.watcher else { return }
 
-        entries[key] = Entry(source: source, onChange: onChange, debounceTask: nil)
+            var rootChanged = false
+            for i in 0..<numEvents {
+                if eventFlags[i] & UInt32(kFSEventStreamEventFlagRootChanged) != 0 {
+                    rootChanged = true
+                    break
+                }
+            }
+
+            let url = ctx.url
+            Task { await watcher.handleEvent(url: url, rootChanged: rootChanged) }
+        }
+
+        let flags = UInt32(
+            kFSEventStreamCreateFlagFileEvents
+            | kFSEventStreamCreateFlagNoDefer
+            | kFSEventStreamCreateFlagWatchRoot
+        )
+
+        guard let stream = FSEventStreamCreate(
+            kCFAllocatorDefault,
+            callback,
+            &streamContext,
+            [key.path] as CFArray,
+            FSEventStreamEventId(kFSEventStreamEventIdSinceNow),
+            Self.latencySeconds,
+            flags
+        ) else {
+            Unmanaged<StreamContext>.fromOpaque(info).release()
+            logger.error("FSEventStreamCreate failed for \(key.path, privacy: .public)")
+            return
+        }
+
+        FSEventStreamSetDispatchQueue(stream, queue)
+        FSEventStreamStart(stream)
+
+        entries[key] = Entry(stream: stream, info: info, onChange: onChange)
         logger.debug("Watching \(key.path, privacy: .public)")
     }
 
     public func unwatch(url: URL) {
         let key = url.standardizedFileURL
         guard let entry = entries.removeValue(forKey: key) else { return }
-        entry.debounceTask?.cancel()
-        entry.source.cancel()
+        FSEventStreamStop(entry.stream)
+        FSEventStreamInvalidate(entry.stream)
+        FSEventStreamRelease(entry.stream)
+        Unmanaged<StreamContext>.fromOpaque(entry.info).release()
     }
 
     public func unwatchAll() {
@@ -65,25 +120,14 @@ public actor DirectoryWatcher {
         }
     }
 
-    private func handleEvent(url: URL) {
-        guard let entry = entries[url] else { return }
-        let onChange = entry.onChange
+    private func handleEvent(url: URL, rootChanged: Bool) {
+        guard let onChange = entries[url]?.onChange else { return }
 
-        // Directory itself was deleted/renamed: the fd is now stale and the
-        // source would keep firing. Tear down and notify caller once so it can
-        // re-resolve and re-register.
-        let data = entry.source.data
-        if data.contains(.delete) || data.contains(.rename) {
+        // Watched directory itself was deleted or renamed: tear down and notify
+        // once so the caller can re-resolve and re-register.
+        if rootChanged {
             unwatch(url: url)
-            onChange()
-            return
         }
-
-        entries[url]?.debounceTask?.cancel()
-        entries[url]?.debounceTask = Task {
-            try? await Task.sleep(nanoseconds: Self.debounceNanoseconds)
-            guard !Task.isCancelled else { return }
-            onChange()
-        }
+        onChange()
     }
 }

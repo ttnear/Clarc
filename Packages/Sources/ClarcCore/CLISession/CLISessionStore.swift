@@ -195,7 +195,7 @@ public actor CLISessionStore {
                 if let t = meta.title, !t.isEmpty { return t }
                 if let t = snippet.latestAITitle, !t.isEmpty { return shortTitle(from: t) }
                 if let t = snippet.firstUserText, !t.isEmpty { return shortTitle(from: t) }
-                return shortTitle(from: "Session \(String(sid.prefix(8)))")
+                return ChatSession.defaultTitle
             }()
             summaries.append(ChatSession.Summary(
                 id: sid,
@@ -354,7 +354,7 @@ public actor CLISessionStore {
                !firstUser.isEmpty {
                 return shortTitle(from: firstUser)
             }
-            return "Session \(String(sid.prefix(8)))"
+            return "New Session"
         }()
 
         return ChatSession(

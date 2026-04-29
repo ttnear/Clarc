@@ -1,6 +1,8 @@
 import Foundation
 
 public struct ChatSession: Identifiable, Codable, Sendable {
+    public static let defaultTitle = "New Session"
+
     public let id: String
     public let projectId: UUID
     public var title: String
@@ -16,7 +18,7 @@ public struct ChatSession: Identifiable, Codable, Sendable {
     public init(
         id: String,
         projectId: UUID,
-        title: String = "New Session",
+        title: String = ChatSession.defaultTitle,
         messages: [ChatMessage] = [],
         createdAt: Date = Date(),
         updatedAt: Date = Date(),
