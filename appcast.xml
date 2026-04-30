@@ -229,6 +229,38 @@
         sparkle:edSignature="3sOvrfwTrqlGd0a3NwS4mW4RKKrk15IP7QdnJHjV9AwSeAV3bU3IGoloidpqkIV9I3J7EZ7n9nWFl6mDIIQwBA==" />
     </item>
     <item>
+      <title>Clarc v1.2.3</title>
+      <sparkle:version>21</sparkle:version>
+      <sparkle:shortVersionString>1.2.3</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <pubDate>Wed, 30 Apr 2026 00:00:00 +0000</pubDate>
+      <description><![CDATA[
+<h3>New</h3>
+<ul>
+  <li>Sessions started in Clarc now appear in the <code>claude --resume</code> picker — switch freely between Clarc and the terminal CLI.</li>
+  <li>Legacy sessions are automatically migrated to the new format.</li>
+</ul>
+<h3>Improved</h3>
+<ul>
+  <li>Session timestamps now reflect actual last activity instead of file modification time.</li>
+  <li>Improved chat text selection and focus behavior.</li>
+  <li>Shortcut and slash command export files now include locale-specific comment headers.</li>
+  <li>Branch list in the sidebar now supports multiple Git remotes.</li>
+</ul>
+<h3>Fixed</h3>
+<ul>
+  <li>Fixed Korean IME input losing the final syllable.</li>
+  <li>Clicking a notification now navigates to the current window instead of opening a new one.</li>
+</ul>
+      ]]></description>
+      <enclosure
+        url="https://github.com/ttnear/Clarc/releases/download/v1.2.3/Clarc-1.2.3.zip"
+        length="6253605"
+        type="application/octet-stream"
+        sparkle:edSignature="8DdsCPKz4zfFoxnhDt9C2XIhugubv9+cNc+S3R5j793ex0LPt8EaRS+R8++1C9wC6dahOuoF8vN6j408bRpBDg==" />
+    </item>
+
+    <item>
       <title>Clarc v1.2.2</title>
       <sparkle:version>20</sparkle:version>
       <sparkle:shortVersionString>1.2.2</sparkle:shortVersionString>
