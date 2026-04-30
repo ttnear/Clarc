@@ -12,6 +12,7 @@ public actor CLISessionStore {
     private static let titleSniffLineLimit = 400
     private static let cwdProbeLineLimit = 5
     private static let cwdIndexTTL: TimeInterval = 60
+    private static let lastTimestampTailBytes: Int = 16 * 1024
 
     /// In-memory map: standardized cwd → CLI projects sub-directory URL. Built
     /// from real jsonl content (not from forward encoding), so it survives the
@@ -184,11 +185,12 @@ public actor CLISessionStore {
             let sid = url.deletingPathExtension().lastPathComponent
             let meta = metaByID[sid] ?? SessionMetaStore.Meta()
             let mtimeDate = mtime(of: url) ?? Date()
-            let snippet: SniffResult
+            var snippet: SniffResult
             if let cached = sniffCache[sid], cached.mtime == mtimeDate {
                 snippet = cached.result
             } else {
                 snippet = await sniffSummary(url: url)
+                snippet.lastTimestamp = lastTimestamp(in: url)
                 sniffCache[sid] = SniffCacheEntry(mtime: mtimeDate, result: snippet)
             }
             let title: String = {
@@ -202,7 +204,7 @@ public actor CLISessionStore {
                 projectId: projectId,
                 title: title,
                 createdAt: snippet.firstTimestamp ?? mtimeDate,
-                updatedAt: mtimeDate,
+                updatedAt: snippet.lastTimestamp ?? mtimeDate,
                 isPinned: meta.isPinned,
                 model: meta.model,
                 effort: meta.effort,
@@ -223,14 +225,16 @@ public actor CLISessionStore {
         var firstUserText: String?
         var firstTimestamp: Date?
         var latestAITitle: String?
+        var lastTimestamp: Date?
     }
 
     /// Schema-light decoder for the CLI's `ai-title` jsonl line. Sidesteps
     /// `CLISessionLine` so the renderer doesn't have to grow a case it never
-    /// shows.
+    /// shows. `timestamp` is also decoded here to serve `lastTimestamp(in:)`.
     private struct AITitleLine: Decodable {
         let type: String?
         let aiTitle: String?
+        let timestamp: Date?
     }
 
     private func sniffSummary(url: URL) async -> SniffResult {
@@ -287,6 +291,44 @@ public actor CLISessionStore {
             }
             return nil
         }
+    }
+
+    /// Read the last ~16KB of a jsonl and return the largest `timestamp` field
+    /// found. Survives Clarc-side rewrites (PickerExposer, LegacyMigrator) that
+    /// would otherwise bump file mtime to "now". Returns nil for files whose
+    /// tail contains no timestamped lines (e.g. only metadata) — caller falls
+    /// back to mtime.
+    private func lastTimestamp(in url: URL) -> Date? {
+        guard let handle = try? FileHandle(forReadingFrom: url) else { return nil }
+        defer { try? handle.close() }
+        let endOffset: UInt64
+        do {
+            endOffset = try handle.seekToEnd()
+        } catch {
+            return nil
+        }
+        guard endOffset > 0 else { return nil }
+        let window = UInt64(Self.lastTimestampTailBytes)
+        let startOffset = endOffset > window ? endOffset - window : 0
+        do {
+            try handle.seek(toOffset: startOffset)
+        } catch {
+            return nil
+        }
+        guard let data = try? handle.readToEnd(),
+              var text = String(data: data, encoding: .utf8) else { return nil }
+        if startOffset > 0, let nl = text.firstIndex(of: "\n") {
+            text = String(text[text.index(after: nl)...])
+        }
+        var maxDate: Date?
+        for sub in text.split(separator: "\n", omittingEmptySubsequences: true) {
+            guard sub.contains("\"timestamp\":\"") else { continue }
+            let lineData = Data(sub.utf8)
+            guard let ts = (try? decoder.decode(AITitleLine.self, from: lineData))?.timestamp
+            else { continue }
+            maxDate = maxDate.map { max($0, ts) } ?? ts
+        }
+        return maxDate
     }
 
     private func shortTitle(from text: String) -> String {
