@@ -504,4 +504,11 @@ public enum CLIMetaEnvelope {
         }
         return false
     }
+
+    /// Detect the model's no-op-turn marker — emitted when a turn arrived
+    /// without a user prompt (e.g. ScheduleWakeup, hook-driven re-entry).
+    /// Renders as a noisy empty bubble in the chat UI; callers strip it.
+    public static func isNoResponseRequested(_ trimmed: String) -> Bool {
+        trimmed == "No response requested." || trimmed == "No response requested"
+    }
 }
