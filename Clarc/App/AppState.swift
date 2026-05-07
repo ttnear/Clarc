@@ -952,8 +952,25 @@ final class AppState {
                 if let start = state.streamingStartDate {
                     state.messages[idx].duration = Date().timeIntervalSince(start)
                 }
+                Self.stripNoOpText(at: idx, in: &state.messages)
             }
             state.streamingStartDate = nil
+        }
+    }
+
+    /// Drop "No response requested." text blocks from the assistant message
+    /// at `idx`. If the message has no blocks left after the strip, remove
+    /// it entirely. Called at turn-finalization sites — the marker is the
+    /// model's response when a turn arrives without a user prompt
+    /// (ScheduleWakeup, hook re-entry) and reads as noise in the chat UI.
+    private static func stripNoOpText(at idx: Int, in messages: inout [ChatMessage]) {
+        guard messages.indices.contains(idx) else { return }
+        messages[idx].blocks.removeAll { block in
+            guard let text = block.text else { return false }
+            return CLIMetaEnvelope.isNoResponseRequested(text.trimmingCharacters(in: .whitespacesAndNewlines))
+        }
+        if messages[idx].blocks.isEmpty {
+            messages.remove(at: idx)
         }
     }
 
@@ -1329,6 +1346,7 @@ final class AppState {
                     // New Claude turn after receiving tool result — start a new ChatMessage
                     state.messages[idx].isStreaming = false
                     state.messages[idx].finalizeToolCalls()
+                    Self.stripNoOpText(at: idx, in: &state.messages)
                     state.needsNewMessage = false
                     state.messages.append(ChatMessage(role: .assistant, content: buffered, isStreaming: true))
                 } else {
@@ -1376,6 +1394,7 @@ final class AppState {
                         if let idx = state.messages.indices.reversed().first(where: { state.messages[$0].role == .assistant && state.messages[$0].isStreaming }) {
                             state.messages[idx].isStreaming = false
                             state.messages[idx].finalizeToolCalls()
+                            Self.stripNoOpText(at: idx, in: &state.messages)
                         }
                         state.messages.append(ChatMessage(role: .assistant, isStreaming: true))
                         state.needsNewMessage = false

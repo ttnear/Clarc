@@ -110,7 +110,10 @@ public enum CLILineToBlocksMapper {
         for part in content {
             switch part {
             case .text(let t):
-                if !t.isEmpty { blocks.append(.text(t)) }
+                guard !t.isEmpty else { continue }
+                let trimmed = t.trimmingCharacters(in: .whitespacesAndNewlines)
+                if CLIMetaEnvelope.isNoResponseRequested(trimmed) { continue }
+                blocks.append(.text(t))
             case .toolUse(let id, let name, let input):
                 blocks.append(.toolCall(ToolCall(id: id, name: name, input: input)))
             case .skip:
