@@ -1165,6 +1165,8 @@ final class AppState {
                         messages: stateForSession(sessionKey).messages
                     )
 
+                    reconcileFromDisk(sessionId: resultEvent.sessionId, projectId: projectId, cwd: cwd)
+
                     if !resultEvent.isError {
                         let sid = resultEvent.sessionId
                         let key = sessionKey
@@ -2213,18 +2215,67 @@ final class AppState {
         }
     }
 
+    /// Last seen jsonl byte size per session — used as a cheap drift signal
+    /// in `reconcileFromDisk` so the no-drift path skips the full mmap+parse.
+    private var lastReconciledJsonlSize: [String: UInt64] = [:]
+
+    /// Build the routing summary for `persistence.loadFullSession`. Falls back
+    /// to a synthesized `.cliBacked` summary when the session hasn't been
+    /// indexed yet (e.g. brand-new session whose `.result` arrived before the
+    /// summary list refresh).
+    private func summaryFor(sessionId: String, projectId: UUID) -> ChatSession.Summary {
+        allSessionSummaries.first(where: { $0.id == sessionId })
+            ?? ChatSession.Summary(
+                id: sessionId, projectId: projectId, title: "",
+                createdAt: Date(), updatedAt: Date(), isPinned: false,
+                origin: .cliBacked
+            )
+    }
+
+    /// Reload messages from the CLI's jsonl on disk and fill any blocks the
+    /// live stream may have missed (e.g. ownership-transfer races, observation
+    /// re-subscribe gaps). Fired off as a detached task so the stream loop is
+    /// not delayed by the mmap parse.
+    ///
+    /// Replacement is gated on disk having strictly more block content than
+    /// memory, so the common no-drift case produces no UI churn. Before the
+    /// parse, the file size is compared against the last seen size — if the
+    /// jsonl hasn't grown, the parse is skipped entirely.
+    private func reconcileFromDisk(sessionId: String, projectId: UUID, cwd: String) {
+        let summary = summaryFor(sessionId: sessionId, projectId: projectId)
+        let lastSize = lastReconciledJsonlSize[sessionId]
+
+        Task.detached(priority: .userInitiated) { [weak self] in
+            guard let self else { return }
+
+            let url = await self.cliStore.directory(forCwd: cwd)
+                .appendingPathComponent("\(sessionId).jsonl")
+            let currentSize: UInt64? = ((try? FileManager.default.attributesOfItem(atPath: url.path))?[.size] as? Int)
+                .flatMap(UInt64.init(exactly:))
+            if let lastSize, let currentSize, currentSize <= lastSize { return }
+
+            guard let full = await self.persistence.loadFullSession(summary: summary, cwd: cwd) else { return }
+            let cleaned = await self.cleanLoadedMessages(full.messages)
+            await MainActor.run {
+                guard var state = self.sessionStates[sessionId], !state.isStreaming else { return }
+                if let currentSize { self.lastReconciledJsonlSize[sessionId] = currentSize }
+                let memBlocks = state.messages.reduce(0) { $0 + $1.blocks.count }
+                let diskBlocks = cleaned.reduce(0) { $0 + $1.blocks.count }
+                guard diskBlocks > memBlocks else { return }
+                self.logger.info("[Reconcile] sid=\(sessionId, privacy: .public) memBlocks=\(memBlocks) diskBlocks=\(diskBlocks) — applied")
+                state.messages = cleaned
+                self.sessionStates[sessionId] = state
+            }
+        }
+    }
+
     /// Load messages in the background and inject without blocking the main thread.
     /// Does not overwrite if currently streaming or if messages already exist.
     /// `cwd` is needed so we can route to the CLI's jsonl when origin is `.cliBacked`.
     private func loadMessagesInBackground(projectId: UUID, sessionId: String, cwd: String) {
         // Snapshot the summary while we're on MainActor so the detached task
         // can route by origin without awaiting back to us first.
-        let summary = allSessionSummaries.first(where: { $0.id == sessionId })
-            ?? ChatSession.Summary(
-                id: sessionId, projectId: projectId, title: "",
-                createdAt: Date(), updatedAt: Date(), isPinned: false,
-                origin: .cliBacked
-            )
+        let summary = summaryFor(sessionId: sessionId, projectId: projectId)
 
         Task.detached(priority: .userInitiated) { [weak self] in
             guard let self else { return }
