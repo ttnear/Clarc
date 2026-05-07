@@ -284,5 +284,23 @@
         type="application/octet-stream"
         sparkle:edSignature="rrpfCh6xwUUR57Ok1k5US2dWYCWsxrWwM2VfxEBYHfbtKjcAIau1IKM7Ay2Y8zVct04tYKRF/J8vgvmuSSrSAw==" />
     </item>
+    <item>
+      <title>Clarc v1.2.4</title>
+      <sparkle:version>23</sparkle:version>
+      <sparkle:shortVersionString>1.2.4</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <pubDate>Thu, 07 May 2026 06:15:08 +0000</pubDate>
+      <description><![CDATA[
+<h3>Fixed</h3>
+<ul>
+  <li>Resolve <code>env: node: No such file or directory</code> error when starting a chat. The app now reads the user's shell <code>PATH</code> so the bundled <code>claude</code> CLI can locate <code>node</code> regardless of where it was installed (Homebrew, nvm, npm-global). (#8)</li>
+</ul>
+      ]]></description>
+      <enclosure
+        url="https://github.com/ttnear/Clarc/releases/download/v1.2.4/Clarc-1.2.4.zip"
+        length="6263985"
+        type="application/octet-stream"
+        sparkle:edSignature="wo8bwxHmh7B3iODRlPyDI6FtNgt4bgxp7DmrNM38jrq8FiTcz+EW0+AIwQhPNr4EqSnILeSzAS/q2+Ok4dVcBA==" />
+    </item>
   </channel>
 </rss>
