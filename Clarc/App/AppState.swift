@@ -1320,50 +1320,44 @@ final class AppState {
 
     private func flushPendingUpdates(for key: String) {
         guard var state = sessionStates[key] else { return }
+        guard var tail = state.streamingTail else { return }
 
-        let hasText = !state.textDeltaBuffer.isEmpty
-        let hasToolResults = !state.pendingToolResults.isEmpty
-
+        let hasText = !tail.textDeltaBuffer.isEmpty
+        let hasToolResults = !tail.pendingToolResults.isEmpty
         guard hasText || hasToolResults else { return }
 
-        func lastAssistantIdx() -> Int? {
-            state.messages.indices.reversed().first { state.messages[$0].role == .assistant }
-        }
-        func lastStreamingAssistantIdx() -> Int? {
-            state.messages.indices.reversed().first { state.messages[$0].role == .assistant && state.messages[$0].isStreaming }
-        }
-
-        // 1. Tool results — apply to the current streaming assistant message
+        // Phase 1: Apply pending tool results to the last assistant message in tail
         if hasToolResults {
-            let results = state.pendingToolResults
-            state.pendingToolResults.removeAll(keepingCapacity: true)
-            if let idx = lastAssistantIdx() {
+            let results = tail.pendingToolResults
+            tail.pendingToolResults = []
+            if let idx = tail.messages.indices.last(where: { tail.messages[$0].role == .assistant }) {
                 for (toolUseId, content, isError) in results {
-                    state.messages[idx].setToolResult(id: toolUseId, result: content, isError: isError)
+                    tail.messages[idx].setToolResult(id: toolUseId, result: content, isError: isError)
                 }
             }
         }
 
-        // 2. Text delta flush
+        // Phase 2: Flush text delta buffer
         if hasText {
-            let buffered = state.textDeltaBuffer
-            state.textDeltaBuffer = ""
-            if let idx = lastStreamingAssistantIdx() {
-                if state.needsNewMessage {
-                    // New Claude turn after receiving tool result — start a new ChatMessage
-                    state.messages[idx].isStreaming = false
-                    state.messages[idx].finalizeToolCalls()
-                    Self.stripNoOpText(at: idx, in: &state.messages)
-                    state.needsNewMessage = false
-                    state.messages.append(ChatMessage(role: .assistant, content: buffered, isStreaming: true))
-                } else {
-                    state.messages[idx].appendText(buffered)
+            let buffered = tail.textDeltaBuffer
+            tail.textDeltaBuffer = ""
+
+            if tail.needsNewMessage {
+                if let idx = tail.messages.indices.last(where: { tail.messages[$0].isStreaming }) {
+                    tail.messages[idx].isStreaming = false
+                    tail.messages[idx].finalizeToolCalls()
+                    Self.stripNoOpText(at: idx, in: &tail.messages)
                 }
+                tail.needsNewMessage = false
+                tail.messages.append(ChatMessage(role: .assistant, content: buffered, isStreaming: true))
+            } else if let idx = tail.messages.indices.last(where: { tail.messages[$0].isStreaming && tail.messages[$0].role == .assistant }) {
+                tail.messages[idx].appendText(buffered)
             } else {
-                state.messages.append(ChatMessage(role: .assistant, content: buffered, isStreaming: true))
+                tail.messages.append(ChatMessage(role: .assistant, content: buffered, isStreaming: true))
             }
         }
 
+        state.streamingTail = tail
         sessionStates[key] = state
     }
 
