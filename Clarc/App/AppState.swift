@@ -363,6 +363,21 @@ final class AppState {
         self.cliStore = cliStore
         self.claude = ClaudeService(cliStore: cliStore)
         self.persistence = PersistenceService(metaStore: metaStore, cliStore: cliStore)
+
+        NotificationCenter.default.addObserver(
+            forName: NSApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                for (sid, state) in self.sessionStates where !state.isStreaming {
+                    guard let summary = self.allSessionSummaries.first(where: { $0.id == sid }),
+                          let project = self.projects.first(where: { $0.id == summary.projectId }) else { continue }
+                    self.reloadCommittedFromDisk(sessionId: sid, projectId: summary.projectId, cwd: project.path)
+                }
+            }
+        }
     }
 
     // MARK: - Private State
@@ -1872,8 +1887,16 @@ final class AppState {
                     guard let self,
                           let p = self.projects.first(where: { $0.id == projectId }) else { return }
                     await self.reloadSessionSummaries(for: p)
+                    self.reloadActiveSessionsForProject(projectId: projectId, cwd: cwd)
                 }
             }
+        }
+    }
+
+    private func reloadActiveSessionsForProject(projectId: UUID, cwd: String) {
+        for summary in allSessionSummaries where summary.projectId == projectId {
+            guard let state = sessionStates[summary.id], !state.isStreaming else { continue }
+            reloadCommittedFromDisk(sessionId: summary.id, projectId: projectId, cwd: cwd)
         }
     }
 
