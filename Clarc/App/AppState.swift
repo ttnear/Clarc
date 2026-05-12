@@ -374,7 +374,7 @@ final class AppState {
     }
 
     func messages(in window: WindowState) -> [ChatMessage] {
-        streamState(in: window).messages
+        streamState(in: window).allMessages
     }
 
     func isStreaming(in window: WindowState) -> Bool {
@@ -589,7 +589,7 @@ final class AppState {
         func observeStream() {
             withObservationTracking {
                 let state = streamState(in: window)
-                bridge.messages = state.messages
+                bridge.messages = state.allMessages
                 bridge.isStreaming = state.isStreaming
                 bridge.isThinking = state.isThinking
                 bridge.streamingStartDate = state.streamingStartDate
