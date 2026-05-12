@@ -1884,9 +1884,12 @@ final class AppState {
     }
 
     private func reloadActiveSessionsForProject(projectId: UUID, cwd: String) {
-        for summary in allSessionSummaries where summary.projectId == projectId {
-            guard let state = sessionStates[summary.id], !state.isStreaming else { continue }
-            reloadCommittedFromDisk(sessionId: summary.id, projectId: projectId, cwd: cwd)
+        // Only reload sessions actually loaded into memory (a window has touched them).
+        for (sid, state) in sessionStates {
+            guard !state.isStreaming else { continue }
+            guard let summary = allSessionSummaries.first(where: { $0.id == sid }),
+                  summary.projectId == projectId else { continue }
+            reloadCommittedFromDisk(sessionId: sid, projectId: projectId, cwd: cwd)
         }
     }
 
