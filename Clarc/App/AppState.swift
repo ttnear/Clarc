@@ -2358,31 +2358,6 @@ final class AppState {
         }
     }
 
-    /// Load messages in the background and inject without blocking the main thread.
-    /// Does not overwrite if currently streaming.
-    /// `cwd` is needed so we can route to the CLI's jsonl when origin is `.cliBacked`.
-    private func loadMessagesInBackground(projectId: UUID, sessionId: String, cwd: String) {
-        // Snapshot the summary while we're on MainActor so the detached task
-        // can route by origin without awaiting back to us first.
-        let summary = summaryFor(sessionId: sessionId, projectId: projectId)
-
-        Task.detached(priority: .userInitiated) { [weak self] in
-            guard let self else { return }
-            let full = await self.persistence.loadFullSession(summary: summary, cwd: cwd)
-            guard let full else { return }
-            let cleaned = await self.cleanLoadedMessages(full.messages)
-            await MainActor.run {
-                guard var state = self.sessionStates[sessionId] else { return }
-                guard !state.isStreaming else { return }
-                state.committedMessages = cleaned
-                if state.model == nil { state.model = full.model }
-                if state.effort == nil { state.effort = full.effort }
-                if state.permissionMode == nil { state.permissionMode = full.permissionMode }
-                self.sessionStates[sessionId] = state
-            }
-        }
-    }
-
     private func saveCurrentSession(in window: WindowState) async {
         guard let project = window.selectedProject,
               let sessionId = window.currentSessionId else { return }
