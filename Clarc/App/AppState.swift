@@ -1127,15 +1127,16 @@ final class AppState {
                     // Extract text only when no text_delta has been received in the current turn.
                     // Normally content_block_delta(text_delta) is the primary path, so this branch rarely executes.
                     updateState(sessionKey) { state in
-                        guard state.textDeltaBuffer.isEmpty else { return }
-                        let afterLastUser = (state.messages.lastIndex(where: { $0.role == .user }).map { $0 + 1 }) ?? 0
-                        let hasStreamedText = state.messages.suffix(from: afterLastUser).contains {
+                        guard state.streamingTail!.textDeltaBuffer.isEmpty else { return }
+                        let allMsgs = state.allMessages
+                        let afterLastUser = (allMsgs.lastIndex(where: { $0.role == .user }).map { $0 + 1 }) ?? 0
+                        let hasStreamedText = allMsgs.suffix(from: afterLastUser).contains {
                             $0.role == .assistant && $0.blocks.contains(where: \.isText)
                         }
                         guard !hasStreamedText else { return }
                         for block in assistantMessage.content {
                             if case .text(let text) = block, !text.isEmpty {
-                                state.textDeltaBuffer += text
+                                state.streamingTail!.textDeltaBuffer += text
                             }
                         }
                     }
@@ -1144,8 +1145,8 @@ final class AppState {
                     logger.debug("[Stream:UI] event #\(eventCount) .user (gap=\(String(format: "%.1f", gap))s, toolUseId=\(userMessage.toolUseId ?? "none"))")
                     updateState(sessionKey) { state in
                         guard let toolUseId = userMessage.toolUseId else { return }
-                        state.pendingToolResults.append((toolUseId, userMessage.content, userMessage.isError))
-                        state.needsNewMessage = true
+                        state.streamingTail!.pendingToolResults.append((toolUseId, userMessage.content, userMessage.isError))
+                        state.streamingTail!.needsNewMessage = true
                     }
 
                 case .result(let resultEvent):
@@ -1391,35 +1392,35 @@ final class AppState {
                 updateState(sessionKey) { state in
                     state.isThinking = false
                     // needsNewMessage: new Claude turn after tool result — create a new ChatMessage
-                    if state.needsNewMessage {
-                        if let idx = state.messages.indices.reversed().first(where: { state.messages[$0].role == .assistant && state.messages[$0].isStreaming }) {
-                            state.messages[idx].isStreaming = false
-                            state.messages[idx].finalizeToolCalls()
-                            Self.stripNoOpText(at: idx, in: &state.messages)
+                    if state.streamingTail!.needsNewMessage {
+                        if let idx = state.streamingTail!.messages.indices.reversed().first(where: { state.streamingTail!.messages[$0].role == .assistant && state.streamingTail!.messages[$0].isStreaming }) {
+                            state.streamingTail!.messages[idx].isStreaming = false
+                            state.streamingTail!.messages[idx].finalizeToolCalls()
+                            Self.stripNoOpText(at: idx, in: &state.streamingTail!.messages)
                         }
-                        state.messages.append(ChatMessage(role: .assistant, isStreaming: true))
-                        state.needsNewMessage = false
-                    } else if state.messages.last?.role != .assistant || !(state.messages.last?.isStreaming ?? false) {
-                        state.messages.append(ChatMessage(role: .assistant, isStreaming: true))
+                        state.streamingTail!.messages.append(ChatMessage(role: .assistant, isStreaming: true))
+                        state.streamingTail!.needsNewMessage = false
+                    } else if state.streamingTail!.messages.last?.role != .assistant || !(state.streamingTail!.messages.last?.isStreaming ?? false) {
+                        state.streamingTail!.messages.append(ChatMessage(role: .assistant, isStreaming: true))
                     }
-                    if let lastIndex = state.messages.indices.last,
-                       state.messages[lastIndex].role == .assistant {
-                        state.messages[lastIndex].appendToolCall(toolCall)
+                    if let lastIndex = state.streamingTail!.messages.indices.last,
+                       state.streamingTail!.messages[lastIndex].role == .assistant {
+                        state.streamingTail!.messages[lastIndex].appendToolCall(toolCall)
                     }
                     // Ready to receive input_json_delta
-                    state.activeToolId = id
-                    state.activeToolInputBuffer = ""
+                    state.streamingTail!.activeToolId = id
+                    state.streamingTail!.activeToolInputBuffer = ""
                 }
             } else if blockType == "text" {
                 // New text block started — if needsNewMessage, prepare a new ChatMessage
                 updateState(sessionKey) { state in
-                    if state.needsNewMessage {
+                    if state.streamingTail!.needsNewMessage {
                         // Keep the flag so a new message is created on the next text_delta flush
                         // (needsNewMessage is handled inside flush)
                     }
                     state.isThinking = false
-                    state.activeToolId = nil
-                    state.activeToolInputBuffer = ""
+                    state.streamingTail!.activeToolId = nil
+                    state.streamingTail!.activeToolInputBuffer = ""
                 }
             } else if blockType == "thinking" {
                 updateState(sessionKey) { $0.isThinking = true }
@@ -1432,11 +1433,11 @@ final class AppState {
             if deltaType == "text_delta", let text = delta["text"] as? String {
                 updateState(sessionKey) { state in
                     state.isThinking = false
-                    state.textDeltaBuffer += text
+                    state.streamingTail!.textDeltaBuffer += text
                 }
             } else if deltaType == "input_json_delta", let partial = delta["partial_json"] as? String {
                 updateState(sessionKey) { state in
-                    state.activeToolInputBuffer += partial
+                    state.streamingTail!.activeToolInputBuffer += partial
                 }
             } else if deltaType == "thinking_delta" {
                 updateState(sessionKey) { $0.isThinking = true }
@@ -1445,20 +1446,20 @@ final class AppState {
         case "content_block_stop":
             // Finalize tool_use input — parse the accumulated JSON and apply to the tool call
             updateState(sessionKey) { state in
-                guard let toolId = state.activeToolId, !state.activeToolInputBuffer.isEmpty else {
-                    state.activeToolId = nil
+                guard let toolId = state.streamingTail!.activeToolId, !state.streamingTail!.activeToolInputBuffer.isEmpty else {
+                    state.streamingTail!.activeToolId = nil
                     return
                 }
-                let buffer = state.activeToolInputBuffer
-                state.activeToolId = nil
-                state.activeToolInputBuffer = ""
+                let buffer = state.streamingTail!.activeToolInputBuffer
+                state.streamingTail!.activeToolId = nil
+                state.streamingTail!.activeToolInputBuffer = ""
 
                 guard let inputData = buffer.data(using: .utf8),
                       let parsed = try? JSONDecoder().decode([String: JSONValue].self, from: inputData) else { return }
 
-                if let msgIdx = state.messages.indices.reversed().first(where: { state.messages[$0].role == .assistant && state.messages[$0].isStreaming }),
-                   let blockIdx = state.messages[msgIdx].toolCallIndex(id: toolId) {
-                    state.messages[msgIdx].blocks[blockIdx].toolCall?.input = parsed
+                if let msgIdx = state.streamingTail!.messages.indices.reversed().first(where: { state.streamingTail!.messages[$0].role == .assistant && state.streamingTail!.messages[$0].isStreaming }),
+                   let blockIdx = state.streamingTail!.messages[msgIdx].toolCallIndex(id: toolId) {
+                    state.streamingTail!.messages[msgIdx].blocks[blockIdx].toolCall?.input = parsed
                 }
             }
 
