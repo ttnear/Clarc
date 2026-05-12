@@ -8,7 +8,7 @@ import ClarcChatKit
 
 /// Cache key for reloadCommittedFromDisk: both size and mtime must match to skip a parse.
 /// Using size alone misses shrink/rewrite (e.g. `claude --resume` compaction).
-private struct ReloadCacheKey: Equatable {
+nonisolated private struct ReloadCacheKey: Equatable {
     let size: UInt64
     let mtime: Date
 }
@@ -89,7 +89,7 @@ final class AppState {
 
     /// Retained token for the NSApplication.didBecomeActiveNotification observer.
     /// Stored so we can remove it in deinit.
-    nonisolated(unsafe) private var didBecomeActiveObserverToken: NSObjectProtocol?
+    private var didBecomeActiveObserverToken: NSObjectProtocol?
 
     // MARK: - Session Summaries (shared — lightweight metadata for all projects)
 
@@ -401,9 +401,10 @@ final class AppState {
         }
     }
 
-    deinit {
-        let token = didBecomeActiveObserverToken
-        if let token { NotificationCenter.default.removeObserver(token) }
+    isolated deinit {
+        if let token = didBecomeActiveObserverToken {
+            NotificationCenter.default.removeObserver(token)
+        }
     }
 
     // MARK: - Private State
@@ -1947,6 +1948,8 @@ final class AppState {
                 state.committedMessages = cleanLoadedMessages(msgs)
             }
             sessionStates[session.id] = state
+            // Stale reload cache would cause reloadCommittedFromDisk to skip parsing when messages are empty.
+            lastCommittedReloadKey.removeValue(forKey: session.id)
         } else {
             if var state = sessionStates[session.id] {
                 if state.model == nil { state.model = session.model }
