@@ -46,6 +46,16 @@ struct SessionStreamState {
     var activeModelName: String?
 }
 
+/// Holds the in-flight messages and delta buffers for the currently active streaming turn.
+/// Created when streaming starts; discarded after the turn ends and disk is reloaded.
+struct StreamingTail {
+    var messages: [ChatMessage] = []
+    var textDeltaBuffer: String = ""
+    var pendingToolResults: [(toolUseId: String, content: String, isError: Bool)] = []
+    var needsNewMessage: Bool = false
+    var activeToolId: String?
+    var activeToolInputBuffer: String = ""
+}
 
 @Observable
 @MainActor
