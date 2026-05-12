@@ -9,25 +9,22 @@ import ClarcChatKit
 /// Encapsulates all independent state per session.
 /// Stored in the `AppState.sessionStates` dictionary keyed by session ID.
 struct SessionStreamState {
-    // Messages
-    var messages: [ChatMessage] = []
+    // Two-tier message storage: disk truth + live tail
+    var committedMessages: [ChatMessage] = []
+    var streamingTail: StreamingTail?
 
-    // Streaming
+    /// The full message list for rendering and saving.
+    var allMessages: [ChatMessage] {
+        committedMessages + (streamingTail?.messages ?? [])
+    }
+
+    // Streaming lifecycle
     var isStreaming = false
     var isThinking = false
-    var needsNewMessage = false   // After receiving .user(tool result), the next block starts a new ChatMessage
     var activeStreamId: UUID?
     var streamingStartDate: Date?
     var streamTask: Task<Void, Never>?
-
-    // Text delta buffer (50ms throttle)
-    var textDeltaBuffer = ""
-    var pendingToolResults: [(toolUseId: String, content: String, isError: Bool)] = []
     var flushTask: Task<Void, Never>?
-
-    // tool_use input streaming buffer
-    var activeToolId: String?           // tool_use id currently receiving input_json_delta
-    var activeToolInputBuffer: String = ""  // accumulator for input_json_delta
 
     // Per-session overrides (persisted in memory across session switches)
     var model: String?
