@@ -155,7 +155,15 @@ struct InputBarView<Accessory: View, TopAccessory: View>: View {
             accessory
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            if !showSlashPopup {
+            if chatBridge.isStreaming {
+                ClaudeSendButton(
+                    isEnabled: true,
+                    systemImageName: "stop.fill",
+                    accessibilityLabel: NSLocalizedString("Stop streaming (cancel response generation)", comment: "Accessibility label for stop streaming button")
+                ) {
+                    Task { await chatBridge.cancelStreaming() }
+                }
+            } else if !showSlashPopup {
                 ClaudeSendButton(
                     isEnabled: !windowState.inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                         || inputHasMarkedText
