@@ -218,6 +218,9 @@ struct MessageBubble: View {
                         userActionButton(systemName: isCopied ? "checkmark" : "doc.on.doc") {
                             copyToClipboard(message.content, feedback: $isCopied)
                         }
+                        userActionButton(systemName: "arrow.triangle.branch") {
+                            Task { await chatBridge.forkFromHere(messageId: message.id) }
+                        }
                         userActionButton(systemName: "pencil") {
                             editText = message.content
                             isEditing = true
@@ -264,9 +267,12 @@ struct MessageBubble: View {
         .bubbleStyle(.assistant)
         .overlay(alignment: .bottomTrailing) {
             if hoveredBlockId == blockId && !message.isStreaming {
-                copyButton(for: text)
-                    .padding(6)
-                    .transition(.opacity.animation(.easeInOut(duration: 0.15)))
+                HStack(spacing: 4) {
+                    copyButton(for: text)
+                    forkButton()
+                }
+                .padding(6)
+                .transition(.opacity.animation(.easeInOut(duration: 0.15)))
             }
         }
         .onHover { hoveredBlockId = $0 ? blockId : nil }
@@ -298,6 +304,25 @@ struct MessageBubble: View {
                 )
         }
         .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private func forkButton() -> some View {
+        Button {
+            Task { await chatBridge.forkFromHere(messageId: message.id) }
+        } label: {
+            Image(systemName: "arrow.triangle.branch")
+                .font(.system(size: ClaudeTheme.messageSize(11), weight: .medium))
+                .foregroundStyle(ClaudeTheme.textSecondary)
+                .frame(width: 26, height: 26)
+                .background(ClaudeTheme.surfaceSecondary, in: RoundedRectangle(cornerRadius: 6))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6)
+                        .strokeBorder(ClaudeTheme.border, lineWidth: 0.5)
+                )
+        }
+        .buttonStyle(.plain)
+        .help(String(localized: "Fork from here", bundle: .module))
     }
 
     @ViewBuilder

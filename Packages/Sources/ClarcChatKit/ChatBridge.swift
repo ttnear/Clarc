@@ -27,6 +27,7 @@ public final class ChatBridge {
     public var sendSlashCommandHandler: ((String) async -> Void)?
     public var runTerminalCommandHandler: ((String) async -> Void)?
     public var editAndResendHandler: ((UUID, String) async -> Void)?
+    public var forkFromHereHandler: ((UUID) async -> Void)?
     public var fetchRateLimitHandler: (() async -> RateLimitUsage?)?
 
     // MARK: - Init
@@ -53,6 +54,10 @@ public final class ChatBridge {
 
     public func editAndResend(messageId: UUID, newContent: String) async {
         await editAndResendHandler?(messageId, newContent)
+    }
+
+    public func forkFromHere(messageId: UUID) async {
+        await forkFromHereHandler?(messageId)
     }
 
     public func fetchRateLimit() async -> RateLimitUsage? {
