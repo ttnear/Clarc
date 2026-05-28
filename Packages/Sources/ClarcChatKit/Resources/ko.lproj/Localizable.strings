@@ -3,6 +3,8 @@
 // MARK: - InputBarView
 "Attach file" = "파일 첨부";
 "Type a message..." = "메시지를 입력하세요...";
+"Send message" = "메시지 전송";
+"Stop streaming (cancel response generation)" = "스트리밍 중지 (응답 생성 취소)";
 
 // MARK: - FileDiffView
 "Diff" = "Diff";

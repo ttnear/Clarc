@@ -159,7 +159,7 @@ struct InputBarView<Accessory: View, TopAccessory: View>: View {
                 ClaudeSendButton(
                     isEnabled: true,
                     systemImageName: "stop.fill",
-                    accessibilityLabel: NSLocalizedString("Stop streaming (cancel response generation)", comment: "Accessibility label for stop streaming button")
+                    accessibilityLabel: String(localized: "Stop streaming (cancel response generation)", bundle: .module)
                 ) {
                     Task { await chatBridge.cancelStreaming() }
                 }
@@ -168,6 +168,7 @@ struct InputBarView<Accessory: View, TopAccessory: View>: View {
                     isEnabled: !windowState.inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                         || inputHasMarkedText
                         || !windowState.attachments.isEmpty,
+                    accessibilityLabel: String(localized: "Send message", bundle: .module),
                     action: sendMessage
                 )
                 .keyboardShortcut(.return, modifiers: .command)
