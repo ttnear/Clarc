@@ -139,6 +139,7 @@
 "Show more" = "더 보기";
 "Copy Message" = "메시지 복사";
 "Edit Message" = "메시지 편집";
+"Fork from here" = "여기서 분기";
 
 // MARK: - ChatView
 "Manage shortcuts" = "단축키 관리";

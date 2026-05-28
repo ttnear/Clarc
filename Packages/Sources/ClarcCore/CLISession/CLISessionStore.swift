@@ -430,6 +430,139 @@ public actor CLISessionStore {
         await PickerExposer.normalize(jsonlAt: await jsonlURL(sid: sid, cwd: cwd))
     }
 
+    // MARK: - Fork
+
+    /// Branch a session at the line matching `messageTimestamp`/`role`. Copies the
+    /// originating jsonl up to that line (plus any immediately-following tool_result
+    /// lines that resolve tool_use blocks in the kept assistant turn), rewrites every
+    /// `sessionId` field to a fresh UUID, and writes the result as a new jsonl in the
+    /// same projects directory. The CLI then accepts the new sid via `--resume`,
+    /// preserving full prior context for the fork.
+    ///
+    /// Returns the new session id, or nil if the source jsonl is unreadable or no
+    /// matching line is found.
+    public func forkSession(
+        fromSid sid: String,
+        cwd: String,
+        atMessageTimestamp messageTimestamp: Date,
+        role: Role
+    ) async -> String? {
+        let originalURL = await jsonlURL(sid: sid, cwd: cwd)
+        let directory = originalURL.deletingLastPathComponent()
+
+        let data: Data
+        do {
+            data = try Data(contentsOf: originalURL, options: .mappedIfSafe)
+        } catch {
+            logger.error("forkSession read failed for \(sid, privacy: .public): \(error.localizedDescription, privacy: .public)")
+            return nil
+        }
+        guard let content = String(data: data, encoding: .utf8) else { return nil }
+
+        let rawLines = content.split(separator: "\n", omittingEmptySubsequences: true).map(String.init)
+        var decoded: [CLISessionLine?] = Array(repeating: nil, count: rawLines.count)
+        for (i, raw) in rawLines.enumerated() {
+            guard let lineData = raw.data(using: .utf8) else { continue }
+            decoded[i] = try? decoder.decode(CLISessionLine.self, from: lineData)
+        }
+
+        // Match the last line of the requested role whose timestamp == messageTimestamp.
+        // CLI emits sub-second precision timestamps, so collisions across visible turns
+        // are vanishingly rare.
+        var truncIndex: Int?
+        for (i, line) in decoded.enumerated() {
+            switch (line, role) {
+            case (.user(let u)?, .user):
+                if u.isMeta || u.isSidechain { continue }
+                if let ts = u.timestamp, ts == messageTimestamp {
+                    truncIndex = i
+                }
+            case (.assistant(let a)?, .assistant):
+                if a.isSidechain { continue }
+                if let ts = a.timestamp, ts == messageTimestamp {
+                    truncIndex = i
+                }
+            default:
+                continue
+            }
+        }
+        guard let truncIndex else {
+            logger.error("forkSession: no line matched timestamp for sid \(sid, privacy: .public)")
+            return nil
+        }
+
+        var endIndex = truncIndex
+
+        // For assistant turns with tool_use blocks, extend through the immediately
+        // following tool_result user lines so the resumed conversation has all
+        // tool_uses resolved. Stop as soon as we hit fresh user text or another
+        // assistant turn — those belong to the post-fork timeline.
+        if case .assistant(let assistantLine)? = decoded[truncIndex] {
+            var pendingToolIds: Set<String> = []
+            for part in assistantLine.message.content {
+                if case .toolUse(let id, _, _) = part { pendingToolIds.insert(id) }
+            }
+            if !pendingToolIds.isEmpty {
+                var i = truncIndex + 1
+                while i < decoded.count {
+                    guard let next = decoded[i] else { i += 1; continue }
+                    switch next {
+                    case .user(let u):
+                        if u.isMeta || u.isSidechain { i += 1; continue }
+                        guard case .parts(let parts) = u.message.content else {
+                            i = decoded.count  // string content = fresh user input
+                            continue
+                        }
+                        var hasText = false
+                        var resolvedAny = false
+                        for p in parts {
+                            switch p {
+                            case .text(let t):
+                                if !t.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+                                   !CLIMetaEnvelope.isEnvelope(t.trimmingCharacters(in: .whitespacesAndNewlines)) {
+                                    hasText = true
+                                }
+                            case .toolResult(let id, _, _):
+                                if pendingToolIds.contains(id) { resolvedAny = true }
+                            case .unknown:
+                                continue
+                            }
+                        }
+                        if hasText { i = decoded.count; continue }
+                        if resolvedAny { endIndex = i }
+                        i += 1
+                    case .assistant:
+                        i = decoded.count
+                    case .skip:
+                        i += 1
+                    }
+                }
+            }
+        }
+
+        let newSid = UUID().uuidString.lowercased()
+        let kept = rawLines[0...endIndex].map { Self.rewriteSessionId(in: $0, to: newSid) }
+        let newContent = kept.joined(separator: "\n") + "\n"
+
+        let newURL = directory.appendingPathComponent("\(newSid).jsonl")
+        do {
+            try newContent.data(using: .utf8)?.write(to: newURL, options: .atomic)
+            logger.debug("Forked session \(sid, privacy: .public) → \(newSid, privacy: .public) (\(kept.count, privacy: .public) lines)")
+            return newSid
+        } catch {
+            logger.error("forkSession write failed: \(error.localizedDescription, privacy: .public)")
+            return nil
+        }
+    }
+
+    private static func rewriteSessionId(in line: String, to newSid: String) -> String {
+        line.replacingOccurrences(
+            of: #""sessionId"\s*:\s*"[^"]*""#,
+            with: "\"sessionId\":\"\(newSid)\"",
+            options: .regularExpression
+        )
+    }
+
     // MARK: - Deletion
 
     /// Remove the CLI-owned jsonl for a session.

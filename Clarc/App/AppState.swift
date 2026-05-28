@@ -619,6 +619,10 @@ final class AppState {
             guard let self, let window else { return }
             await self.editAndResend(messageId: messageId, newContent: newContent, in: window)
         }
+        bridge.forkFromHereHandler = { [weak self, weak window] messageId in
+            guard let self, let window else { return }
+            await self.forkFromHere(messageId: messageId, in: window)
+        }
         bridge.fetchRateLimitHandler = {
             await RateLimitService.shared.fetchUsage()
         }
@@ -686,6 +690,56 @@ final class AppState {
         sessionStates.removeValue(forKey: window.newSessionKey)
         lastCommittedReloadKey.removeValue(forKey: window.newSessionKey)
         await sendPrompt(trimmed, skipAppendingUserMessage: true, initialMessages: snapshot, in: window)
+    }
+
+    // MARK: - Fork
+
+    /// Branch the current session at the selected message. Copies the CLI jsonl up
+    /// to (and including) the matching line into a fresh sid so the resumed
+    /// conversation keeps full prior context — the original session is left
+    /// untouched, and the window switches to the new branch.
+    func forkFromHere(messageId: UUID, in window: WindowState) async {
+        guard let sid = window.currentSessionId,
+              !window.pendingPlaceholderIds.contains(sid) else {
+            logger.warning("forkFromHere: no committed session to fork")
+            return
+        }
+        guard let project = window.selectedProject else { return }
+
+        let snapshot = sessionStates[sid]?.allMessages ?? []
+        guard let message = snapshot.first(where: { $0.id == messageId }) else { return }
+
+        if isStreaming(in: window) {
+            await cancelStreaming(in: window)
+        }
+
+        guard let newSid = await cliStore.forkSession(
+            fromSid: sid,
+            cwd: project.path,
+            atMessageTimestamp: message.timestamp,
+            role: message.role
+        ) else {
+            logger.error("forkFromHere: cliStore.forkSession returned nil")
+            return
+        }
+
+        // Normalize the copied jsonl so the branch shows up in the external
+        // `claude --resume` picker, matching how Clarc-spawned sessions are exposed.
+        await cliStore.exposeToPicker(sid: newSid, cwd: project.path)
+
+        guard let forked = await cliStore.loadFullSession(
+            sid: newSid,
+            cwd: project.path,
+            projectId: project.id
+        ) else {
+            logger.error("forkFromHere: failed to load forked session \(newSid)")
+            return
+        }
+
+        allSessionSummaries.removeAll { $0.id == newSid }
+        allSessionSummaries.insert(forked.summary, at: 0)
+        switchToSession(forked, messages: forked.messages, in: window)
+        window.requestInputFocus = true
     }
 
     // MARK: - Send Message
