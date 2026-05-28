@@ -218,9 +218,6 @@ struct MessageBubble: View {
                         userActionButton(systemName: isCopied ? "checkmark" : "doc.on.doc") {
                             copyToClipboard(message.content, feedback: $isCopied)
                         }
-                        userActionButton(systemName: "arrow.triangle.branch") {
-                            Task { await chatBridge.forkFromHere(messageId: message.id) }
-                        }
                         userActionButton(systemName: "pencil") {
                             editText = message.content
                             isEditing = true
@@ -329,13 +326,17 @@ struct MessageBubble: View {
     private func userActionButton(systemName: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: systemName)
-                .font(.system(size: ClaudeTheme.messageSize(9), weight: .medium))
+                .font(.system(size: ClaudeTheme.messageSize(11), weight: .medium))
                 .foregroundStyle(ClaudeTheme.textSecondary)
-                .frame(width: 20, height: 20)
-                .background(ClaudeTheme.surfaceSecondary.opacity(0.5), in: RoundedRectangle(cornerRadius: 5))
+                .frame(width: 24, height: 24)
+                .background(ClaudeTheme.surfaceSecondary, in: RoundedRectangle(cornerRadius: 6))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6)
+                        .strokeBorder(ClaudeTheme.border, lineWidth: 0.5)
+                )
         }
         .buttonStyle(.plain)
-        .opacity(0.6)
+        .opacity(0.8)
     }
 
     // MARK: - Transient Tool Helpers
