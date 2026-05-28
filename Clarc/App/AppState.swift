@@ -720,6 +720,10 @@ final class AppState {
             return
         }
 
+        // Normalize the copied jsonl so the branch shows up in the external
+        // `claude --resume` picker, matching how Clarc-spawned sessions are exposed.
+        await cliStore.exposeToPicker(sid: newSid, cwd: project.path)
+
         guard let forked = await cliStore.loadFullSession(
             sid: newSid,
             cwd: project.path,
