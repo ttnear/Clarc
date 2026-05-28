@@ -155,11 +155,20 @@ struct InputBarView<Accessory: View, TopAccessory: View>: View {
             accessory
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            if !showSlashPopup {
+            if chatBridge.isStreaming {
+                ClaudeSendButton(
+                    isEnabled: true,
+                    systemImageName: "stop.fill",
+                    accessibilityLabel: String(localized: "Stop streaming (cancel response generation)", bundle: .module)
+                ) {
+                    Task { await chatBridge.cancelStreaming() }
+                }
+            } else if !showSlashPopup {
                 ClaudeSendButton(
                     isEnabled: !windowState.inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                         || inputHasMarkedText
                         || !windowState.attachments.isEmpty,
+                    accessibilityLabel: String(localized: "Send message", bundle: .module),
                     action: sendMessage
                 )
                 .keyboardShortcut(.return, modifiers: .command)

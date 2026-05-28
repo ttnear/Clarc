@@ -193,16 +193,25 @@ public struct ClaudeSecondaryButtonStyle: ButtonStyle {
 
 public struct ClaudeSendButton: View {
     public let isEnabled: Bool
+    public let systemImageName: String
+    public let accessibilityLabel: String
     public let action: () -> Void
 
-    public init(isEnabled: Bool, action: @escaping () -> Void) {
+    public init(
+        isEnabled: Bool,
+        systemImageName: String = "arrow.up",
+        accessibilityLabel: String = "Send message",
+        action: @escaping () -> Void
+    ) {
         self.isEnabled = isEnabled
+        self.systemImageName = systemImageName
+        self.accessibilityLabel = accessibilityLabel
         self.action = action
     }
 
     public var body: some View {
         Button(action: action) {
-            Image(systemName: "arrow.up")
+            Image(systemName: systemImageName)
                 .font(.system(size: ClaudeTheme.size(14), weight: .semibold))
                 .foregroundStyle(.white)
                 .frame(width: 32, height: 32)
@@ -211,6 +220,7 @@ public struct ClaudeSendButton: View {
         }
         .buttonStyle(.plain)
         .disabled(!isEnabled)
+        .accessibilityLabel(Text(accessibilityLabel))
     }
 }
 
