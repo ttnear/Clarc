@@ -28,6 +28,13 @@ enum BashSafety {
         // comparison / text processing
         "diff", "cmp", "comm", "sort", "uniq", "cut", "awk", "sed",
         "jq", "yq", "xargs", "tr",
+        // code / archive inspection (read-only)
+        "tokei", "cloc", "tar", "unzip", "zip",
+        // binary / hash inspection (read-only)
+        "xxd", "hexdump", "od", "strings",
+        "shasum", "md5sum", "sha256sum", "base64",
+        // misc read-only utilities
+        "id", "groups", "rev", "time", "cal",
     ]
 
     private nonisolated static let gitMutatingSubcommands: Set<String> = [

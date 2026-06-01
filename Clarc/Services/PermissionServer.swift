@@ -245,6 +245,35 @@ actor PermissionServer {
             }
         }
 
+        // Phase 1 on-request approval: auto-approve file-modifying tools
+        // whose target path is inside the project root for the current
+        // session. Tool names are PascalCase (Edit/Write/MultiEdit) per
+        // the hook matcher. For MultiEdit, fall back to the first edit
+        // entry's file_path if the top-level one is missing.
+        if req.toolName == "Edit" || req.toolName == "Write" || req.toolName == "MultiEdit",
+           let sid = req.sessionId,
+           let projectKey = sessionRegistry[sid]?.projectKey,
+           let target = filePathForRequest(req),
+           PathContainment.isInside(parent: projectKey, child: target) {
+            return "Path inside project root"
+        }
+
+        return nil
+    }
+
+    /// Extracts the file path from Edit/Write/MultiEdit `tool_input`.
+    /// For MultiEdit, the top-level `file_path` is preferred; otherwise the
+    /// first edit entry's `file_path` is used as a fallback.
+    private func filePathForRequest(_ req: HookRequestBody) -> String? {
+        if let p = req.toolInput["file_path"]?.stringValue { return p }
+        if req.toolName == "MultiEdit",
+           let edits = req.toolInput["edits"]?.arrayValue {
+            for edit in edits {
+                if let obj = edit.objectValue, let p = obj["file_path"]?.stringValue {
+                    return p
+                }
+            }
+        }
         return nil
     }
 
