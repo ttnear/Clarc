@@ -1,0 +1,34 @@
+/* Simplified Chinese — zh-Hans localization for ClarcChatKit */
+
+// MARK: - ToolResultView
+"Show less" = "收起";
+"Show more" = "展开";
+
+// MARK: - SlashCommandManagerView
+"Imported %lld custom commands." = "已导入 %lld 条自定义命令。";
+"A command with this name already exists." = "已存在同名的命令。";
+"Restore modified default commands to their original state" = "将已修改的默认命令恢复到原始状态";
+"All modified default commands will be restored to their original state." = "所有已修改的默认命令都将恢复到原始状态。";
+"Clarc slash command export file." = "Clarc 斜杠命令导出文件。";
+"Usage:" = "用法:";
+"Edit the array below to add, remove, or change custom slash commands." = "编辑下方的数组,以添加、删除或修改自定义斜杠命令。";
+"The leading slash is optional while editing names; Clarc saves names without it." = "编辑名称时,前导斜杠是可选的;Clarc 保存时不会带斜杠。";
+"Built-in command names are ignored on import and are never exported." = "导入时会忽略内置命令名称,且不会导出内置命令。";
+"Each custom command supports these properties:" = "每个自定义命令支持以下属性:";
+"name: command name without the leading slash." = "name: 不带前导斜杠的命令名称。";
+"description: short text shown in the command picker." = "description: 显示在命令选择器中的简短说明。";
+"detailDescription: optional longer text shown in command details. Use null or omit it when empty." = "detailDescription: 显示在命令详情中的可选长说明。留空时使用 null 或省略。";
+"acceptsInput: true lets users type additional text after the command." = "acceptsInput: 设为 true 时,允许在命令后输入额外文本。";
+"isInteractive: true runs the command in the interactive terminal." = "isInteractive: 设为 true 时,在交互式终端中执行该命令。";
+"All properties example:" = "所有属性示例:";
+"Short description shown in the command picker" = "显示在命令选择器中的简短说明";
+"Optional longer description shown in command details" = "显示在命令详情中的可选长说明";
+"Clarc shortcut export file." = "Clarc 快捷按钮导出文件。";
+"Edit the array below to add, remove, or change shortcuts." = "编辑下方的数组,以添加、删除或修改快捷按钮。";
+"Each shortcut supports these properties:" = "每个快捷按钮支持以下属性:";
+"id: optional unique identifier (UUID). Auto-generated on import if omitted." = "id: 可选的唯一标识 (UUID)。导入时若省略则自动生成。";
+"name: label shown on the shortcut button." = "name: 显示在快捷按钮上的名称。";
+"message: text sent to Claude, or command run in the terminal." = "message: 发送给 Claude 的文本,或在终端中执行的命令。";
+"isTerminalCommand: true runs the message as a terminal command instead of sending it to chat." = "isTerminalCommand: 设为 true 时,将消息作为终端命令执行,而不是发送到对话。";
+"Shortcut button label" = "快捷按钮名称";
+"Message sent to Claude or command run in terminal" = "发送给 Claude 的消息或在终端中执行的命令";
