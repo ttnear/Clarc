@@ -229,6 +229,28 @@ final class AppState {
         didSet { UserDefaults.standard.set(focusMode, forKey: "focusMode") }
     }
 
+    // MARK: - Permission Auto-Deny Timeout
+
+    /// How long a pending permission request waits for user input before
+    /// Clarc auto-denies it. Default is 5 minutes (the pre-existing hard
+    /// coded behavior). Persisted across launches.
+    var autoDenyTimeout: AutoDenyTimeout = {
+        if let raw = UserDefaults.standard.string(forKey: "autoDenyTimeout"),
+           let value = AutoDenyTimeout(rawValue: raw) {
+            return value
+        }
+        return .fiveMinutes
+    }() {
+        didSet {
+            UserDefaults.standard.set(autoDenyTimeout.rawValue, forKey: "autoDenyTimeout")
+            // Push the new value into the running PermissionServer so
+            // future hook requests pick it up without an app restart.
+            Task { [weak self] in
+                await self?.permission.updateTimeoutSeconds(self?.autoDenyTimeout.seconds ?? 300)
+            }
+        }
+    }
+
     // MARK: - Attachment Auto-Preview Settings
 
     private static let autoPreviewSettingsKey = "attachmentAutoPreviewSettings"

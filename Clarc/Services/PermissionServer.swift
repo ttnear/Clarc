@@ -14,7 +14,13 @@ actor PermissionServer {
 
     private static let basePort: UInt16 = 19836
     private static let maxPort: UInt16 = 19846
-    private static let timeoutSeconds: UInt64 = 300 // 5 minutes
+    /// Default if no timeout has been pushed in yet (5 minutes — the
+    /// pre-existing hard coded value). The instance property below
+    /// holds the live value; this constant is kept only as a comment
+    /// anchor for the historical behavior. Note: an instance property
+    /// initializer cannot reference `Self`, so the literal `300` is
+    /// duplicated here.
+    private static let defaultTimeoutSeconds: UInt64 = 300
 
     // MARK: - Properties
 
@@ -64,9 +70,35 @@ actor PermissionServer {
     /// Per-subscriber broadcast continuations. One is issued per window via subscribe().
     private var subscribers: [UUID: AsyncStream<PermissionRequest>.Continuation] = [:]
 
+    /// Per-instance auto-deny timeout, in seconds. Default 5 minutes (the
+    /// pre-existing behavior). Updated at runtime by ``updateTimeoutSeconds(_:)``
+    /// when the user changes the corresponding setting — the new value
+    /// applies to any hook request that arrives after the update, and
+    /// any in-flight timeout task that hasn't already fired is cancelled
+    /// and rescheduled by the caller.
+    private var timeoutSeconds: UInt64 = 300
+
     // MARK: - Init
 
     init() {}
+
+    // MARK: - Timeout
+
+    /// Push a new auto-deny timeout (in seconds) into this server.
+    /// Called by ``AppState`` when the user changes the corresponding
+    /// setting in Settings → General. Future hook requests use this
+    /// value; in-flight timeout tasks are not retroactively rescheduled.
+    func updateTimeoutSeconds(_ seconds: Int) {
+        let clamped = max(1, seconds)
+        self.timeoutSeconds = UInt64(clamped)
+    }
+
+    /// Current auto-deny timeout in seconds. Used by the per-request
+    /// timeout task so it can read the latest value at sleep time
+    /// rather than capturing a snapshot.
+    func currentTimeoutSeconds() -> UInt64 {
+        self.timeoutSeconds
+    }
 
     // MARK: - Subscription
 
@@ -310,7 +342,7 @@ actor PermissionServer {
                             [
                                 "type": "http",
                                 "url": url,
-                                "timeout": 300
+                                "timeout": Int(self.timeoutSeconds)
                             ]
                         ]
                     ]
@@ -431,7 +463,8 @@ actor PermissionServer {
                     updatedInput: nil
                 )
                 timeoutTasks[toolUseId] = Task { [weak self] in
-                    try? await Task.sleep(nanoseconds: UInt64(Self.timeoutSeconds) * 1_000_000_000)
+                    guard let seconds = await self?.currentTimeoutSeconds() else { return }
+                    try? await Task.sleep(nanoseconds: seconds * 1_000_000_000)
                     guard !Task.isCancelled else { return }
                     await self?.cancelPendingIfNeeded(toolUseId: toolUseId)
                 }

@@ -68,6 +68,8 @@ struct GeneralSettingsTab: View {
                 Divider()
                 notificationsSection(appState: $appState.notificationsEnabled)
                 Divider()
+                permissionSection(timeout: $appState.autoDenyTimeout)
+                Divider()
                 VStack(alignment: .leading, spacing: 8) {
                     skillMarketSection
                     helpSection
@@ -179,6 +181,27 @@ struct GeneralSettingsTab: View {
             detail: "Sends a system notification while Clarc is in the background.",
             isOn: appState
         )
+    }
+
+    // MARK: - Permission Section
+
+    private func permissionSection(timeout: Binding<AutoDenyTimeout>) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Permission Auto-Deny")
+                .font(.system(size: ClaudeTheme.size(13), weight: .semibold))
+
+            Picker("Auto-deny after", selection: timeout) {
+                ForEach(AutoDenyTimeout.allCases, id: \.self) { value in
+                    Text(value.displayName).tag(value)
+                }
+            }
+            .pickerStyle(.menu)
+
+            Text("How long a pending permission request waits for your decision before Clarc denies it automatically. Choose a longer window or “Don’t auto-deny” if you step away from the keyboard.")
+                .font(.system(size: ClaudeTheme.size(11)))
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
     }
 
     // MARK: - Theme Section

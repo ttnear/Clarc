@@ -7,10 +7,18 @@ struct PermissionModal: View {
     @Environment(WindowState.self) private var windowState
     let request: PermissionRequest
 
-    @State private var remainingSeconds: Int = 300
+    @State private var remainingSeconds: Int
     @FocusState private var isFocused: Bool
 
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
+    init(request: PermissionRequest) {
+        self.request = request
+        // Seed the countdown from the app-wide setting. The value is
+        // re-read in onAppear so the modal reflects the live setting
+        // even if the user changes it while a request is pending.
+        self._remainingSeconds = State(initialValue: 300)
+    }
 
     var body: some View {
         VStack(spacing: 20) {
@@ -31,8 +39,13 @@ struct PermissionModal: View {
             Task { await appState.respondToPermission(request, decision: .allow, in: windowState) }
             return .handled
         }
-        .onAppear { isFocused = true }
+        .onAppear {
+            isFocused = true
+            remainingSeconds = appState.autoDenyTimeout.seconds
+        }
         .onReceive(timer) { _ in
+            // No countdown when the user opted out of auto-deny entirely.
+            guard !appState.autoDenyTimeout.isUnlimited else { return }
             if remainingSeconds > 0 {
                 remainingSeconds -= 1
             } else {
@@ -112,9 +125,15 @@ struct PermissionModal: View {
                 .font(.caption)
                 .foregroundStyle(ClaudeTheme.textTertiary)
 
-            Text("Auto-deny in \(formattedTime)")
-                .font(.caption)
-                .foregroundStyle(ClaudeTheme.textTertiary)
+            if appState.autoDenyTimeout.isUnlimited {
+                Text("No auto-deny")
+                    .font(.caption)
+                    .foregroundStyle(ClaudeTheme.textTertiary)
+            } else {
+                Text("Auto-deny in \(formattedTime)")
+                    .font(.caption)
+                    .foregroundStyle(ClaudeTheme.textTertiary)
+            }
         }
     }
 
