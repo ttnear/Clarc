@@ -46,23 +46,30 @@ jobs:
           echo "Building Clarc v$VERSION"
 
       - name: Select Xcode
-        # The .xcodeproj uses file format 77 (Xcode 16+), so pin to Xcode 16
-        # on the macos-14 runner. The runner images ship multiple Xcode
-        # versions under /Applications; if a particular label is missing
-        # we fall back to the highest installed.
+        # Package.swift declares swift-tools-version 6.2, which Xcode 16.0/16.1
+        # don't ship (they have Swift 6.0). macos-15's default is Xcode 16.4,
+        # which works. Walk the label list newest → oldest.
         run: |
           set -eux
-          if [ -d "/Applications/Xcode_16.app" ]; then
-            sudo xcode-select -s "/Applications/Xcode_16.app/Contents/Developer"
-          elif [ -d "/Applications/Xcode_16.2.app" ]; then
-            sudo xcode-select -s "/Applications/Xcode_16.2.app/Contents/Developer"
-          elif [ -d "/Applications/Xcode_16.0.app" ]; then
-            sudo xcode-select -s "/Applications/Xcode_16.0.app/Contents/Developer"
-          else
-            # Fall back to whatever's installed and hope it's new enough.
-            echo "::warning::No known Xcode 16.x label found; using $(xcode-select -p)"
-          fi
+          for label in \
+            "/Applications/Xcode_26.3.app" \
+            "/Applications/Xcode_26.2.app" \
+            "/Applications/Xcode_26.1.1.app" \
+            "/Applications/Xcode_26.0.1.app" \
+            "/Applications/Xcode_16.4.app" \
+            "/Applications/Xcode_16.3.app" \
+            "/Applications/Xcode_16.2.app" \
+            "/Applications/Xcode_16.1.app" \
+            "/Applications/Xcode_16.app"
+          do
+            if [ -d "$label" ]; then
+              echo "Selecting $label"
+              sudo xcode-select -s "$label/Contents/Developer"
+              break
+            fi
+          done
           xcodebuild -version
+          swift --version
 
       - name: Build (Release, ad-hoc signed)
         run: |
