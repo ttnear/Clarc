@@ -1176,7 +1176,12 @@ final class AppState {
                     if let model = systemEvent.model {
                         updateState(sessionKey) { $0.activeModelName = model }
                     }
-                    if let sid = systemEvent.sessionId {
+                    // Only the `init` event carries the authoritative conversation session id.
+                    // Hook lifecycle events (hook_started/hook_response) are emitted with the
+                    // SessionStart hook's own session id — treating those as the conversation
+                    // would re-key state to a bogus id and insert a phantom history entry that
+                    // vanishes when the turn ends and the list is rebuilt from disk.
+                    if systemEvent.subtype == "init", let sid = systemEvent.sessionId {
                         await permission.registerSession(sid: sid, projectKey: cwd, mode: permissionMode)
                         if sessionKey != sid {
                             let oldKey = sessionKey
