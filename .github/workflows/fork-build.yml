@@ -1,0 +1,127 @@
+name: Build Clarc (fork)
+
+# Fork-only CI for the dttxorg/Clarc fork.
+#
+# Triggers:
+#   - Tag push matching v* (e.g. v1.3.2-fork.1): build + sign + zip + GitHub Release
+#   - Manual dispatch (workflow_dispatch): build + sign + zip, attach to a "fork-preview" run
+#
+# This workflow does NOT notarize (no Apple Developer ID available in fork).
+# The output is ad-hoc-signed; users will need to right-click → Open on first launch.
+# This is a fork convenience build, not a redistribution channel.
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Marketing version (e.g. 1.3.2-fork.1)'
+        required: true
+        default: '1.3.2-fork.1'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build & Release
+    runs-on: macos-14
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show resolved version
+        id: version
+        run: |
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
+            VERSION="${{ inputs.version }}"
+          else
+            VERSION="${GITHUB_REF_NAME#v}"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Building Clarc v$VERSION"
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+
+      - name: Build (Release, ad-hoc signed)
+        run: |
+          set -euxo pipefail
+          xcodebuild \
+            -project Clarc.xcodeproj \
+            -scheme Clarc \
+            -configuration Release \
+            -destination 'generic/platform=macOS' \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            -derivedDataPath build/DerivedData \
+            build | tee build/xcodebuild.log
+          # Locate the produced .app
+          APP_PATH=$(find build/DerivedData/Build/Products/Release -maxdepth 2 -name "Clarc.app" -type d | head -n1)
+          if [ -z "$APP_PATH" ]; then
+            echo "::error::Clarc.app not found under build/DerivedData/Build/Products/Release"
+            exit 1
+          fi
+          echo "APP_PATH=$APP_PATH" >> "$GITHUB_ENV"
+          echo "Built: $APP_PATH"
+
+      - name: Package zip
+        run: |
+          set -euxo pipefail
+          ZIP_NAME="Clarc-${{ steps.version.outputs.version }}.zip"
+          # Match upstream's safe-zip flags (see scripts/build_zip.sh comment re: AppleDouble)
+          ditto -c -k --keepParent --norsrc --noextattr --noqtn \
+            "$APP_PATH" \
+            "build/$ZIP_NAME"
+          ls -lh "build/$ZIP_NAME"
+          echo "ZIP_NAME=$ZIP_NAME" >> "$GITHUB_ENV"
+
+      - name: Upload artifact (always)
+        uses: actions/upload-artifact@v4
+        with:
+          name: clarc-fork-build
+          path: build/Clarc-*.zip
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Create GitHub Release (tag push only)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Clarc ${{ steps.version.outputs.version }} (fork build)"
+          draft: true
+          generate_release_notes: true
+          body: |
+            ## ⚠️ Fork build — not an official release
+
+            This build was produced by the [dttxorg/Clarc](https://github.com/dttxorg/Clarc) fork
+            because the upstream PR ([ttnear/Clarc#16](https://github.com/ttnear/Clarc/pull/16))
+            that adds the on-request auto-approval feature has not yet been merged.
+
+            **What you get**
+            - Auto-approval of `Edit`/`Write`/`MultiEdit` whose target path is inside the
+              registered project root (see PR #16 for details).
+            - 16 additional read-only Bash commands added to the safety whitelist
+              (`tokei`, `cloc`, `tar`, `unzip`, `zip`, `xxd`, `hexdump`, `od`, `strings`,
+              `shasum`, `md5sum`, `sha256sum`, `base64`, `id`, `groups`, `rev`, `time`, `cal`).
+
+            **Install**
+            1. Download `Clarc-${{ steps.version.outputs.version }}.zip` below.
+            2. Unzip and drag `Clarc.app` to `/Applications`.
+            3. On first launch, right-click `Clarc.app` → **Open** → confirm the Gatekeeper prompt
+               (the build is **ad-hoc signed**, not notarized with an Apple Developer ID).
+            4. After the first launch, normal double-click works.
+
+            **Caveats**
+            - Sparkle auto-updater will not see this build as an update — it points to the
+              upstream `ttnear/Clarc` appcast. Disable "Check for updates" in the in-app
+              Update menu, or replace the installed app manually when a new fork build ships.
+            - No Apple notarization. macOS Gatekeeper will require the right-click-open
+              workaround on every fresh install.
+          files: |
+            build/Clarc-*.zip
