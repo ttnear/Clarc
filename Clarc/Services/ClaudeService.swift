@@ -70,6 +70,13 @@ actor ClaudeService {
     /// cannot locate Node.
     private var cachedShellPath: String?
 
+    /// Cached env dictionary exported by the user's interactive login shell.
+    /// Built once on first use. macOS GUI processes do not inherit the
+    /// user's `~/.zshrc` exports, so third-party routing variables
+    /// (e.g. `ANTHROPIC_API_KEY`, `ANTHROPIC_BASE_URL`) silently disappear
+    /// unless we re-read the login shell.
+    private var cachedShellEnv: [String: String]?
+
     /// Compose a PATH that lets the spawned `claude` CLI find `node` and
     /// related tools regardless of where the user installed them.
     ///
@@ -146,12 +153,52 @@ actor ClaudeService {
         return nil
     }
 
-    /// Build the full environment dictionary for spawned subprocesses,
-    /// inheriting the GUI environment but with PATH replaced by ``resolvedShellPath()``.
+    /// Build the full environment dictionary for spawned subprocesses.
+    ///
+    /// Starts from the GUI process's env, then layers the user's login shell
+    /// exports on top so that third-party routing variables
+    /// (e.g. `ANTHROPIC_API_KEY`, `ANTHROPIC_BASE_URL`) reach the spawned
+    /// `claude` CLI. PATH is always overridden with ``resolvedShellPath()``
+    /// since the curated PATH survives the GUI launch context better than
+    /// the raw shell PATH for this use case.
     private func resolvedEnvironment() async -> [String: String] {
         var env = ProcessInfo.processInfo.environment
+        if let shellEnv = await readUserShellEnv() {
+            for (key, value) in shellEnv where key != "PATH" { env[key] = value }
+        }
         env["PATH"] = await resolvedShellPath()
         return env
+    }
+
+    /// Read all env vars exported by the user's interactive login shell.
+    ///
+    /// Uses `zsh -ilc "env -0"` so the user's `.zshrc` (and `nvm`/`asdf` init
+    /// it typically sources) is loaded and `export FOO=bar` lines are visible.
+    /// The `-0` flag produces NUL-separated records, robust to spaces and
+    /// newlines inside values. Result is cached for the service lifetime.
+    private func readUserShellEnv() async -> [String: String]? {
+        if let cached = cachedShellEnv { return cached }
+        do {
+            let output = try await runShellCommand(
+                "/bin/zsh",
+                arguments: ["-ilc", "env -0"],
+                injectPath: false
+            )
+            var parsed: [String: String] = [:]
+            for entry in output.split(separator: "\0", omittingEmptySubsequences: true) {
+                guard let eq = entry.firstIndex(of: "=") else { continue }
+                let key = String(entry[..<eq])
+                let value = String(entry[entry.index(after: eq)...])
+                parsed[key] = value
+            }
+            if parsed.isEmpty { return nil }
+            cachedShellEnv = parsed
+            logger.info("Resolved shell env for subprocess (entries=\(parsed.count))")
+            return parsed
+        } catch {
+            logger.warning("Failed to read user shell env: \(error.localizedDescription)")
+            return nil
+        }
     }
 
     // MARK: - Binary Discovery

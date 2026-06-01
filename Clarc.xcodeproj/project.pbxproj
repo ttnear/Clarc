@@ -179,6 +179,7 @@
 			knownRegions = (
 				en,
 				ko,
+				zh-Hans,
 				Base,
 			);
 			mainGroup = E673352F2F7356F600FD26C7;
