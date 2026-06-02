@@ -357,7 +357,9 @@ struct GeneralSettingsTab: View {
             appState.usageEndpointFiveHourPath = nil
             appState.usageEndpointSevenDayPath = nil
         case .minimax:
-            if let ep = appState.usageEndpoint, ep.isEmpty,
+            // usageEndpoint is `String?`; setter normalizes "" to nil.
+            // Pre-fill only when the user has not typed anything.
+            if appState.usageEndpoint == nil,
                let def = UsageProvider.minimax.defaultEndpoint {
                 appState.usageEndpoint = def
             }
