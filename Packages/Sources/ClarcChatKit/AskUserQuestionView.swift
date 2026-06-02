@@ -22,8 +22,10 @@ struct AskUserQuestionView: View {
 
                 if hasAnswer {
                     answerBadge
+                } else if question.multiSelect {
+                    multiSelectList(question)
                 } else {
-                    optionsList(question)
+                    singleSelectList(question)
                 }
             }
             .bubbleStyle(.tool)
@@ -76,38 +78,136 @@ struct AskUserQuestionView: View {
     }
 
     @ViewBuilder
-    private func optionsList(_ question: AskUserQuestion.Question) -> some View {
+    private func singleSelectList(_ question: AskUserQuestion.Question) -> some View {
         VStack(spacing: 6) {
             ForEach(question.options) { option in
                 Button {
                     windowState.answerQuestionHandler?(toolCall.id, option.label)
                 } label: {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(option.label)
-                            .font(.system(size: ClaudeTheme.messageSize(13), weight: .medium))
-                            .foregroundStyle(ClaudeTheme.textPrimary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        if let desc = option.description, !desc.isEmpty {
-                            Text(desc)
-                                .font(.system(size: ClaudeTheme.messageSize(11)))
-                                .foregroundStyle(ClaudeTheme.textSecondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                    }
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 8)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(ClaudeTheme.surfaceSecondary)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .strokeBorder(ClaudeTheme.border, lineWidth: 1)
-                    )
+                    optionRow(label: option.label, description: option.description)
                 }
                 .buttonStyle(.plain)
             }
+        }
+    }
+
+    @ViewBuilder
+    private func multiSelectList(_ question: AskUserQuestion.Question) -> some View {
+        MultiSelectOptionsList(
+            question: question,
+            onSubmit: { selectedLabels in
+                windowState.answerQuestionHandler?(toolCall.id, selectedLabels.joined(separator: ", "))
+            }
+        )
+    }
+
+    @ViewBuilder
+    private func optionRow(label: String, description: String?) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(label)
+                .font(.system(size: ClaudeTheme.messageSize(13), weight: .medium))
+                .foregroundStyle(ClaudeTheme.textPrimary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            if let desc = description, !desc.isEmpty {
+                Text(desc)
+                    .font(.system(size: ClaudeTheme.messageSize(11)))
+                    .foregroundStyle(ClaudeTheme.textSecondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(ClaudeTheme.surfaceSecondary)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .strokeBorder(ClaudeTheme.border, lineWidth: 1)
+        )
+    }
+}
+
+// MARK: - Multi-Select List
+
+/// Checkbox list + Submit button. Lifted into its own view so the
+/// `@State` Set<String> is local to the list (the parent re-renders
+/// on every tick and would otherwise reset the selection).
+private struct MultiSelectOptionsList: View {
+    let question: AskUserQuestion.Question
+    let onSubmit: ([String]) -> Void
+
+    @State private var selected: Set<String> = []
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            VStack(spacing: 6) {
+                ForEach(question.options) { option in
+                    Button {
+                        if selected.contains(option.label) {
+                            selected.remove(option.label)
+                        } else {
+                            selected.insert(option.label)
+                        }
+                    } label: {
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: selected.contains(option.label) ? "checkmark.square.fill" : "square")
+                                .font(.system(size: ClaudeTheme.messageSize(14), weight: .medium))
+                                .foregroundStyle(selected.contains(option.label) ? ClaudeTheme.accent : ClaudeTheme.textSecondary)
+                                .frame(width: 16, alignment: .center)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(option.label)
+                                    .font(.system(size: ClaudeTheme.messageSize(13), weight: .medium))
+                                    .foregroundStyle(ClaudeTheme.textPrimary)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                if let desc = option.description, !desc.isEmpty {
+                                    Text(desc)
+                                        .font(.system(size: ClaudeTheme.messageSize(11)))
+                                        .foregroundStyle(ClaudeTheme.textSecondary)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 8)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(ClaudeTheme.surfaceSecondary)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(
+                                    selected.contains(option.label) ? ClaudeTheme.accent : ClaudeTheme.border,
+                                    lineWidth: selected.contains(option.label) ? 1.5 : 1
+                                )
+                        )
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+
+            Button {
+                // Preserve the original question.options order in the
+                // submitted list (Set is unordered).
+                let ordered = question.options.map(\.label).filter { selected.contains($0) }
+                onSubmit(ordered)
+            } label: {
+                Text("Submit")
+                    .font(.system(size: ClaudeTheme.messageSize(13), weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(selected.isEmpty
+                                  ? ClaudeTheme.textSecondary.opacity(0.4)
+                                  : ClaudeTheme.accent)
+                    )
+            }
+            .buttonStyle(.plain)
+            .disabled(selected.isEmpty)
         }
     }
 }
