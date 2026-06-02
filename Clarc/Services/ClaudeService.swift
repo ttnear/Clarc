@@ -467,11 +467,22 @@ actor ClaudeService {
             "--include-partial-messages",
         ]
 
+        // Map Clarc's `.fullAccess` to the CLI's `bypassPermissions` token;
+        // the wildcard `--allowedTools "*"` (emitted below) carries the
+        // "all tools pre-approved" semantics that distinguishes it from
+        // plain bypass.
         if permissionMode != .default {
-            args += ["--permission-mode", permissionMode.rawValue]
+            args += ["--permission-mode", permissionMode.cliPermissionModeValue]
         }
 
-        if !permissionMode.skipsHookPipeline {
+        if permissionMode.usesWildcardAllowedTools {
+            // Wildcard pre-approves every tool at the CLI layer so no tool
+            // call ever blocks on the permission modal. The hook pipeline
+            // is skipped (skipsHookPipeline == true) so we never write
+            // PreToolUse hook settings — there's nothing for the hook to
+            // intercept.
+            args += ["--allowedTools", "*"]
+        } else if !permissionMode.skipsHookPipeline {
             // Pre-approve safe tools that don't need to go through hooks via --allowedTools.
             // This eliminates HTTP round-trips from internal agent mechanics like Read/Grep/Task,
             // since no approval UI is shown for these.
