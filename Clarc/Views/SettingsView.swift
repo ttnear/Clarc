@@ -766,16 +766,82 @@ private struct ThemePickerRow: View {
     }
 }
 
-// MARK: - Usage Settings View Model (stub; filled in by Task 12)
+// MARK: - Usage Settings View Model
 
 @MainActor
 @Observable
 final class UsageSettingsViewModel {
+
     enum TestState {
         case idle
         case running
+        case success(http: Int, usage: RateLimitUsage, rawJSON: Data, endpoint: String)
+        case failure(http: Int?, message: String, rawJSON: Data?, endpoint: String)
     }
+
     var testState: TestState = .idle
+
+    func test(appState: AppState) async {
+        testState = .running
+        let endpoint = appState.usageEndpoint?.isEmpty == false
+            ? appState.usageEndpoint
+            : appState.usageProvider.defaultEndpoint
+
+        let config = UsageQueryConfig(
+            provider: appState.usageProvider,
+            endpoint: endpoint,
+            bearerToken: appState.usageEndpointBearerToken,
+            fiveHourPath: appState.usageEndpointFiveHourPath,
+            sevenDayPath: appState.usageEndpointSevenDayPath
+        )
+
+        do {
+            let outcome = try await UsageAdapterFactory
+                .make(provider: config.provider)
+                .fetch(config: config)
+            testState = .success(
+                http: outcome.httpStatus,
+                usage: outcome.usage,
+                rawJSON: outcome.rawJSON,
+                endpoint: outcome.endpointURL
+            )
+        } catch UsageError.http(let status, let body) {
+            testState = .failure(
+                http: status,
+                message: "HTTP \(status)",
+                rawJSON: body,
+                endpoint: endpoint ?? "(none)"
+            )
+        } catch UsageError.invalidURL {
+            testState = .failure(
+                http: nil,
+                message: "Invalid URL",
+                rawJSON: nil,
+                endpoint: endpoint ?? "(none)"
+            )
+        } catch UsageError.malformedJSON {
+            testState = .failure(
+                http: nil,
+                message: "Response is not valid JSON",
+                rawJSON: nil,
+                endpoint: endpoint ?? "(none)"
+            )
+        } catch UsageError.missingField(let path) {
+            testState = .failure(
+                http: nil,
+                message: "Missing field: \(path)",
+                rawJSON: nil,
+                endpoint: endpoint ?? "(none)"
+            )
+        } catch {
+            testState = .failure(
+                http: nil,
+                message: error.localizedDescription,
+                rawJSON: nil,
+                endpoint: endpoint ?? "(none)"
+            )
+        }
+    }
 }
 
 private struct TestEndpointSheet: View {
@@ -783,12 +849,141 @@ private struct TestEndpointSheet: View {
     let appState: AppState
     @Binding var isPresented: Bool
 
+    @State private var didRun = false
+
     var body: some View {
-        VStack {
-            Text("Test Endpoint sheet — coming next")
-            Button("Close") { isPresented = false }
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("Test Result").font(.headline)
+                Spacer()
+                Button("Close") { isPresented = false }
+            }
+
+            content
+
+            Spacer(minLength: 0)
         }
-        .frame(width: 480, height: 320)
+        .padding(20)
+        .frame(width: 540, height: 480)
+        .task(id: didRun) {
+            if !didRun {
+                didRun = true
+                await viewModel.test(appState: appState)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        switch viewModel.testState {
+        case .idle, .running:
+            HStack {
+                ProgressView()
+                Text("Sending request…")
+            }
+        case .success(let http, let usage, let rawJSON, let endpoint):
+            successBody(http: http, usage: usage, rawJSON: rawJSON, endpoint: endpoint)
+        case .failure(let http, let message, let rawJSON, let endpoint):
+            failureBody(http: http, message: message, rawJSON: rawJSON, endpoint: endpoint)
+        }
+    }
+
+    @ViewBuilder
+    private func successBody(
+        http: Int, usage: RateLimitUsage, rawJSON: Data, endpoint: String
+    ) -> some View {
+        statusBadge(ok: true, text: "HTTP \(http)")
+        Text("Endpoint: \(endpoint)")
+            .font(.system(size: 11, design: .monospaced))
+            .foregroundStyle(.secondary)
+        HStack(spacing: 24) {
+            metric(label: "5h Utilization", value: String(format: "%.1f%%", usage.fiveHourPercent))
+            metric(label: "7d Utilization", value: String(format: "%.1f%%", usage.sevenDayPercent))
+        }
+        if usage.fiveHourResetsAt != nil || usage.sevenDayResetsAt != nil {
+            HStack(spacing: 24) {
+                if let d = usage.fiveHourResetsAt {
+                    metric(label: "5h Resets", value: d.formatted(.relative(presentation: .named)))
+                }
+                if let d = usage.sevenDayResetsAt {
+                    metric(label: "7d Resets", value: d.formatted(.relative(presentation: .named)))
+                }
+            }
+        }
+        rawSection(rawJSON: rawJSON)
+    }
+
+    @ViewBuilder
+    private func failureBody(
+        http: Int?, message: String, rawJSON: Data?, endpoint: String
+    ) -> some View {
+        statusBadge(ok: false, text: http.map { "HTTP \($0)" } ?? "Error")
+        Text("Endpoint: \(endpoint)")
+            .font(.system(size: 11, design: .monospaced))
+            .foregroundStyle(.secondary)
+        Text(message)
+            .font(.system(size: 12))
+            .foregroundStyle(.red)
+        if let rawJSON {
+            rawSection(rawJSON: rawJSON)
+        }
+    }
+
+    private func statusBadge(ok: Bool, text: String) -> some View {
+        Text(text)
+            .font(.system(size: 12, weight: .semibold))
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background((ok ? Color.green : Color.red).opacity(0.15))
+            .foregroundStyle(ok ? Color.green : Color.red)
+            .clipShape(RoundedRectangle(cornerRadius: 6))
+    }
+
+    private func metric(label: String, value: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(label).font(.system(size: 11)).foregroundStyle(.secondary)
+            Text(value).font(.system(size: 14, weight: .medium))
+        }
+    }
+
+    @ViewBuilder
+    private func rawSection(rawJSON: Data) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text("Raw Response").font(.system(size: 11, weight: .semibold))
+                Spacer()
+                Button("Copy") {
+                    let pb = NSPasteboard.general
+                    pb.clearContents()
+                    pb.setString(prettify(rawJSON), forType: .string)
+                }
+                .buttonStyle(.plain)
+                .font(.system(size: 11))
+            }
+            ScrollView {
+                Text(prettify(rawJSON))
+                    .font(.system(size: 11, design: .monospaced))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .textSelection(.enabled)
+            }
+            .frame(maxHeight: 220)
+            .background(Color(NSColor.textBackgroundColor))
+            .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(Color(NSColor.separatorColor)))
+        }
+    }
+
+    private func prettify(_ data: Data) -> String {
+        guard
+            let obj = try? JSONSerialization.jsonObject(with: data),
+            let pretty = try? JSONSerialization.data(
+                withJSONObject: obj,
+                options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+            ),
+            let str = String(data: pretty, encoding: .utf8)
+        else {
+            return String(data: data, encoding: .utf8) ?? ""
+        }
+        return str
     }
 }
 
