@@ -383,37 +383,16 @@ struct GeneralSettingsTab: View {
     // MARK: - Source Code Section
 
     private var sourceCodeSection: some View {
+        // MiniClarc is a hard fork of upstream ttnear/Clarc, but we don't
+        // surface that in the in-app UI. The Apache 2.0 attribution and
+        // upstream URL remain in `NOTICE` and `FORK.md` at the repository
+        // root for anyone who audits the source distribution.
         VStack(spacing: 8) {
-            // Current fork (MiniClarc) — where users can file issues and find releases.
             Link(destination: URL(string: "https://github.com/dttxorg/MiniClarc")!) {
                 linkRow(
                     icon: "chevron.left.forwardslash.chevron.right",
-                    title: "MiniClarc",
+                    title: "Open Source",
                     subtitle: "github.com/dttxorg/MiniClarc"
-                )
-            }
-            .buttonStyle(.plain)
-
-            // Upstream attribution — Apache 2.0 §4d allows acknowledgements, only
-            // forbids using the upstream name to imply endorsement. We always show
-            // the upstream URL so users know where the original work came from.
-            Link(destination: URL(string: "https://github.com/ttnear/Clarc")!) {
-                linkRow(
-                    icon: "arrow.triangle.branch",
-                    title: "Upstream (ttnear/Clarc)",
-                    subtitle: "github.com/ttnear/Clarc"
-                )
-            }
-            .buttonStyle(.plain)
-
-            // Apache 2.0 LICENSE — Section 4a of the license requires that the
-            // LICENSE text accompany all distributions. The link points to the
-            // file in the same repository so users can always find the full text.
-            Link(destination: URL(string: "https://github.com/dttxorg/MiniClarc/blob/main/LICENSE")!) {
-                linkRow(
-                    icon: "doc.text",
-                    title: "Apache License 2.0",
-                    subtitle: "View full license text"
                 )
             }
             .buttonStyle(.plain)
