@@ -318,6 +318,18 @@ final class AppState {
         }
     }
 
+    /// Identifies which `UsageAdapter` is used for usage fetches.
+    /// Persisted in UserDefaults as the enum's raw string.
+    var usageProvider: UsageProvider {
+        get {
+            UserDefaults.standard.string(forKey: "usageProvider")
+                .flatMap(UsageProvider.init(rawValue:)) ?? .anthropic
+        }
+        set {
+            UserDefaults.standard.set(newValue.rawValue, forKey: "usageProvider")
+        }
+    }
+
     // MARK: - Permission Auto-Deny Timeout
 
     /// How long a pending permission request waits for user input before
@@ -491,6 +503,7 @@ final class AppState {
     let directoryWatcher = DirectoryWatcher()
 
     init() {
+        migrateUsageProvider()
         let metaStore = self.metaStore
         let cliStore = CLISessionStore(metaStore: metaStore)
         self.cliStore = cliStore
@@ -522,6 +535,21 @@ final class AppState {
     }
 
     // MARK: - Private State
+
+    // MARK: - Migrations
+
+    private static let didMigrateUsageProviderKey = "usageProviderMigrated"
+
+    private func migrateUsageProvider() {
+        guard !UserDefaults.standard.bool(forKey: Self.didMigrateUsageProviderKey) else { return }
+        UserDefaults.standard.set(true, forKey: Self.didMigrateUsageProviderKey)
+        // If the user had a non-empty custom endpoint before this feature
+        // existed, treat them as a "custom" provider so their config keeps
+        // working. New users get the default (.anthropic).
+        if let ep = usageEndpoint, !ep.isEmpty {
+            usageProvider = .custom
+        }
+    }
 
     // MARK: - Window-Scoped Session State Accessors
 
@@ -736,10 +764,11 @@ final class AppState {
         }
         bridge.fetchRateLimitHandler = {
             await RateLimitService.shared.fetchUsage(
-                customEndpoint: self.usageEndpoint,
-                customBearerToken: self.usageEndpointBearerToken,
-                customFiveHourPath: self.usageEndpointFiveHourPath,
-                customSevenDayPath: self.usageEndpointSevenDayPath
+                provider: self.usageProvider,
+                endpoint: self.usageEndpoint,
+                bearerToken: self.usageEndpointBearerToken,
+                fiveHourPath: self.usageEndpointFiveHourPath,
+                sevenDayPath: self.usageEndpointSevenDayPath
             )
         }
 
