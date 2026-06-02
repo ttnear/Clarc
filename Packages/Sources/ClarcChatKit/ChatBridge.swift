@@ -20,10 +20,12 @@ public final class ChatBridge {
     public var messages: [ChatMessage] = []
     public var isStreaming: Bool = false
     public var isThinking: Bool = false
-    /// The phase of the in-flight content block (e.g. thinking / toolUse /
-    /// toolResult / text). Pushed by AppState at each `content_block_start`
-    /// event so the UI can label and auto-collapse completed non-text phases.
-    public var currentPhase: StreamPhase?
+    /// Per-turn summaries for completed assistant turns, oldest first. Pushed
+    /// by AppState when `finalizeStreamSession` runs. The most recent (last
+    /// element) is the "current phase" — its messages stream live and its
+    /// summary is generated on completion. Older entries are auto-collapsed
+    /// in the UI by default; the user can expand any one to inspect.
+    public var phaseSummaries: [PhaseSummary] = []
     public var streamingStartDate: Date?
     public var lastTurnContextUsedPercentage: Double?
     public var modelDisplayName: String = ""

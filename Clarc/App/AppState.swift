@@ -30,6 +30,12 @@ struct SessionStreamState {
     /// terminal transcript). Survives disk reloads — disk only owns committedMessages.
     var localAddendum: [ChatMessage] = []
 
+    /// Per-turn roll-up summaries appended when an assistant turn completes.
+    /// Pushed to the UI via `ChatBridge.phaseSummaries`. Cleared on
+    /// session switch / reload (the messages themselves carry the same
+    /// information; the summaries are a presentation cache).
+    var phaseSummaries: [PhaseSummary] = []
+
     /// The full message list for rendering and saving.
     var allMessages: [ChatMessage] {
         committedMessages + (streamingTail?.messages ?? []) + localAddendum
@@ -38,11 +44,6 @@ struct SessionStreamState {
     // Streaming lifecycle
     var isStreaming = false
     var isThinking = false
-    /// Current phase of the in-flight content block. Set in
-    /// `handlePartialEvent` at each `content_block_start` and read by
-    /// `finalizeStreamSession` to tag the just-completed message with
-    /// `completedPhase`. Pushed to the UI via `ChatBridge.currentPhase`.
-    var currentPhase: StreamPhase?
     var activeStreamId: UUID?
     var streamingStartDate: Date?
     var streamTask: Task<Void, Never>?
@@ -724,7 +725,7 @@ final class AppState {
                 bridge.messages = state.allMessages
                 bridge.isStreaming = state.isStreaming
                 bridge.isThinking = state.isThinking
-                bridge.currentPhase = state.currentPhase
+                bridge.phaseSummaries = state.phaseSummaries
                 bridge.streamingStartDate = state.streamingStartDate
                 bridge.lastTurnContextUsedPercentage = state.lastTurnContextUsedPercentage
                 bridge.modelDisplayName = modelDisplayName(for: window.sessionModel ?? selectedModel, in: window)
@@ -1156,18 +1157,12 @@ final class AppState {
                 }) {
                     state.streamingTail!.messages[idx].isStreaming = false
                     state.streamingTail!.messages[idx].isResponseComplete = true
-                    // Tag the finalized message with the phase that was active
-                    // when streaming ended so the UI can decide whether to
-                    // auto-collapse (non-text phases) or keep expanded (text).
-                    state.streamingTail!.messages[idx].completedPhase = state.currentPhase
                     state.streamingTail!.messages[idx].finalizeToolCalls()
                     if let start = state.streamingStartDate {
                         state.streamingTail!.messages[idx].duration = Date().timeIntervalSince(start)
                     }
                     Self.stripNoOpText(at: idx, in: &state.streamingTail!.messages)
                 }
-                // Clear the active phase — the next turn starts from .text.
-                state.currentPhase = nil
             }
 
             extraMutations?(&state)
@@ -1588,10 +1583,6 @@ final class AppState {
                     tail.messages[idx].setToolResult(id: toolUseId, result: content, isError: isError)
                 }
             }
-            // Tier 3: tool results were just applied — the current phase is now
-            // toolResult. Will be overwritten when the next content_block_start
-            // (thinking / text / tool_use) opens.
-            sessionStates[key]?.currentPhase = .toolResult
         }
 
         // Phase 2: Flush text delta buffer
@@ -1647,8 +1638,6 @@ final class AppState {
                 flushPendingUpdates(for: sessionKey)
                 updateState(sessionKey) { state in
                     state.isThinking = false
-                    // Tier 3: a tool-use content block started — record the phase.
-                    state.currentPhase = .toolUse
                     // needsNewMessage: new Claude turn after tool result — create a new ChatMessage
                     if state.streamingTail!.needsNewMessage {
                         if let idx = state.streamingTail!.messages.indices.reversed().first(where: { state.streamingTail!.messages[$0].role == .assistant && state.streamingTail!.messages[$0].isStreaming }) {
@@ -1679,8 +1668,6 @@ final class AppState {
                     state.isThinking = false
                     state.streamingTail!.activeToolId = nil
                     state.streamingTail!.activeToolInputBuffer = ""
-                    // Tier 3: a text content block started — final answer phase.
-                    state.currentPhase = .text
                 }
             } else if blockType == "thinking" || blockType == "redacted_thinking" {
                 // Flush any pending text first so thinking blocks land in order.
@@ -1690,8 +1677,6 @@ final class AppState {
                     state.streamingTail!.activeToolId = nil
                     state.streamingTail!.activeToolInputBuffer = ""
                     state.isThinking = true
-                    // Tier 3: a thinking content block started.
-                    state.currentPhase = .thinking
                     // needsNewMessage: opening a new Claude turn after a tool result.
                     if state.streamingTail!.needsNewMessage {
                         if let idx = state.streamingTail!.messages.lastIndex(where: { $0.role == .assistant && $0.isStreaming }) {

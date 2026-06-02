@@ -169,10 +169,7 @@ struct MessageListView: View {
     private func messageRows(_ messages: some RandomAccessCollection<ChatMessage>) -> some View {
         let groups = groupMessages(Array(messages))
         ForEach(groups) { group in
-            if group.isPhaseGroup, let phase = group.phase {
-                PhaseGroupSummaryView(group: group, phase: phase)
-                    .id(group.id)
-            } else if group.isTransientGroup {
+            if group.isTransientGroup {
                 TransientGroupSummaryView(messages: group.messages)
                     .id(group.id)
             } else if let message = group.messages.first {
@@ -235,24 +232,6 @@ struct MessageGroup: Identifiable {
     let id: UUID
     let messages: [ChatMessage]
     let isTransientGroup: Bool
-    /// Tier 3: when true, this group is a phase-collapsed roll-up of one or
-    /// more completed assistant messages whose `completedPhase` is non-text
-    /// (thinking / toolUse / toolResult). Rendered as `PhaseGroupSummaryView`
-    /// instead of `MessageBubble`.
-    let isPhaseGroup: Bool
-    let phase: StreamPhase?
-}
-
-/// Tier 3 — returns true when the message is a completed assistant turn
-/// that landed in a non-text phase and is therefore a candidate for
-/// phase-based auto-collapse. Errors and still-streaming messages are
-/// always exempt.
-fileprivate func isPhaseCollapsible(_ message: ChatMessage) -> Bool {
-    guard message.role == .assistant,
-          !message.isError,
-          !message.isStreaming,
-          let phase = message.completedPhase else { return false }
-    return phase != .text
 }
 
 /// Returns true if the message would render only a transient tool summary (no visible text or non-transient tools).
@@ -283,117 +262,33 @@ fileprivate func isInvisibleMessage(_ message: ChatMessage) -> Bool {
 /// - Parameter minGroupSize: Minimum number of transient messages required to collapse into a group.
 ///   Pass 1 (streaming context) to hide even a single completed tool call the moment the next message starts.
 ///   Pass 2 (settled list) to keep lone tool calls visible after streaming ends.
-///
-/// Tier 3: also groups consecutive completed assistant messages whose
-/// `completedPhase` is non-text (thinking / toolUse / toolResult) into a
-/// single `isPhaseGroup` roll-up. Text and error messages always emit as
-/// standalone groups. The last message in the list is always emitted
-/// individually so a trailing non-text phase is visible while streaming
-/// continues.
 fileprivate func groupMessages(_ messages: [ChatMessage], minGroupSize: Int = 2) -> [MessageGroup] {
     var result: [MessageGroup] = []
-    var transientAccumulator: [ChatMessage] = []
-    var phaseAccumulator: [ChatMessage] = []
-    var phaseAccumulatorPhase: StreamPhase?
+    var accumulator: [ChatMessage] = []
 
-    func flushTransient() {
-        guard !transientAccumulator.isEmpty else { return }
-        if transientAccumulator.count >= minGroupSize {
-            result.append(MessageGroup(
-                id: transientAccumulator[0].id,
-                messages: transientAccumulator,
-                isTransientGroup: true,
-                isPhaseGroup: false,
-                phase: nil
-            ))
+    func flushAccumulator() {
+        guard !accumulator.isEmpty else { return }
+        if accumulator.count >= minGroupSize {
+            result.append(MessageGroup(id: accumulator[0].id, messages: accumulator, isTransientGroup: true))
         } else {
-            for m in transientAccumulator {
-                result.append(MessageGroup(
-                    id: m.id,
-                    messages: [m],
-                    isTransientGroup: false,
-                    isPhaseGroup: false,
-                    phase: nil
-                ))
+            for m in accumulator {
+                result.append(MessageGroup(id: m.id, messages: [m], isTransientGroup: false))
             }
         }
-        transientAccumulator = []
+        accumulator = []
     }
 
-    func flushPhase(forceExpanded: Bool = false) {
-        guard !phaseAccumulator.isEmpty else { return }
-        if forceExpanded || phaseAccumulator.count == 1 {
-            // Emit each message individually so the trailing / lone phase
-            // group stays visible inline.
-            for m in phaseAccumulator {
-                result.append(MessageGroup(
-                    id: m.id,
-                    messages: [m],
-                    isTransientGroup: false,
-                    isPhaseGroup: false,
-                    phase: nil
-                ))
-            }
-        } else {
-            result.append(MessageGroup(
-                id: phaseAccumulator[0].id,
-                messages: phaseAccumulator,
-                isTransientGroup: false,
-                isPhaseGroup: true,
-                phase: phaseAccumulatorPhase
-            ))
-        }
-        phaseAccumulator = []
-        phaseAccumulatorPhase = nil
-    }
-
-    for (index, message) in messages.enumerated() {
-        let isLast = index == messages.count - 1
+    for message in messages {
         if isPureTransientMessage(message) {
-            flushPhase()
-            transientAccumulator.append(message)
+            accumulator.append(message)
         } else if isInvisibleMessage(message) {
-            // Skip invisible messages (e.g. all tool calls removed due to empty results).
-            // They render nothing in the UI and must not break grouping.
             continue
-        } else if isPhaseCollapsible(message), let phase = message.completedPhase {
-            flushTransient()
-            if phaseAccumulatorPhase == phase {
-                phaseAccumulator.append(message)
-            } else {
-                // Phase boundary — flush old, start new accumulator
-                flushPhase(forceExpanded: isLast)
-                phaseAccumulator.append(message)
-                phaseAccumulatorPhase = phase
-            }
         } else {
-            flushTransient()
-            // If we're ending a phase accumulator on a non-phase message,
-            // force-emit each member individually (no roll-up) so the
-            // boundary is clearly visible.
-            flushPhase(forceExpanded: true)
-            result.append(MessageGroup(
-                id: message.id,
-                messages: [message],
-                isTransientGroup: false,
-                isPhaseGroup: false,
-                phase: nil
-            ))
-        }
-
-        // After processing the last message, if we left items in either
-        // accumulator we still flush — but force-expand the trailing phase
-        // so a final non-text phase is visible inline.
-        if isLast {
-            flushTransient()
-            flushPhase(forceExpanded: true)
+            flushAccumulator()
+            result.append(MessageGroup(id: message.id, messages: [message], isTransientGroup: false))
         }
     }
-
-    // Empty input edge case
-    if messages.isEmpty {
-        return []
-    }
+    flushAccumulator()
 
     return result
 }
@@ -511,85 +406,6 @@ struct TransientGroupSummaryView: View {
 
 // MARK: - Phase Group Summary (Tier 3)
 
-/// Collapsed view for a run of completed non-text assistant messages
-/// (thinking / toolUse / toolResult). Auto-collapses when the group is
-/// created; clicking the header toggles expansion to inspect the full
-/// per-message bubbles inside.
-struct PhaseGroupSummaryView: View {
-    let group: MessageGroup
-    let phase: StreamPhase
-
-    @State private var isExpanded: Bool = false
-
-    /// SF Symbol matching the phase kind.
-    private var phaseIcon: String {
-        switch phase {
-        case .thinking:   return "brain"
-        case .text:       return "text.bubble"
-        case .toolUse:    return "hammer"
-        case .toolResult: return "checkmark.circle"
-        }
-    }
-
-    /// Localized label. For `.toolUse` we substitute the first tool call's
-    /// name so the user sees e.g. "Tool: Bash" rather than the generic label.
-    private var phaseLabel: String {
-        switch phase {
-        case .thinking:
-            return String(localized: "Phase label: thinking", bundle: .module)
-        case .text:
-            return String(localized: "Phase label: text", bundle: .module)
-        case .toolUse:
-            let firstName = group.messages.first?.toolCalls.first?.name ?? "—"
-            return String(format: String(localized: "Phase label: tool use", bundle: .module), firstName)
-        case .toolResult:
-            return String(localized: "Phase label: tool result", bundle: .module)
-        }
-    }
-
-    /// Human-readable detail suffix, e.g. " · 3 calls" for multi-message
-    /// phase groups. Skipped for single-message groups to keep the header
-    /// compact.
-    private var countSuffix: String {
-        guard group.messages.count > 1 else { return "" }
-        return " · \(group.messages.count)"
-    }
-
-    var body: some View {
-        HStack(alignment: .top, spacing: 0) {
-            VStack(alignment: .leading, spacing: 6) {
-                Button {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        isExpanded.toggle()
-                    }
-                } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: phaseIcon)
-                            .font(.system(size: ClaudeTheme.size(11)))
-                            .foregroundStyle(ClaudeTheme.textTertiary)
-                        Text(phaseLabel + countSuffix)
-                            .font(.system(size: ClaudeTheme.size(12)))
-                            .foregroundStyle(ClaudeTheme.textTertiary)
-                        Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                            .font(.system(size: ClaudeTheme.size(9)))
-                            .foregroundStyle(ClaudeTheme.textTertiary)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-
-                if isExpanded {
-                    ForEach(group.messages) { message in
-                        MessageBubble(message: message)
-                            .id(message.id)
-                    }
-                }
-            }
-            Spacer(minLength: 40)
-        }
-    }
-}
 
 // MARK: - Empty Session
 
