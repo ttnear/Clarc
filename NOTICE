@@ -1,19 +1,19 @@
-Clarc CN
-Copyright 2024-2026 The Clarc CN Authors (originally Copyright 2024-2026 ttnear)
+MiniClarc
+Copyright 2024-2026 The MiniClarc Authors (originally Copyright 2024-2026 ttnear)
 
 This product is a hard fork of Clarc (https://github.com/ttnear/Clarc),
 originally developed by ttnear and contributors, and is distributed under
 the same Apache License, Version 2.0.
 
 ----------------------------------------------------------------------
-Modifications made in Clarc CN
+Modifications made in MiniClarc
 ----------------------------------------------------------------------
 
 The following sections of the upstream codebase have been modified or
 extended. See the git log for the full per-commit history; this NOTICE
 summarises the cumulative delta as of the listed release.
 
-Release: Clarc CN 2.0.0
+Release: MiniClarc 2.0.0
 Base upstream commit: 62ce78e (feat/auto-approve-in-project-root)
 
 (1) On-request auto-approval (carried from upstream PR #16)
@@ -65,13 +65,13 @@ Base upstream commit: 62ce78e (feat/auto-approve-in-project-root)
       internal so PhaseGroupSummaryView can hold a MessageGroup typed
       property (compile error in Xcode toolchain).
 
-(8) Project identity (Clarc CN v2.0.0)
-    - CFBundleIdentifier: com.idealapp.Clarc -> com.dttxorg.ClarcCN.
-    - CFBundleName: Clarc -> Clarc CN.
+(8) Project identity (MiniClarc v2.0.0)
+    - CFBundleIdentifier: com.idealapp.Clarc -> com.dttxorg.MiniClarc.
+    - CFBundleName: Clarc -> MiniClarc.
     - MARKETING_VERSION: 1.3.0 -> 2.0.0 (independent version line).
     - CURRENT_PROJECT_VERSION: 26 -> 1.
     - SUFeedURL: ttnear/Clarc/main/appcast.xml ->
-      dttxorg/ClarcCN/main/appcast.xml.
+      dttxorg/MiniClarc/main/appcast.xml.
     - SUPublicEDKey: cleared (was upstream ttnear's key; not reusable).
     - NSHumanReadableCopyright: filled in with Apache 2.0 attribution.
     - Settings → open-source panel now shows three links (this fork,

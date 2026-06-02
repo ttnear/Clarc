@@ -1,7 +1,7 @@
-# Clarc CN — 中文社区增强版
+# MiniClarc — 中文社区增强版
 
 > **Based on [ttnear/Clarc](https://github.com/ttnear/Clarc)** (Apache License 2.0).
-> Clarc CN is an independently maintained, hard-forked distribution with
+> MiniClarc is an independently maintained, hard-forked distribution with
 > extra features, localized defaults, and a faster release cadence. See
 > [`FORK.md`](./FORK.md) for the full attribution and modification history.
 
@@ -16,7 +16,7 @@ Clarc is a lightweight native macOS desktop client for Claude Code. It brings th
 
 ---
 
-## What's different in Clarc CN
+## What's different in MiniClarc
 
 This fork ships extra features that have not been (or are not yet) merged upstream. See [`FORK.md`](./FORK.md) for the full list. Highlights:
 
@@ -107,9 +107,9 @@ Same engine, no terminal required.
 
 ## Installation
 
-1. Download the latest `ClarcCN-x.y.z.zip` from the [Releases](https://github.com/dttxorg/ClarcCN/releases) page.
-2. Unzip and move `Clarc CN.app` to your `Applications` folder.
-3. Launch `Clarc CN.app`.
+1. Download the latest `MiniClarc-x.y.z.zip` from the [Releases](https://github.com/dttxorg/MiniClarc/releases) page.
+2. Unzip and move `MiniClarc.app` to your `Applications` folder.
+3. Launch `MiniClarc.app`.
 
 ### First Launch on macOS 15 (Sequoia)
 

@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
-    <title>Clarc CN</title>
-    <description>Clarc CN — Hard fork of Clarc maintained by dttxorg. See https://github.com/dttxorg/ClarcCN/releases for binary downloads.</description>
+    <title>MiniClarc</title>
+    <description>MiniClarc — Hard fork of Clarc maintained by dttxorg. See https://github.com/dttxorg/MiniClarc/releases for binary downloads.</description>
     <language>zh-Hans</language>
     <!--
       Releases are appended below as <item> blocks when published.
       Each <item> must be signed with the project's Sparkle EdDSA key.
       The previous contents of this file pointed at ttnear/Clarc releases
-      and have been cleared because Clarc CN is an independent distribution
+      and have been cleared because MiniClarc is an independent distribution
       and should not auto-update users to upstream binaries.
     -->
 
     <item>
-      <title>Clarc CN v2.0.0</title>
+      <title>MiniClarc v2.0.0</title>
       <sparkle:version>1</sparkle:version>
       <sparkle:shortVersionString>2.0.0</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
       <pubDate>Tue, 02 Jun 2026 00:00:00 +0000</pubDate>
       <description><![CDATA[
-Clarc CN 2.0.0 — first independent release of the hard-forked distribution.
+MiniClarc 2.0.0 — first independent release of the hard-forked distribution.
 
 Changes from upstream v1.3.x:
-- Project identity: bundle id com.idealapp.Clarc -> com.dttxorg.ClarcCN,
-  app name -> "Clarc CN", independent version line (v2.x).
+- Project identity: bundle id com.idealapp.Clarc -> com.dttxorg.MiniClarc,
+  app name -> "MiniClarc", independent version line (v2.x).
 - Full Access permission mode (--permission-mode bypassPermissions +
   --allowedTools "*").
 - Phase-based auto-collapse for completed thinking / tool_use / tool_result.
@@ -35,7 +35,7 @@ This build is ad-hoc signed and not notarized. Right-click the app
 -> Open on first launch to clear Gatekeeper.
       ]]></description>
       <enclosure
-        url="https://github.com/dttxorg/ClarcCN/releases/download/v2.0.0/Clarc-2.0.0.zip"
+        url="https://github.com/dttxorg/MiniClarc/releases/download/v2.0.0/Clarc-2.0.0.zip"
         length="0"
         type="application/octet-stream"
         sparkle:edSignature="" />

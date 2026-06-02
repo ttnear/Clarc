@@ -1,4 +1,4 @@
-// Modifications Copyright 2026 dttxorg (Clarc CN).
+// Modifications Copyright 2026 dttxorg (MiniClarc).
 // SPDX-License-Identifier: Apache-2.0
 //
 // Originally: Clarc (https://github.com/ttnear/Clarc), Apache License 2.0.
@@ -308,12 +308,12 @@ struct GeneralSettingsTab: View {
 
     private var sourceCodeSection: some View {
         VStack(spacing: 8) {
-            // Current fork (Clarc CN) — where users can file issues and find releases.
-            Link(destination: URL(string: "https://github.com/dttxorg/ClarcCN")!) {
+            // Current fork (MiniClarc) — where users can file issues and find releases.
+            Link(destination: URL(string: "https://github.com/dttxorg/MiniClarc")!) {
                 linkRow(
                     icon: "chevron.left.forwardslash.chevron.right",
-                    title: "Clarc CN",
-                    subtitle: "github.com/dttxorg/ClarcCN"
+                    title: "MiniClarc",
+                    subtitle: "github.com/dttxorg/MiniClarc"
                 )
             }
             .buttonStyle(.plain)
@@ -333,7 +333,7 @@ struct GeneralSettingsTab: View {
             // Apache 2.0 LICENSE — Section 4a of the license requires that the
             // LICENSE text accompany all distributions. The link points to the
             // file in the same repository so users can always find the full text.
-            Link(destination: URL(string: "https://github.com/dttxorg/ClarcCN/blob/main/LICENSE")!) {
+            Link(destination: URL(string: "https://github.com/dttxorg/MiniClarc/blob/main/LICENSE")!) {
                 linkRow(
                     icon: "doc.text",
                     title: "Apache License 2.0",

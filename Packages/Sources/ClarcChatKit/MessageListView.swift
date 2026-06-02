@@ -1,4 +1,4 @@
-// Modifications Copyright 2026 dttxorg (Clarc CN).
+// Modifications Copyright 2026 dttxorg (MiniClarc).
 // SPDX-License-Identifier: Apache-2.0
 //
 // Originally: Clarc (https://github.com/ttnear/Clarc), Apache License 2.0.

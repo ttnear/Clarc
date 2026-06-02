@@ -27,7 +27,7 @@
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright 2024-2026 The Clarc Authors (originally: ttnear). Licensed under the Apache License, Version 2.0.</string>
 	<key>SUFeedURL</key>
-	<string>https://raw.githubusercontent.com/dttxorg/ClarcCN/main/appcast.xml</string>
+	<string>https://raw.githubusercontent.com/dttxorg/MiniClarc/main/appcast.xml</string>
 	<key>SUPublicEDKey</key>
 	<string></string>
 </dict>

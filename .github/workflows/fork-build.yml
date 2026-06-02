@@ -1,6 +1,6 @@
-name: Build Clarc CN
+name: Build MiniClarc
 
-# CI for the Clarc CN (dttxorg/ClarcCN) hard-fork distribution.
+# CI for the MiniClarc (dttxorg/MiniClarc) hard-fork distribution.
 # Distinct from upstream ttnear/Clarc — see NOTICE and FORK.md.
 #
 # Triggers:
@@ -44,7 +44,7 @@ jobs:
             VERSION="${GITHUB_REF_NAME#v}"
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "Building Clarc CN v$VERSION"
+          echo "Building MiniClarc v$VERSION"
 
       - name: Select Xcode
         # Package.swift declares swift-tools-version 6.2, which Xcode 16.0/16.1
@@ -118,17 +118,17 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          name: "Clarc CN ${{ steps.version.outputs.version }}"
+          name: "MiniClarc ${{ steps.version.outputs.version }}"
           draft: true
           generate_release_notes: true
           body: |
-            ## Clarc CN — 中文社区增强版
+            ## MiniClarc — 中文社区增强版
 
-            This build is produced by the [dttxorg/ClarcCN](https://github.com/dttxorg/ClarcCN)
+            This build is produced by the [dttxorg/MiniClarc](https://github.com/dttxorg/MiniClarc)
             hard-fork distribution. It is **not** an official upstream Clarc release; it
             is independently maintained under the same Apache License 2.0. See
-            [`FORK.md`](https://github.com/dttxorg/ClarcCN/blob/main/FORK.md) and
-            [`NOTICE`](https://github.com/dttxorg/ClarcCN/blob/main/NOTICE) in the
+            [`FORK.md`](https://github.com/dttxorg/MiniClarc/blob/main/FORK.md) and
+            [`NOTICE`](https://github.com/dttxorg/MiniClarc/blob/main/NOTICE) in the
             source tree for the full attribution.
 
             **What's in this build**
@@ -143,12 +143,12 @@ jobs:
 
             **Install**
             1. Download `Clarc-${{ steps.version.outputs.version }}.zip` below.
-            2. Unzip and drag `Clarc CN.app` to `/Applications`.
-            3. On first launch, right-click `Clarc CN.app` → **Open** → confirm the
+            2. Unzip and drag `MiniClarc.app` to `/Applications`.
+            3. On first launch, right-click `MiniClarc.app` → **Open** → confirm the
                Gatekeeper prompt (the build is **ad-hoc signed**, not notarized with
                an Apple Developer ID).
             4. After the first launch, normal double-click works.
-            5. The bundle id is `com.dttxorg.ClarcCN`, distinct from upstream
+            5. The bundle id is `com.dttxorg.MiniClarc`, distinct from upstream
                `com.idealapp.Clarc`. The two can coexist on the same Mac.
 
             **Caveats**
@@ -158,6 +158,6 @@ jobs:
             - No Apple notarization. macOS Gatekeeper will require the
               right-click-open workaround on every fresh install.
             - This distribution does not track upstream releases 1:1. If you need a
-              specific upstream feature, file an issue on dttxorg/ClarcCN.
+              specific upstream feature, file an issue on dttxorg/MiniClarc.
           files: |
             build/Clarc-*.zip
