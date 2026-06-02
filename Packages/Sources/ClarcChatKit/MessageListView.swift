@@ -592,66 +592,85 @@ struct PhaseSummaryCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Collapsed header — always visible.
-            Button {
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    isExpanded.toggle()
-                }
-            } label: {
-                HStack(alignment: .top, spacing: 10) {
-                    Image(systemName: statusIcon)
-                        .font(.system(size: ClaudeTheme.size(13)))
-                        .foregroundStyle(statusColor)
-                        .frame(width: 16, alignment: .center)
-                        .padding(.top, 2)
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack(spacing: 6) {
-                            Text("Phase \(summary.phaseIndex + 1)")
-                                .font(.system(size: ClaudeTheme.size(12), weight: .semibold))
-                                .foregroundStyle(ClaudeTheme.textPrimary)
-                            Text("—")
-                                .font(.system(size: ClaudeTheme.size(12)))
-                                .foregroundStyle(ClaudeTheme.textTertiary)
-                            Text(durationText)
-                                .font(.system(size: ClaudeTheme.size(12), design: .monospaced))
-                                .foregroundStyle(ClaudeTheme.textTertiary)
-                            Spacer()
-                            Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                                .font(.system(size: ClaudeTheme.size(10)))
-                                .foregroundStyle(ClaudeTheme.textTertiary)
+            // Collapsed header — always visible. The card has a
+            // distinctive left-edge color bar to set it apart from
+            // regular MessageBubbles (the fold / roll-up is the new
+            // shape and needs to be visually obvious).
+            HStack(alignment: .top, spacing: 0) {
+                Rectangle()
+                    .fill(statusColor)
+                    .frame(width: 3)
+                    .clipShape(RoundedRectangle(cornerRadius: 1.5))
+                    .padding(.vertical, 4)
+                    .padding(.trailing, 8)
+                VStack(alignment: .leading, spacing: 0) {
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            isExpanded.toggle()
                         }
-
-                        if !summary.changeSummary.isEmpty {
-                            Text(summary.changeSummary)
-                                .font(.system(size: ClaudeTheme.size(11)))
-                                .foregroundStyle(ClaudeTheme.textSecondary)
-                                .lineLimit(1)
-                        }
-
-                        HStack(spacing: 6) {
-                            Text(statusText)
-                                .font(.system(size: ClaudeTheme.size(11), weight: .medium))
+                    } label: {
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: statusIcon)
+                                .font(.system(size: ClaudeTheme.size(13)))
                                 .foregroundStyle(statusColor)
-                            if !summary.suggestedNext.isEmpty {
-                                Text("·")
-                                    .foregroundStyle(ClaudeTheme.textTertiary)
-                                Text(summary.suggestedNext)
-                                    .font(.system(size: ClaudeTheme.size(11)))
-                                    .foregroundStyle(ClaudeTheme.textSecondary)
-                                    .lineLimit(1)
+                                .frame(width: 16, alignment: .center)
+                                .padding(.top, 2)
+
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack(spacing: 6) {
+                                    // "PHASE 1" badge in monospace.
+                                    Text("PHASE \(summary.phaseIndex + 1)")
+                                        .font(.system(size: ClaudeTheme.size(11), weight: .bold, design: .monospaced))
+                                        .foregroundStyle(statusColor)
+                                        .padding(.horizontal, 6)
+                                        .padding(.vertical, 1)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 3)
+                                                .fill(statusColor.opacity(0.12))
+                                        )
+                                    Text(durationText)
+                                        .font(.system(size: ClaudeTheme.size(12), design: .monospaced))
+                                        .foregroundStyle(ClaudeTheme.textTertiary)
+                                    Spacer()
+                                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                                        .font(.system(size: ClaudeTheme.size(10)))
+                                        .foregroundStyle(ClaudeTheme.textTertiary)
+                                }
+
+                                if !summary.changeSummary.isEmpty {
+                                    Text(summary.changeSummary)
+                                        .font(.system(size: ClaudeTheme.size(11)))
+                                        .foregroundStyle(ClaudeTheme.textSecondary)
+                                        .lineLimit(1)
+                                }
+
+                                HStack(spacing: 6) {
+                                    Text(statusText)
+                                        .font(.system(size: ClaudeTheme.size(11), weight: .medium))
+                                        .foregroundStyle(statusColor)
+                                    if !summary.suggestedNext.isEmpty {
+                                        Text("·")
+                                            .foregroundStyle(ClaudeTheme.textTertiary)
+                                        Text(summary.suggestedNext)
+                                            .font(.system(size: ClaudeTheme.size(11)))
+                                            .foregroundStyle(ClaudeTheme.textSecondary)
+                                            .lineLimit(1)
+                                    }
+                                }
                             }
                         }
+                        .padding(.vertical, 10)
+                        .padding(.trailing, 10)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
                     }
+                    .buttonStyle(.plain)
                 }
-                .padding(10)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(
-                    RoundedRectangle(cornerRadius: ClaudeTheme.cornerRadiusSmall)
-                        .fill(ClaudeTheme.surfacePrimary.opacity(0.6))
-                )
             }
-            .buttonStyle(.plain)
+            .background(
+                RoundedRectangle(cornerRadius: ClaudeTheme.cornerRadiusSmall)
+                    .fill(ClaudeTheme.surfacePrimary.opacity(0.6))
+            )
 
             // Expanded body — per-tool-call log + the assistant bubble.
             if isExpanded {
@@ -689,7 +708,7 @@ struct PhaseSummaryCard: View {
                         .id(message.id)
                 }
                 .padding(.top, 4)
-                .padding(.leading, 26)
+                .padding(.leading, 11)  // align with header text (3 + 8)
             }
         }
     }

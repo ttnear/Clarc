@@ -233,7 +233,7 @@
 "Use custom usage endpoint" = "사용자 지정 사용량 엔드포인트 사용";
 "Endpoint URL" = "엔드포인트 URL";
 "Bearer token (optional)" = "Bearer 토큰 (선택사항)";
-"usage.endpoint.desc" = "기본적으로 MiniClarc은 사용자의 OAuth 액세스 토큰으로 Anthropic 공식 oauth/usage 엔드포인트를 조회합니다. 토글을 켜면 Anthropic 페이로드와 호환되는 JSON을 반환하는 사용자 지정 URL을 지정할 수 있습니다(최상위 키: five_hour 및 seven_day, 각각 utilization 0-100 숫자와 선택적 ISO 8601 resets_at 문자열).";
+"usage.endpoint.desc" = "기본적으로 MiniClarc은 사용자의 OAuth 액세스 토큰으로 Anthropic 공식 oauth/usage 엔드포인트를 조회합니다. 토글을 켜면 사용자 지정 URL을 지정할 수 있으며, 두 JSON 경로 필드로 응답 내 5h / 7d 사용률 숫자 위치를 지정할 수 있습니다(예: Anthropic 형식은 'five_hour.utilization', MiniMax 스타일 프록시는 'data.five_hour_plan_remains_percent'). 경로는 '.' 로 중첩 딕셔너리를 탐색하며, 리프는 0-100 JSON 숫자여야 합니다.";
 
 // MARK: - Effort Level Descriptions
 "effort.desc.auto" = "활성 모델과 플랜에 따라 자동으로 결정되는 모델 기본값을 사용합니다.";

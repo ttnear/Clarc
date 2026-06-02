@@ -288,6 +288,36 @@ final class AppState {
         }
     }
 
+    /// Dotted JSON path inside the custom endpoint's response body that
+    /// yields the 5-hour window utilization as a number 0-100. Default
+    /// is the Anthropic shape `five_hour.utilization`. Set to e.g.
+    /// `data.five_hour_plan_remains_percent` for a MiniMax-shaped
+    /// proxy, or `data.usage.5h.pct` for any custom path.
+    var usageEndpointFiveHourPath: String? {
+        get { UserDefaults.standard.string(forKey: "usageEndpointFiveHourPath") }
+        set {
+            if let newValue, !newValue.isEmpty {
+                UserDefaults.standard.set(newValue, forKey: "usageEndpointFiveHourPath")
+            } else {
+                UserDefaults.standard.removeObject(forKey: "usageEndpointFiveHourPath")
+            }
+        }
+    }
+
+    /// Dotted JSON path inside the custom endpoint's response body
+    /// that yields the 7-day window utilization as a number 0-100.
+    /// See `usageEndpointFiveHourPath` for usage notes.
+    var usageEndpointSevenDayPath: String? {
+        get { UserDefaults.standard.string(forKey: "usageEndpointSevenDayPath") }
+        set {
+            if let newValue, !newValue.isEmpty {
+                UserDefaults.standard.set(newValue, forKey: "usageEndpointSevenDayPath")
+            } else {
+                UserDefaults.standard.removeObject(forKey: "usageEndpointSevenDayPath")
+            }
+        }
+    }
+
     // MARK: - Permission Auto-Deny Timeout
 
     /// How long a pending permission request waits for user input before
@@ -707,7 +737,9 @@ final class AppState {
         bridge.fetchRateLimitHandler = {
             await RateLimitService.shared.fetchUsage(
                 customEndpoint: self.usageEndpoint,
-                customBearerToken: self.usageEndpointBearerToken
+                customBearerToken: self.usageEndpointBearerToken,
+                customFiveHourPath: self.usageEndpointFiveHourPath,
+                customSevenDayPath: self.usageEndpointSevenDayPath
             )
         }
 
@@ -1277,6 +1309,67 @@ final class AppState {
             if let pattern = stringValue(for: ["pattern"]) { return pattern }
         }
         return "(no input)"
+    }
+
+    /// Walk a list of committed messages and synthesize a PhaseSummary
+    /// for each completed assistant turn. Used at session load so that
+    /// historical chats (loaded from disk jsonl) get the Codex-style
+    /// per-turn card without waiting for a fresh turn.
+    ///
+    /// The synthesized summaries are intentionally less precise than
+    /// the live ones (no wall-clock duration, no live streamingStartDate)
+    /// — the source of truth for "what happened" is the underlying
+    /// ChatMessage.phaseIndex here just gives a stable ordering.
+    private static func synthesizePhaseSummaries(
+        forMessages messages: [ChatMessage]
+    ) -> [PhaseSummary] {
+        var summaries: [PhaseSummary] = []
+        for message in messages {
+            guard message.role == .assistant,
+                  message.isResponseComplete,
+                  !message.isError,
+                  !message.toolCalls.isEmpty || message.blocks.contains(where: { $0.isText }) else {
+                continue
+            }
+
+            let invocations = message.toolCalls.map { tc -> PhaseSummary.ToolInvocation in
+                let status: PhaseSummary.ToolInvocation.Status
+                if tc.isError { status = .failed }
+                else if tc.result == nil { status = .unverified }
+                else { status = .succeeded }
+                return PhaseSummary.ToolInvocation(
+                    name: tc.name,
+                    inputSummary: summarizeToolInput(tc),
+                    status: status
+                )
+            }
+
+            let unverifiedCount = invocations.filter { $0.status == .unverified }.count
+            let failedCount = invocations.filter { $0.status == .failed }.count
+            let finalText = message.blocks.reversed().compactMap { $0.text }.first ?? ""
+            let suggestedNext = PhaseSummary.extractSuggestedNext(from: finalText)
+            let changeSummary = PhaseSummary.summarizeChanges(from: invocations)
+
+            // Use message.duration when present (set by the streaming
+            // pipeline); fall back to 0 for old jsonl messages that
+            // pre-date the duration field.
+            let duration = message.duration ?? 0
+
+            summaries.append(PhaseSummary(
+                phaseIndex: summaries.count,
+                startedAt: message.timestamp,
+                endedAt: message.timestamp.addingTimeInterval(duration),
+                durationSeconds: duration,
+                toolInvocations: invocations,
+                unverifiedCommandCount: unverifiedCount,
+                failedInvocationCount: failedCount,
+                readyForReview: (failedCount == 0 && unverifiedCount == 0),
+                changeSummary: changeSummary,
+                suggestedNext: suggestedNext,
+                messageIDs: [message.id]
+            ))
+        }
+        return summaries
     }
 
     /// Drop "No response requested." text blocks from the assistant message
@@ -2277,6 +2370,13 @@ final class AppState {
             if let msgs = loadedMessages {
                 state.committedMessages = cleanLoadedMessages(msgs)
             }
+            // Synthesize PhaseSummary objects for any completed assistant
+            // turns loaded from disk. This makes sessions opened after the
+            // v2.1.0 feature shipped show the new Codex-style phase cards
+            // for their historical turns, not just future ones.
+            state.phaseSummaries = Self.synthesizePhaseSummaries(
+                forMessages: state.committedMessages
+            )
             sessionStates[session.id] = state
             // Stale reload cache would cause reloadCommittedFromDisk to skip parsing when messages are empty.
             lastCommittedReloadKey.removeValue(forKey: session.id)

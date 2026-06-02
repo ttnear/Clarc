@@ -24,18 +24,24 @@ actor RateLimitService {
     /// - Parameters:
     ///   - forceRefresh: bypass the 5-minute cache when true.
     ///   - customEndpoint: when non-nil, use this URL instead of the default
-    ///     Anthropic oauth/usage endpoint. The custom URL's response must be
-    ///     JSON compatible with Anthropic's payload (keys: `five_hour` and
-    ///     `seven_day`, each with `utilization` (number 0-100) and optional
-    ///     `resets_at` (ISO 8601 string)).
+    ///     Anthropic oauth/usage endpoint.
     ///   - customBearerToken: when `customEndpoint` is set, this token is sent
     ///     in the `Authorization: Bearer <token>` header. Ignored when
     ///     `customEndpoint` is nil (the default endpoint always uses the
     ///     OAuth access token read from Keychain).
+    ///   - customFiveHourPath: dotted JSON path inside the custom response
+    ///     body that yields the 5h utilization (0-100). Defaults to
+    ///     `five_hour.utilization` (Anthropic shape). Set to e.g.
+    ///     `data.five_hour_plan_remains_percent` for a MiniMax-shaped
+    ///     proxy.
+    ///   - customSevenDayPath: see `customFiveHourPath` but for the 7d
+    ///     window. Defaults to `seven_day.utilization`.
     func fetchUsage(
         forceRefresh: Bool = false,
         customEndpoint: String? = nil,
-        customBearerToken: String? = nil
+        customBearerToken: String? = nil,
+        customFiveHourPath: String? = nil,
+        customSevenDayPath: String? = nil
     ) async -> RateLimitUsage? {
         if !forceRefresh, let c = cached, let at = cachedAt, Date().timeIntervalSince(at) < cacheTTL {
             return c
@@ -47,7 +53,9 @@ actor RateLimitService {
             return await callAPI(
                 token: customBearerToken ?? "",
                 urlOverride: endpoint,
-                isCustom: true
+                isCustom: true,
+                fiveHourPath: customFiveHourPath,
+                sevenDayPath: customSevenDayPath
             )
         }
 
@@ -77,7 +85,13 @@ actor RateLimitService {
 
         logger.info("[RateLimit] Token ready, calling API...")
 
-        guard let usage = await callAPI(token: accessToken, urlOverride: nil, isCustom: false) else {
+        guard let usage = await callAPI(
+            token: accessToken,
+            urlOverride: nil,
+            isCustom: false,
+            fiveHourPath: customFiveHourPath,
+            sevenDayPath: customSevenDayPath
+        ) else {
             logger.debug("[RateLimit] API call returned nil")
             return cached
         }
@@ -167,9 +181,11 @@ actor RateLimitService {
     // MARK: - API
 
     /// Hit either the default Anthropic oauth/usage endpoint or a user-supplied
-    /// custom endpoint. The response schema is identical in both cases:
+    /// custom endpoint. The default Anthropic response shape is:
     /// `{ "five_hour": { "utilization": <0-100>, "resets_at": "..." },
     ///    "seven_day": { "utilization": <0-100>, "resets_at": "..." } }`
+    /// Custom endpoints can be normalized by passing dotted JSON paths
+    /// via `fiveHourPath` / `sevenDayPath` (defaults preserved).
     ///
     /// - Parameters:
     ///   - token: bearer token. Required for the default endpoint (OAuth
@@ -179,7 +195,17 @@ actor RateLimitService {
     ///   - isCustom: true when `urlOverride` is a user-supplied custom URL.
     ///     In that case we do not send the `anthropic-beta` header (which
     ///     is Anthropic-specific) and do not auth-fail on 401.
-    private func callAPI(token: String, urlOverride: String?, isCustom: Bool) async -> RateLimitUsage? {
+    ///   - fiveHourPath: dotted JSON path to the 5h utilization number
+    ///     (0-100). Defaults to `five_hour.utilization`.
+    ///   - sevenDayPath: see `fiveHourPath` but for 7d. Defaults to
+    ///     `seven_day.utilization`.
+    private func callAPI(
+        token: String,
+        urlOverride: String?,
+        isCustom: Bool,
+        fiveHourPath: String? = nil,
+        sevenDayPath: String? = nil
+    ) async -> RateLimitUsage? {
         let resolvedURL: String = urlOverride ?? "https://api.anthropic.com/api/oauth/usage"
         guard let url = URL(string: resolvedURL) else {
             logger.warning("[RateLimit] Invalid URL: \(resolvedURL, privacy: .public)")
@@ -214,19 +240,71 @@ actor RateLimitService {
                 return nil
             }
 
-            let fiveHour = json["five_hour"] as? [String: Any]
-            let sevenDay = json["seven_day"] as? [String: Any]
+            let fiveHourValue = lookupNumeric(
+                in: json,
+                path: fiveHourPath ?? "five_hour.utilization"
+            )
+            let sevenDayValue = lookupNumeric(
+                in: json,
+                path: sevenDayPath ?? "seven_day.utilization"
+            )
+            let fiveHourResetsAt = lookupString(
+                in: json,
+                path: "five_hour.resets_at"
+            ).flatMap(parseISO8601)
+            let sevenDayResetsAt = lookupString(
+                in: json,
+                path: "seven_day.resets_at"
+            ).flatMap(parseISO8601)
 
             return RateLimitUsage(
-                fiveHourPercent: (fiveHour?["utilization"] as? Double) ?? 0,
-                sevenDayPercent: (sevenDay?["utilization"] as? Double) ?? 0,
-                fiveHourResetsAt: parseISO8601(fiveHour?["resets_at"] as? String),
-                sevenDayResetsAt: parseISO8601(sevenDay?["resets_at"] as? String)
+                fiveHourPercent: fiveHourValue ?? 0,
+                sevenDayPercent: sevenDayValue ?? 0,
+                fiveHourResetsAt: fiveHourResetsAt,
+                sevenDayResetsAt: sevenDayResetsAt
             )
         } catch {
             logger.error("Rate limit fetch failed: \(error.localizedDescription)")
             return nil
         }
+    }
+
+    /// Walk a dotted JSON path inside a JSON object and return the
+    /// numeric value at that leaf, if any. Components are matched
+    /// against dictionary keys; if any segment is missing or the leaf
+    /// is not numeric, returns nil. Handles both `Int` and `Double`
+    /// JSON numbers and treats `NSNumber`-wrapped values uniformly.
+    private func lookupNumeric(in root: [String: Any], path: String) -> Double? {
+        let segments = path.split(separator: ".").map(String.init)
+        var current: Any = root
+        for segment in segments {
+            if let dict = current as? [String: Any], let next = dict[segment] {
+                current = next
+            } else {
+                return nil
+            }
+        }
+        if let d = (current as? NSNumber)?.doubleValue {
+            return d
+        }
+        if let i = current as? Int { return Double(i) }
+        if let d = current as? Double { return d }
+        return nil
+    }
+
+    /// Walk a dotted JSON path and return the string at the leaf, if
+    /// the leaf is a `String`. Otherwise nil.
+    private func lookupString(in root: [String: Any], path: String) -> String? {
+        let segments = path.split(separator: ".").map(String.init)
+        var current: Any = root
+        for segment in segments {
+            if let dict = current as? [String: Any], let next = dict[segment] {
+                current = next
+            } else {
+                return nil
+            }
+        }
+        return current as? String
     }
 
     private static let isoFormatter: ISO8601DateFormatter = {

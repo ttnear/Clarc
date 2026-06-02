@@ -280,6 +280,36 @@ struct GeneralSettingsTab: View {
                     .textFieldStyle(.roundedBorder)
                     .font(.system(size: ClaudeTheme.size(12), design: .monospaced))
                 }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(LocalizedStringKey("5h utilization JSON path"))
+                        .font(.system(size: ClaudeTheme.size(11), weight: .medium))
+                        .foregroundStyle(.secondary)
+                    TextField(
+                        "five_hour.utilization",
+                        text: Binding(
+                            get: { appState.usageEndpointFiveHourPath ?? "five_hour.utilization" },
+                            set: { appState.usageEndpointFiveHourPath = $0 }
+                        )
+                    )
+                    .textFieldStyle(.roundedBorder)
+                    .font(.system(size: ClaudeTheme.size(12), design: .monospaced))
+                }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(LocalizedStringKey("7d utilization JSON path"))
+                        .font(.system(size: ClaudeTheme.size(11), weight: .medium))
+                        .foregroundStyle(.secondary)
+                    TextField(
+                        "seven_day.utilization",
+                        text: Binding(
+                            get: { appState.usageEndpointSevenDayPath ?? "seven_day.utilization" },
+                            set: { appState.usageEndpointSevenDayPath = $0 }
+                        )
+                    )
+                    .textFieldStyle(.roundedBorder)
+                    .font(.system(size: ClaudeTheme.size(12), design: .monospaced))
+                }
             }
 
             Text(LocalizedStringKey("usage.endpoint.desc"))

@@ -233,7 +233,7 @@
 "Use custom usage endpoint" = "Use custom usage endpoint";
 "Endpoint URL" = "Endpoint URL";
 "Bearer token (optional)" = "Bearer token (optional)";
-"usage.endpoint.desc" = "By default MiniClarc queries the official Anthropic oauth/usage endpoint with your OAuth access token. Enable the toggle to point at a custom URL whose response is JSON compatible with Anthropic's payload (keys: five_hour and seven_day, each with utilization 0-100 and optional ISO 8601 resets_at).";
+"usage.endpoint.desc" = "By default MiniClarc queries the official Anthropic oauth/usage endpoint with your OAuth access token. Enable the toggle to point at a custom URL. Use the two JSON-path fields to point at the 5h / 7d utilization numbers anywhere inside the response (e.g. 'five_hour.utilization' for Anthropic shape, or 'data.five_hour_plan_remains_percent' for a MiniMax-shaped proxy). The path walks nested dicts using '.' as separator; the leaf must be a JSON number 0-100.";
 
 // MARK: - Effort Level Descriptions
 "effort.desc.auto" = "Uses the model's default effort level, chosen automatically based on the active model and plan.";
