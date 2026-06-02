@@ -65,8 +65,12 @@ public struct CustomAdapter: UsageAdapter {
             throw UsageError.missingField(fivePath)
         }
 
-        let fiveValue = numericValue(at: fiveParsed.lookup(in: root)) ?? 0
-        let sevenValue = numericValue(at: sevenParsed.lookup(in: root)) ?? 0
+        guard let fiveLeaf = fiveParsed.lookup(in: root), let fiveValue = numericValue(at: fiveLeaf) else {
+            throw UsageError.missingField(fivePath)
+        }
+        guard let sevenLeaf = sevenParsed.lookup(in: root), let sevenValue = numericValue(at: sevenLeaf) else {
+            throw UsageError.missingField(sevenPath)
+        }
 
         let usage = RateLimitUsage(
             fiveHourPercent: fiveValue,

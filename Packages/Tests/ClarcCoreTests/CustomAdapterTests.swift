@@ -7,7 +7,7 @@ struct CustomAdapterTests {
 
     @Test("Walks dotted key path and returns numeric value")
     func dottedKey() async throws {
-        let data = #"{"five_hour": {"utilization": 42}}"#.data(using: .utf8)!
+        let data = #"{"five_hour": {"utilization": 42}, "seven_day": {"utilization": 7}}"#.data(using: .utf8)!
         let outcome = try await CustomAdapter.parseResponse(
             data: data,
             httpStatus: 200,
@@ -16,7 +16,7 @@ struct CustomAdapterTests {
             sevenDayPath: "seven_day.utilization"
         )
         #expect(outcome.usage.fiveHourPercent == 42)
-        #expect(outcome.usage.sevenDayPercent == 0)  // missing → 0
+        #expect(outcome.usage.sevenDayPercent == 7)
     }
 
     @Test("Walks bracket index into array")
