@@ -80,10 +80,16 @@ struct MainView: View {
                     windowState.foldThreshold = appState.foldThreshold
                 }
                 .navigationTitle({
-                    let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
-                    let base = "Clarc(\(appVersion))"
+                    // Use the marketing version (e.g. "2.0.0") and current
+                    // project version (build number, e.g. "1") from the
+                    // host app's Info.plist — these are the canonical
+                    // sources the App Store / Sparkle also use.
+                    let info = Bundle.main.infoDictionary
+                    let appVersion = info?["CFBundleShortVersionString"] as? String ?? "2.0.0"
+                    let build = info?["CFBundleVersion"] as? String ?? "1"
+                    let base = "MiniClarc \(appVersion) (\(build))"
                     if let cliVersion = appState.claudeVersion {
-                        return "\(base) — CC \(cliVersion)"
+                        return "\(base) — Claude Code \(cliVersion)"
                     }
                     return base
                 }())
