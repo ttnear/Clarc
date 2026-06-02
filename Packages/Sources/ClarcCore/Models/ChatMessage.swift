@@ -3,7 +3,7 @@ import Foundation
 // MARK: - Message Block
 
 public struct MessageBlock: Identifiable, Codable, Sendable, Equatable {
-    public let id: String
+    public var id: String
     public var text: String?
     public var toolCall: ToolCall?
     public var thinking: String?
@@ -78,7 +78,7 @@ public struct MessageBlock: Identifiable, Codable, Sendable, Equatable {
 // MARK: - Chat Message
 
 public struct ChatMessage: Identifiable, Codable, Sendable, Equatable {
-    public let id: UUID
+    public var id: UUID
     public let role: Role
     public var blocks: [MessageBlock]
     public var isStreaming: Bool
@@ -240,6 +240,44 @@ public struct ChatMessage: Identifiable, Codable, Sendable, Equatable {
             guard let toolCall = block.toolCall else { return false }
             if toolCall.isKeepAlways { return false }
             return toolCall.result == nil || (toolCall.result?.isEmpty == true && !toolCall.isError)
+        }
+    }
+}
+
+// MARK: - Identity Reconciliation
+
+extension ChatMessage {
+    /// Disk is the source of truth for message *content*, but a fresh parse of the
+    /// CLI jsonl assigns ids derived from the line `uuid` — which differ from the
+    /// random ids a live stream produced for the same turns. Swapping them in
+    /// re-keys every SwiftUI row and visibly flickers the chat when a stream ends
+    /// and `reloadCommittedFromDisk` runs.
+    ///
+    /// Carry the previous render's ids onto the freshly parsed messages wherever
+    /// they line up (same index, same role), so identity stays stable while content
+    /// still comes from disk. Text-block ids are preserved the same way; tool-call
+    /// blocks already key off the stable CLI tool_use id, so they need no help.
+    /// Anything that doesn't line up keeps its disk id — a one-time re-key there is
+    /// safer than grafting identity onto the wrong message.
+    public static func reconcilingIdentity(
+        _ incoming: [ChatMessage],
+        from previous: [ChatMessage]
+    ) -> [ChatMessage] {
+        guard !previous.isEmpty else { return incoming }
+        return incoming.enumerated().map { index, message in
+            guard index < previous.count, previous[index].role == message.role else { return message }
+            var reconciled = message
+            reconciled.id = previous[index].id
+            let priorBlocks = previous[index].blocks
+            reconciled.blocks = message.blocks.enumerated().map { blockIndex, block in
+                guard blockIndex < priorBlocks.count,
+                      block.toolCall == nil,
+                      priorBlocks[blockIndex].toolCall == nil else { return block }
+                var carried = block
+                carried.id = priorBlocks[blockIndex].id
+                return carried
+            }
+            return reconciled
         }
     }
 }

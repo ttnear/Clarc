@@ -1,4 +1,5 @@
 import Foundation
+import CryptoKit
 
 /// Converts a stream of decoded jsonl lines into the `[ChatMessage]` shape Clarc
 /// renders. Sidechain (subagent) lines and meta caveats are skipped; tool_result
@@ -8,7 +9,7 @@ public enum CLILineToBlocksMapper {
     public static func map(lines: [CLISessionLine]) -> [ChatMessage] {
         var messages: [ChatMessage] = []
 
-        for line in lines {
+        for (lineIndex, line) in lines.enumerated() {
             switch line {
             case .skip:
                 continue
@@ -16,12 +17,14 @@ public enum CLILineToBlocksMapper {
             case .user(let user):
                 if user.isSidechain || user.isMeta { continue }
                 appendUser(user.message.content,
+                           id: stableID(user.uuid, fallback: lineIndex),
                            timestamp: user.timestamp,
                            into: &messages)
 
             case .assistant(let assistant):
                 if assistant.isSidechain { continue }
                 appendAssistant(assistant.message.content,
+                                id: stableID(assistant.uuid, fallback: lineIndex),
                                 timestamp: assistant.timestamp,
                                 into: &messages)
             }
@@ -36,21 +39,40 @@ public enum CLILineToBlocksMapper {
         return messages
     }
 
+    // MARK: - Stable identity
+
+    /// Derive a stable message UUID from the CLI line's `uuid`. The CLI emits a
+    /// standard UUID per line, so it round-trips directly; a missing/malformed
+    /// value falls back to the line index (deterministic for a given file).
+    /// Identity must stay constant across reloads — a fresh random UUID per
+    /// parse makes `reloadCommittedFromDisk` replace the whole committed list on
+    /// every reload, forcing SwiftUI to rebuild every row and flicker the chat.
+    private static func stableID(_ uuid: String?, fallback lineIndex: Int) -> UUID {
+        if let uuid, let parsed = UUID(uuidString: uuid) { return parsed }
+        let digest = Insecure.MD5.hash(data: Data((uuid ?? "line-\(lineIndex)").utf8))
+        let b = Array(digest)
+        return UUID(uuid: (b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7],
+                           b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]))
+    }
+
     // MARK: - User
 
     private static func appendUser(
         _ content: UserContent,
+        id: UUID,
         timestamp: Date?,
         into messages: inout [ChatMessage]
     ) {
+        let blockID = "\(id.uuidString)#0"
         switch content {
         case .string(let s):
             let trimmed = s.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmed.isEmpty else { return }
             if CLIMetaEnvelope.isEnvelope(trimmed) { return }
             messages.append(ChatMessage(
+                id: id,
                 role: .user,
-                blocks: [.text(s)],
+                blocks: [.text(s, id: blockID)],
                 isResponseComplete: true,
                 timestamp: timestamp ?? Date()
             ))
@@ -73,8 +95,9 @@ public enum CLILineToBlocksMapper {
             if !textsForNewMessage.isEmpty {
                 let combined = textsForNewMessage.joined(separator: "\n\n")
                 messages.append(ChatMessage(
+                    id: id,
                     role: .user,
-                    blocks: [.text(combined)],
+                    blocks: [.text(combined, id: blockID)],
                     isResponseComplete: true,
                     timestamp: timestamp ?? Date()
                 ))
@@ -103,17 +126,18 @@ public enum CLILineToBlocksMapper {
 
     private static func appendAssistant(
         _ content: [AssistantContentPart],
+        id: UUID,
         timestamp: Date?,
         into messages: inout [ChatMessage]
     ) {
         var blocks: [MessageBlock] = []
-        for part in content {
+        for (i, part) in content.enumerated() {
             switch part {
             case .text(let t):
                 guard !t.isEmpty else { continue }
                 let trimmed = t.trimmingCharacters(in: .whitespacesAndNewlines)
                 if CLIMetaEnvelope.isNoResponseRequested(trimmed) { continue }
-                blocks.append(.text(t))
+                blocks.append(.text(t, id: "\(id.uuidString)#\(i)"))
             case .toolUse(let id, let name, let input):
                 blocks.append(.toolCall(ToolCall(id: id, name: name, input: input)))
             case .thinking(let t):
@@ -134,6 +158,7 @@ public enum CLILineToBlocksMapper {
         // we kept, keep them as separate ChatMessages — Clarc renders one bubble
         // per ChatMessage and the live-stream code does the same.
         messages.append(ChatMessage(
+            id: id,
             role: .assistant,
             blocks: blocks,
             isResponseComplete: true,

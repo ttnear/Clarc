@@ -2520,8 +2520,15 @@ final class AppState {
                 if let currentSize, let currentMtime {
                     self.lastCommittedReloadKey[sessionId] = ReloadCacheKey(size: currentSize, mtime: currentMtime)
                 }
+                // Common no-op reload (disk unchanged from what we show): skip the
+                // reconcile + rebuild entirely.
                 guard cleaned != state.committedMessages else { return }
-                state.committedMessages = cleaned
+                // Disk owns the content; carry over the prior render's ids so a
+                // live stream's random ids don't get swapped for CLI-derived ones,
+                // which would re-key every row and flicker the chat.
+                let reconciled = ChatMessage.reconcilingIdentity(cleaned, from: state.committedMessages)
+                guard reconciled != state.committedMessages else { return }
+                state.committedMessages = reconciled
                 self.sessionStates[sessionId] = state
             }
         }
