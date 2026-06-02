@@ -373,5 +373,23 @@
         type="application/octet-stream"
         sparkle:edSignature="FiqCLwZiCB/1CQ5liw/MTWTSUAANcY5L2lwgpCEgvqGqGoz0ukVVqTMOP7XJtEKxQYBeHnL2X0LPerJYFdVRDA==" />
     </item>
+    <item>
+      <title>Clarc v1.3.2</title>
+      <sparkle:version>28</sparkle:version>
+      <sparkle:shortVersionString>1.3.2</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <pubDate>Tue, 02 Jun 2026 04:20:20 +0000</pubDate>
+      <description><![CDATA[
+<h3>Fixed</h3>
+<ul>
+  <li>Chat: Continuing a conversation or finishing a response no longer flickers. Messages — including turns with a thinking trace — now keep a stable identity when the history reloads from disk, so the list redraws in place instead of rebuilding every row.</li>
+</ul>
+      ]]></description>
+      <enclosure
+        url="https://github.com/ttnear/Clarc/releases/download/v1.3.2/Clarc-1.3.2.zip"
+        length="6308495"
+        type="application/octet-stream"
+        sparkle:edSignature="d6tPWoqxet30ElSQbIO7OpAGWhM90kE5Pu/2+7Zli5sk6tKvEZkfUIpuUyPq3q0/d9nztkBPwRHC/wFYDnUgCQ==" />
+    </item>
   </channel>
 </rss>
