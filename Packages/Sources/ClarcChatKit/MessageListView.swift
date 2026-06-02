@@ -225,7 +225,7 @@ fileprivate func partitionByStreaming(_ messages: [ChatMessage]) -> (settled: [C
 }
 
 
-fileprivate struct MessageGroup: Identifiable {
+struct MessageGroup: Identifiable {
     let id: UUID
     let messages: [ChatMessage]
     let isTransientGroup: Bool
