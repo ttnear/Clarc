@@ -168,4 +168,65 @@ struct TaskUpdateParserTests {
         #expect(updates.isEmpty)
         #expect(remaining == input)
     }
+
+    private let sampleXML = """
+    <task-update id="phase-1" title="Implementation" status="done">
+      <summary>完成 MiniMaxAdapter 实现</summary>
+      <details>新增 UsageAdapter、MiniMaxAdapter 和 JSONPath。</details>
+      <filesChanged>
+        <file path="MiniMaxAdapter.swift" changeType="added" additions="120" deletions="4"/>
+      </filesChanged>
+      <testResults>
+        <test name="MiniMaxAdapterTests" status="passed" durationSeconds="3.2"/>
+      </testResults>
+    </task-update>
+    """
+
+    @Test("parse(xmlFragment:) reads attributes and child elements")
+    func parseFullXML() throws {
+        let update = try #require(TaskUpdateParser.parse(xmlFragment: sampleXML))
+        #expect(update.title == "Implementation")
+        #expect(update.status == .done)
+        #expect(update.summary == "完成 MiniMaxAdapter 实现")
+        #expect(update.details == "新增 UsageAdapter、MiniMaxAdapter 和 JSONPath。")
+        #expect(update.filesChanged.count == 1)
+        #expect(update.filesChanged[0].path == "MiniMaxAdapter.swift")
+        #expect(update.filesChanged[0].additions == 120)
+        #expect(update.filesChanged[0].deletions == 4)
+        #expect(update.filesChanged[0].changeType == "added")
+        #expect(update.testResults.count == 1)
+        #expect(update.testResults[0].name == "MiniMaxAdapterTests")
+        #expect(update.testResults[0].status == "passed")
+        #expect(update.testResults[0].durationSeconds == 3.2)
+    }
+
+    @Test("parse(xmlFragment:) returns nil when title is missing")
+    func parseXMLMissingTitle() {
+        let xml = "<task-update id=\"x\" status=\"running\"></task-update>"
+        #expect(TaskUpdateParser.parse(xmlFragment: xml) == nil)
+    }
+
+    @Test("parse(xmlFragment:) returns nil for malformed XML")
+    func parseMalformedXML() {
+        #expect(TaskUpdateParser.parse(xmlFragment: "<not-task-update>") == nil)
+    }
+
+    @Test("parse(xmlFragment:) uses a fresh UUID when id is missing or unparseable")
+    func parseXMLBadID() throws {
+        let xml = "<task-update title=\"x\"></task-update>"
+        let update = try #require(TaskUpdateParser.parse(xmlFragment: xml))
+        #expect(update.id != UUID())
+    }
+
+    @Test("extract: XML block is parsed and removed from the surrounding text")
+    func extractXML() {
+        let input = "Before <task-update title=\"X\" status=\"done\"></task-update> after"
+        let (updates, remaining) = TaskUpdateParser.extract(from: input)
+        #expect(updates.count == 1)
+        #expect(updates[0].title == "X")
+        #expect(updates[0].status == .done)
+        #expect(!remaining.contains("<task-update"))
+        #expect(remaining.contains("Before"))
+        #expect(remaining.contains("after"))
+    }
 }

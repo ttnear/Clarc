@@ -66,7 +66,24 @@ public enum TaskUpdateParser {
     /// Parse a `<task-update ...>...</task-update>` XML fragment.
     /// Implemented in Task 4. Returns nil for now.
     public static func parse(xmlFragment: String) -> TaskUpdateMessage? {
-        nil
+        let parser = XMLParser(data: Data(xmlFragment.utf8))
+        let delegate = TaskUpdateXMLDelegate()
+        parser.delegate = delegate
+        parser.shouldProcessNamespaces = false
+        guard parser.parse() else { return nil }
+        guard let title = delegate.title, !title.isEmpty else { return nil }
+        return TaskUpdateMessage(
+            id: delegate.id ?? UUID(),
+            title: title,
+            summary: delegate.summary ?? "",
+            details: delegate.details ?? "",
+            status: TaskUpdateStatus(rawValue: delegate.status ?? "") ?? .running,
+            startTime: Date(),
+            endTime: nil,
+            durationSeconds: nil,
+            filesChanged: delegate.files,
+            testResults: delegate.tests
+        )
     }
 
     // MARK: - Private helpers (JSON path)
@@ -154,7 +171,30 @@ public enum TaskUpdateParser {
         from text: String,
         into updates: inout [TaskUpdateMessage]
     ) -> String {
-        return text
+        var result = ""
+        var cursor = text.startIndex
+        while cursor < text.endIndex {
+            guard let openRange = text.range(of: "<task-update", range: cursor..<text.endIndex) else {
+                result.append(contentsOf: text[cursor..<text.endIndex])
+                break
+            }
+            result.append(contentsOf: text[cursor..<openRange.lowerBound])
+            // Find the matching </task-update> close
+            let afterOpen = openRange.upperBound
+            guard let closeRange = text.range(of: "</task-update>", range: afterOpen..<text.endIndex) else {
+                // Unterminated — keep everything as-is
+                result.append(contentsOf: text[openRange.lowerBound..<text.endIndex])
+                return result
+            }
+            let fragment = String(text[openRange.lowerBound..<closeRange.upperBound])
+            if let update = parse(xmlFragment: fragment) {
+                updates.append(update)
+            } else {
+                result.append(contentsOf: fragment)
+            }
+            cursor = closeRange.upperBound
+        }
+        return result
     }
 
     private static func findMatchingBrace(in text: String, from openIdx: String.Index) -> String.Index? {
@@ -266,5 +306,97 @@ private extension JSONValue {
         } else {
             self = .null
         }
+    }
+}
+
+// MARK: - XML Delegate
+
+private final class TaskUpdateXMLDelegate: NSObject, XMLParserDelegate {
+    var id: UUID?
+    var title: String?
+    var status: String?
+    var summary: String?
+    var details: String?
+    var files: [TaskFileChange] = []
+    var tests: [TaskTestResult] = []
+
+    private var elementStack: [String] = []
+    private var currentText = ""
+    private var inFilesContainer = false
+    private var inTestsContainer = false
+
+    func parser(_ parser: XMLParser, didStartElement elementName: String,
+                namespaceURI: String?, qualifiedName qName: String?,
+                attributes attributeDict: [String: String] = [:]) {
+        elementStack.append(elementName)
+        currentText = ""
+
+        switch elementName {
+        case "task-update":
+            if let idStr = attributeDict["id"], let u = UUID(uuidString: idStr) {
+                id = u
+            }
+            title = attributeDict["title"]
+            status = attributeDict["status"]
+        case "filesChanged":
+            inFilesContainer = true
+        case "file":
+            if inFilesContainer,
+               let path = attributeDict["path"] {
+                files.append(TaskFileChange(
+                    path: path,
+                    additions: intValue(attributeDict["additions"]),
+                    deletions: intValue(attributeDict["deletions"]),
+                    changeType: attributeDict["changeType"]
+                ))
+            }
+        case "testResults":
+            inTestsContainer = true
+        case "test":
+            if inTestsContainer,
+               let name = attributeDict["name"] {
+                tests.append(TaskTestResult(
+                    name: name,
+                    status: attributeDict["status"] ?? "unknown",
+                    durationSeconds: doubleValue(attributeDict["durationSeconds"])
+                ))
+            }
+        default:
+            break
+        }
+    }
+
+    func parser(_ parser: XMLParser, foundCharacters string: String) {
+        currentText += string
+    }
+
+    func parser(_ parser: XMLParser, didEndElement elementName: String,
+                namespaceURI: String?, qualifiedName qName: String?) {
+        let trimmed = currentText.trimmingCharacters(in: .whitespacesAndNewlines)
+        // We need to know the parent; elementStack still contains the parent at this point
+        // because we pop AFTER this switch.
+        let parent = elementStack.dropLast().last
+        switch elementName {
+        case "summary" where parent == "task-update":
+            summary = trimmed
+        case "details" where parent == "task-update":
+            details = trimmed
+        default:
+            break
+        }
+        if elementName == "filesChanged" { inFilesContainer = false }
+        if elementName == "testResults" { inTestsContainer = false }
+        if !elementStack.isEmpty { elementStack.removeLast() }
+        currentText = ""
+    }
+
+    private func intValue(_ s: String?) -> Int? {
+        guard let s, !s.isEmpty else { return nil }
+        return Int(s)
+    }
+
+    private func doubleValue(_ s: String?) -> TimeInterval? {
+        guard let s, !s.isEmpty else { return nil }
+        return Double(s)
     }
 }
