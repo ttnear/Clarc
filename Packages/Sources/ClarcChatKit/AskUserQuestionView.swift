@@ -6,6 +6,9 @@ struct AskUserQuestionView: View {
     let toolCall: ToolCall
     @Environment(WindowState.self) private var windowState
 
+    /// Selected option labels for a multi-select question, awaiting submission.
+    @State private var selected: Set<String> = []
+
     private var parsed: AskUserQuestion? {
         AskUserQuestion(input: toolCall.input)
     }
@@ -77,37 +80,106 @@ struct AskUserQuestionView: View {
 
     @ViewBuilder
     private func optionsList(_ question: AskUserQuestion.Question) -> some View {
+        if question.multiSelect {
+            multiSelectList(question)
+        } else {
+            singleSelectList(question)
+        }
+    }
+
+    /// Single-select: tapping an option immediately submits it as the answer.
+    @ViewBuilder
+    private func singleSelectList(_ question: AskUserQuestion.Question) -> some View {
         VStack(spacing: 6) {
             ForEach(question.options) { option in
                 Button {
                     windowState.answerQuestionHandler?(toolCall.id, option.label)
                 } label: {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(option.label)
-                            .font(.system(size: ClaudeTheme.messageSize(13), weight: .medium))
-                            .foregroundStyle(ClaudeTheme.textPrimary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        if let desc = option.description, !desc.isEmpty {
-                            Text(desc)
-                                .font(.system(size: ClaudeTheme.messageSize(11)))
-                                .foregroundStyle(ClaudeTheme.textSecondary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                    }
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 8)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(ClaudeTheme.surfaceSecondary)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .strokeBorder(ClaudeTheme.border, lineWidth: 1)
-                    )
+                    optionLabel(option)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(ClaudeTheme.surfaceSecondary)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(ClaudeTheme.border, lineWidth: 1)
+                        )
                 }
                 .buttonStyle(.plain)
             }
         }
+    }
+
+    /// Multi-select: each option toggles on/off; a Submit button sends all selections.
+    @ViewBuilder
+    private func multiSelectList(_ question: AskUserQuestion.Question) -> some View {
+        VStack(spacing: 6) {
+            ForEach(question.options) { option in
+                let isSelected = selected.contains(option.label)
+                Button {
+                    if isSelected {
+                        selected.remove(option.label)
+                    } else {
+                        selected.insert(option.label)
+                    }
+                } label: {
+                    HStack(alignment: .top, spacing: 8) {
+                        Image(systemName: isSelected ? "checkmark.square.fill" : "square")
+                            .font(.system(size: ClaudeTheme.messageSize(13)))
+                            .foregroundStyle(isSelected ? ClaudeTheme.accent : ClaudeTheme.textSecondary)
+                        optionLabel(option)
+                    }
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(isSelected ? ClaudeTheme.accentSubtle : ClaudeTheme.surfaceSecondary)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(isSelected ? ClaudeTheme.accent : ClaudeTheme.border, lineWidth: 1)
+                    )
+                }
+                .buttonStyle(.plain)
+            }
+
+            Button {
+                // Preserve the original option order; the Set is unordered.
+                let labels = question.options
+                    .map(\.label)
+                    .filter { selected.contains($0) }
+                windowState.answerQuestionHandler?(toolCall.id, labels.joined(separator: ", "))
+            } label: {
+                Text("Submit", bundle: .module)
+                    .font(.system(size: ClaudeTheme.messageSize(13), weight: .medium))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(selected.isEmpty ? ClaudeTheme.textSecondary.opacity(0.4) : ClaudeTheme.accent)
+                    )
+            }
+            .buttonStyle(.plain)
+            .disabled(selected.isEmpty)
+            .padding(.top, 2)
+        }
+    }
+
+    @ViewBuilder
+    private func optionLabel(_ option: AskUserQuestion.Option) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(option.label)
+                .font(.system(size: ClaudeTheme.messageSize(13), weight: .medium))
+                .foregroundStyle(ClaudeTheme.textPrimary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            if let desc = option.description, !desc.isEmpty {
+                Text(desc)
+                    .font(.system(size: ClaudeTheme.messageSize(11)))
+                    .foregroundStyle(ClaudeTheme.textSecondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
