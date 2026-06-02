@@ -142,9 +142,9 @@ public enum CLILineToBlocksMapper {
                 blocks.append(.toolCall(ToolCall(id: id, name: name, input: input)))
             case .thinking(let t):
                 guard !t.isEmpty else { continue }
-                blocks.append(.thinking(t))
+                blocks.append(.thinking(t, id: "\(id.uuidString)#\(i)"))
             case .redactedThinking:
-                blocks.append(.redactedThinking())
+                blocks.append(.redactedThinking(id: "\(id.uuidString)#\(i)"))
             case .skip:
                 continue
             }

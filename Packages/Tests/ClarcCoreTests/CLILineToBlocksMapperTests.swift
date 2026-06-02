@@ -42,4 +42,16 @@ struct CLILineToBlocksMapperTests {
         let remapped = CLILineToBlocksMapper.map(lines: lines).flatMap { $0.blocks.map(\.id) }
         #expect(blockIDs == remapped)
     }
+
+    @Test("Thinking blocks get deterministic ids across reparse")
+    func thinkingBlocksDeterministic() throws {
+        let json = """
+        {"type":"assistant","uuid":"33333333-3333-3333-3333-333333333333","timestamp":"2026-06-02T10:00:00Z","message":{"role":"assistant","content":[{"type":"thinking","thinking":"hmm"},{"type":"text","text":"answer"}]}}
+        """
+        let lines = try decodeLines(json)
+        let first = CLILineToBlocksMapper.map(lines: lines)
+        let second = CLILineToBlocksMapper.map(lines: lines)
+        #expect(first == second)
+        #expect(first.first?.blocks.contains(where: \.isThinking) == true)
+    }
 }
