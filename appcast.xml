@@ -391,5 +391,23 @@
         type="application/octet-stream"
         sparkle:edSignature="d6tPWoqxet30ElSQbIO7OpAGWhM90kE5Pu/2+7Zli5sk6tKvEZkfUIpuUyPq3q0/d9nztkBPwRHC/wFYDnUgCQ==" />
     </item>
+    <item>
+      <title>Clarc v1.3.3</title>
+      <sparkle:version>29</sparkle:version>
+      <sparkle:shortVersionString>1.3.3</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <pubDate>Tue, 02 Jun 2026 06:24:05 +0000</pubDate>
+      <description><![CDATA[
+<h3>Fixed</h3>
+<ul>
+  <li>Chat: Multi-select questions from Claude now show checkboxes and a Submit button so you can pick more than one option. Previously, tapping any option immediately submitted it as the only answer.</li>
+</ul>
+      ]]></description>
+      <enclosure
+        url="https://github.com/ttnear/Clarc/releases/download/v1.3.3/Clarc-1.3.3.zip"
+        length="6324390"
+        type="application/octet-stream"
+        sparkle:edSignature="oDDny7vwXOSMMyBwUDuPmqqFJgTTGXXNbEMZFTGYZrAaK+3vS2B48YQVKnsrtPBS5c6ntAFcTTQtuCIYMm8JDg==" />
+    </item>
   </channel>
 </rss>
