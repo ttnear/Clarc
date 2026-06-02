@@ -45,6 +45,11 @@ public final class WindowState {
     public let id = UUID()
     public var newSessionKey: String { "__new_\(id.uuidString)__" }
 
+    /// Per-window store for task-update phase cards. Owned by the
+    /// window so manual expand/collapse choices stay scoped to a
+    /// single chat session.
+    public let taskProgressStore = TaskProgressStore()
+
     // MARK: - Project / Session Selection
 
     public var selectedProject: Project?

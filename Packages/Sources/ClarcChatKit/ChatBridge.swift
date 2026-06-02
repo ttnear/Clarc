@@ -31,6 +31,7 @@ public final class ChatBridge {
     public var modelDisplayName: String = ""
     public var sessionStats: ChatSessionStats = ChatSessionStats()
     public var autoPreviewSettings: AttachmentAutoPreviewSettings = AttachmentAutoPreviewSettings()
+    public weak var taskProgressStore: TaskProgressStore?
 
     // MARK: - Action Handlers (set up by the app target)
 

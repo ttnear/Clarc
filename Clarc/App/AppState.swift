@@ -771,6 +771,7 @@ final class AppState {
                 sevenDayPath: self.usageEndpointSevenDayPath
             )
         }
+        bridge.taskProgressStore = window.taskProgressStore
 
         startBridgeObservation(bridge, for: window)
     }
