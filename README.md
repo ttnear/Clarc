@@ -54,7 +54,7 @@ Same engine, no terminal required.
 | **Streaming Chat** | Real-time Claude Code conversations with Markdown rendering, tool call visualization, diff views, expandable thinking traces, a visible stop button while streaming, and error bubbles for failed empty responses. |
 | **Conversation Forking** | Hover over any assistant message and fork the conversation from that point into a new branch session, leaving the original untouched. Forked branches also surface in the external `claude --resume` picker. |
 | **Multi-Project Workspace** | Register local folders or GitHub repositories, switch freely, and keep per-project session history. |
-| **Session Management** | Pin, rename, complete, and delete sessions. Mark sessions complete with a checkbox, hide completed ones, and multi-select for batch pin/complete/delete actions. |
+| **Session Management** | Pin, rename, complete, and delete sessions. Treat sessions like a to-do list — tick a checkbox to mark one done (completed titles are struck through and dimmed), hide completed ones, and multi-select for batch pin/complete/delete actions. |
 | **Dedicated Project Windows** | Double-click a project tab to open it in an independent window and work across multiple repositories at once. |
 | **Per-Session Controls** | Choose model, permission mode, and effort level per session from the chat toolbar. Defaults are configurable in Settings. |
 | **Permission Modes** | Ask, Accept Edits, Plan, Auto, and Bypass modes mirror Claude Code's permission model and can be changed from the toolbar. |
