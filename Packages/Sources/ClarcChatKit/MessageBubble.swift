@@ -244,13 +244,20 @@ struct MessageBubble: View {
     // MARK: - Assistant Text Bubble
 
     private func assistantTextBubble(text: String, blockId: String, hasHiddenTools: Bool = false) -> some View {
-        // "Last block" for cursor purposes means the last TEXT block — a trailing
-        // thinking block (rare but possible) must not strip the streaming cursor.
+        // Raw-text (un-rendered) streaming + cursor applies ONLY while this text block is
+        // the genuinely last block still receiving deltas. The moment any block (a tool
+        // such as AskUserQuestion, a thinking block, or another text block) follows it, the
+        // text is settled and switches to full markdown — so e.g. a table sitting above an
+        // AskUserQuestion prompt renders immediately instead of staying as raw source.
+        let isStreamingTail = message.isStreaming && message.blocks.last?.id == blockId
+
+        // "Last text block" governs the trailing-space reservation below (markdown strips
+        // trailing newlines, so the final paragraph can clip at the bubble edge).
         let lastText = message.blocks.last(where: \.isText)
-        let isLastBlock = lastText?.id == blockId && lastText?.text == text
+        let isLastTextBlock = lastText?.id == blockId && lastText?.text == text
 
         return HStack(alignment: .bottom, spacing: 0) {
-            if message.isStreaming && isLastBlock {
+            if isStreamingTail {
                 Text(text)
                     .font(.system(size: ClaudeTheme.messageSize(15)))
                     .lineSpacing(4)
@@ -262,14 +269,14 @@ struct MessageBubble: View {
                     // Trailing empty paragraph: the markdown renderer strips trailing
                     // newlines, so a finished response's last line can get clipped at the
                     // bubble edge. Reserve one line of space below the final text block.
-                    if isLastBlock {
+                    if isLastTextBlock {
                         Text(" ")
                             .font(.system(size: ClaudeTheme.messageSize(15)))
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            if message.isStreaming && isLastBlock {
+            if isStreamingTail {
                 Text("|")
                     .font(.system(size: ClaudeTheme.messageSize(15), weight: .light))
                     .foregroundStyle(ClaudeTheme.accent)
