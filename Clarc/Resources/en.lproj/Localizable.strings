@@ -113,8 +113,13 @@
 // MARK: - HistoryListView
 "Show current project only" = "Show current project only";
 "Show all projects" = "Show all projects";
+"Show completed sessions" = "Show completed sessions";
+"Hide completed sessions" = "Hide completed sessions";
+"Mark as Complete" = "Mark as Complete";
+"Mark as Incomplete" = "Mark as Incomplete";
 "Delete All" = "Delete All";
 "Delete" = "Delete";
+"Delete %lld Sessions" = "Delete %lld Sessions";
 "Cancel" = "Cancel";
 "All sessions in the current project will be deleted. This action cannot be undone." = "All sessions in the current project will be deleted. This action cannot be undone.";
 "All sessions will be deleted. This action cannot be undone." = "All sessions will be deleted. This action cannot be undone.";

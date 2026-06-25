@@ -113,8 +113,13 @@
 // MARK: - HistoryListView
 "Show current project only" = "현재 프로젝트만 표시";
 "Show all projects" = "모든 프로젝트 표시";
+"Show completed sessions" = "완료된 세션 표시";
+"Hide completed sessions" = "완료된 세션 숨기기";
+"Mark as Complete" = "완료로 표시";
+"Mark as Incomplete" = "미완료로 표시";
 "Delete All" = "모두 삭제";
 "Delete" = "삭제";
+"Delete %lld Sessions" = "세션 %lld개 삭제";
 "Cancel" = "취소";
 "All sessions in the current project will be deleted. This action cannot be undone." = "현재 프로젝트의 모든 세션이 삭제됩니다. 이 작업은 되돌릴 수 없습니다.";
 "All sessions will be deleted. This action cannot be undone." = "모든 세션이 삭제됩니다. 이 작업은 되돌릴 수 없습니다.";

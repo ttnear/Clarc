@@ -6,9 +6,15 @@ struct HistoryListView: View {
     @Environment(WindowState.self) private var windowState
     @State private var renamingSession: ChatSession?
     @State private var renameText = ""
+    /// Selected session ids. A single selection opens that session; multiple
+    /// selections (cmd/shift-click) drive batch context-menu actions.
+    @State private var selection = Set<String>()
     @AppStorage("historyShowAllProjects") private var showAllProjects = true
     @AppStorage("historyHideCompleted") private var hideCompleted = false
     @State private var showDeleteAllAlert = false
+    /// Sessions just marked complete while completed items are hidden — kept
+    /// visible briefly so the checkmark animation plays before they slide out.
+    @State private var pendingHideIds: Set<String> = []
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -70,7 +76,7 @@ struct HistoryListView: View {
                 hideCompleted.toggle()
             } label: {
                 Image(systemName: hideCompleted ? "checkmark.circle" : "checkmark.circle.fill")
-                    .font(.system(size: ClaudeTheme.size(11)))
+                    .font(.system(size: ClaudeTheme.size(12)))
                     .foregroundStyle(hideCompleted ? ClaudeTheme.textTertiary : ClaudeTheme.accent)
             }
             .buttonStyle(.borderless)
@@ -104,36 +110,48 @@ struct HistoryListView: View {
     // MARK: - Session List
 
     private var sessionList: some View {
-        List(sessions, selection: selectedSessionBinding) { session in
-            sessionRow(session)
-                .tag(session.id)
+        List(selection: $selection) {
+            ForEach(sessions) { session in
+                sessionRow(session)
+                    .tag(session.id)
+            }
         }
         .listStyle(.sidebar)
         .animation(.default, value: sessions)
+        .contextMenu(forSelectionType: String.self) { ids in
+            sessionContextMenu(for: ids)
+        }
+        .onChange(of: selection) { _, ids in
+            // A lone selection opens the session; a multi-selection leaves the
+            // currently open chat untouched and only feeds batch actions.
+            if ids.count == 1, let id = ids.first {
+                appState.selectSession(id: id, in: windowState)
+            }
+        }
+        .onChange(of: appState.currentSession(in: windowState)?.id, initial: true) { _, id in
+            syncSelectionToCurrent(id)
+        }
     }
 
-    private var selectedSessionBinding: Binding<String?> {
-        Binding<String?>(
-            get: { appState.currentSession(in: windowState)?.id },
-            set: { id in
-                if let id {
-                    appState.selectSession(id: id, in: windowState)
-                }
-            }
-        )
+    /// Mirror the open session into `selection` unless the user is mid
+    /// multi-selection, in which case their choice must not be clobbered.
+    private func syncSelectionToCurrent(_ id: String?) {
+        guard selection.count <= 1 else { return }
+        selection = id.map { [$0] } ?? []
     }
 
     private func sessionRow(_ session: DisplaySession) -> some View {
         return HStack(spacing: 6) {
             Button {
-                Task { await appState.toggleCompleteSession(id: session.id) }
+                completeTapped(session)
             } label: {
                 Image(systemName: session.isCompleted ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: ClaudeTheme.size(14)))
                     .foregroundStyle(session.isCompleted ? ClaudeTheme.accent : ClaudeTheme.textTertiary)
+                    .contentTransition(.symbolEffect(.replace))
             }
             .buttonStyle(.borderless)
-            .help(session.isCompleted ? "Mark as incomplete" : "Mark as complete")
+            .help(session.isCompleted ? "Mark as Incomplete" : "Mark as Complete")
 
             VStack(alignment: .leading, spacing: 3) {
                 Text(session.title)
@@ -175,51 +193,82 @@ struct HistoryListView: View {
             }
         }
         .padding(.vertical, 2)
-        .onLongPressGesture(minimumDuration: 0, maximumDistance: 10, pressing: { pressing in
-            if pressing {
-                appState.selectSession(id: session.id, in: windowState)
-            }
-        }, perform: {})
-        .contextMenu {
-            if let summary = appState.allSessionSummaries.first(where: { $0.id == session.id }) {
-                let chatSession = summary.makeSession()
+    }
 
+    // MARK: - Context Menu
+
+    /// Context menu for the right-clicked selection. `ids` is the effective
+    /// target set macOS hands us: the full selection when right-clicking a
+    /// selected row, or just the clicked row otherwise. Rename is hidden for
+    /// multi-selections; pin/complete/delete apply to every targeted session.
+    @ViewBuilder
+    private func sessionContextMenu(for ids: Set<String>) -> some View {
+        let targets = sessions.filter { ids.contains($0.id) }
+        if !targets.isEmpty {
+            if targets.count == 1, let only = targets.first {
                 Button {
-                    renameText = session.title
-                    renamingSession = chatSession
+                    renameText = only.title
+                    renamingSession = chatSession(for: only.id)
                 } label: {
                     Label("Rename", systemImage: "pencil")
                 }
+            }
 
-                Button {
-                    Task { await appState.togglePinSession(chatSession) }
-                } label: {
-                    if session.isPinned {
-                        Label("Unpin", systemImage: "pin.slash")
-                    } else {
-                        Label("Pin", systemImage: "pin")
-                    }
-                }
+            let allPinned = targets.allSatisfy { $0.isPinned }
+            Button {
+                Task { await applyPin(to: targets, pin: !allPinned) }
+            } label: {
+                Label(allPinned ? "Unpin" : "Pin", systemImage: allPinned ? "pin.slash" : "pin")
+            }
 
-                Button {
-                    Task { await appState.toggleCompleteSession(id: session.id) }
-                } label: {
-                    if session.isCompleted {
-                        Label("Mark as Incomplete", systemImage: "circle")
-                    } else {
-                        Label("Mark as Complete", systemImage: "checkmark.circle")
-                    }
-                }
+            let allCompleted = targets.allSatisfy { $0.isCompleted }
+            Button {
+                Task { await applyComplete(to: targets, complete: !allCompleted) }
+            } label: {
+                Label(
+                    allCompleted ? "Mark as Incomplete" : "Mark as Complete",
+                    systemImage: allCompleted ? "circle" : "checkmark.circle"
+                )
+            }
 
-                Divider()
+            Divider()
 
-                Button(role: .destructive) {
-                    Task { await appState.deleteSession(chatSession, in: windowState) }
-                } label: {
-                    Label("Delete", systemImage: "trash")
-                }
+            Button(role: .destructive) {
+                Task { await deleteSessions(targets) }
+            } label: {
+                Label(
+                    targets.count > 1 ? "Delete \(targets.count) Sessions" : "Delete",
+                    systemImage: "trash"
+                )
             }
         }
+    }
+
+    private func chatSession(for id: String) -> ChatSession? {
+        appState.allSessionSummaries.first(where: { $0.id == id })?.makeSession()
+    }
+
+    private func applyPin(to targets: [DisplaySession], pin: Bool) async {
+        for target in targets where target.isPinned != pin {
+            if let session = chatSession(for: target.id) {
+                await appState.togglePinSession(session)
+            }
+        }
+    }
+
+    private func applyComplete(to targets: [DisplaySession], complete: Bool) async {
+        for target in targets where target.isCompleted != complete {
+            await appState.toggleCompleteSession(id: target.id)
+        }
+    }
+
+    private func deleteSessions(_ targets: [DisplaySession]) async {
+        for target in targets {
+            if let session = chatSession(for: target.id) {
+                await appState.deleteSession(session, in: windowState)
+            }
+        }
+        selection = []
     }
 
     // MARK: - Empty State
@@ -255,7 +304,24 @@ struct HistoryListView: View {
         let base = (windowState.isProjectWindow || !showAllProjects)
             ? currentProjectSessions
             : allProjectSessions
-        return hideCompleted ? base.filter { !$0.isCompleted } : base
+        guard hideCompleted else { return base }
+        return base.filter { !$0.isCompleted || pendingHideIds.contains($0.id) }
+    }
+
+    /// Toggle completion. When hiding completed sessions, the just-completed row
+    /// lingers briefly (showing its checkmark) before animating out of the list.
+    private func completeTapped(_ session: DisplaySession) {
+        let willComplete = !session.isCompleted
+        guard hideCompleted && willComplete else {
+            Task { await appState.toggleCompleteSession(id: session.id) }
+            return
+        }
+        pendingHideIds.insert(session.id)
+        Task {
+            await appState.toggleCompleteSession(id: session.id)
+            try? await Task.sleep(for: .seconds(0.6))
+            pendingHideIds.remove(session.id)
+        }
     }
 
     private static func sessionOrder(
