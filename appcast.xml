@@ -409,5 +409,36 @@
         type="application/octet-stream"
         sparkle:edSignature="oDDny7vwXOSMMyBwUDuPmqqFJgTTGXXNbEMZFTGYZrAaK+3vS2B48YQVKnsrtPBS5c6ntAFcTTQtuCIYMm8JDg==" />
     </item>
+    <item>
+      <title>Clarc v1.3.4</title>
+      <sparkle:version>30</sparkle:version>
+      <sparkle:shortVersionString>1.3.4</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <pubDate>Thu, 25 Jun 2026 14:00:25 +0000</pubDate>
+      <description><![CDATA[
+<h3>New</h3>
+<ul>
+  <li><strong>Multi-language support</strong>: The app is now available in Simplified Chinese, Traditional Chinese, Japanese, and Spanish — in addition to English and Korean.</li>
+  <li><strong>Session completion</strong>: Click the circle next to any session to mark it complete. Completed sessions appear dimmed with a strikethrough, and you can hide them with one click to keep your list tidy.</li>
+  <li><strong>Multi-selection in Sessions</strong>: ⌘-click or ⇧-click to select multiple sessions, then right-click to pin, mark complete, or delete them all at once.</li>
+</ul>
+<h3>Improved</h3>
+<ul>
+  <li><strong>Sessions tab</strong>: The "History" tab is now called "Sessions" across all supported languages.</li>
+</ul>
+<h3>Fixed</h3>
+<ul>
+  <li>Markdown in assistant responses now renders immediately when a text block settles, rather than waiting for the full response to complete.</li>
+  <li>Built-in slash commands updated to match the latest Claude Code CLI reference.</li>
+  <li>Trailing space below the final response paragraph is now correctly reserved, preventing text from touching the bottom edge.</li>
+  <li>Session sidecar fields (pin, completion state) are now preserved when the watcher reloads a session from disk.</li>
+</ul>
+      ]]></description>
+      <enclosure
+        url="https://github.com/ttnear/Clarc/releases/download/v1.3.4/Clarc-1.3.4.zip"
+        length="6454679"
+        type="application/octet-stream"
+        sparkle:edSignature="Uyoimyb2gKz/RVdjLfCauhhBzeAuJrhazGVTGGWKtxEWF/UtumFeqGknZteyqISRwpP7mOA8yyDbcUeQhcNJCg==" />
+    </item>
   </channel>
 </rss>
