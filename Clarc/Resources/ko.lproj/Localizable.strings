@@ -515,3 +515,15 @@
 "The Slash Commands tab manages built-in and custom commands — edit, enable/disable, add, or delete. JSON import/export covers custom commands only. The Shortcuts tab manages shortcut buttons with JSON import/export support." = "슬래시 커맨드 탭에서는 기본 및 커스텀 커맨드를 관리합니다 — 편집, 활성화/비활성화, 추가, 삭제가 가능합니다. JSON 가져오기/내보내기는 커스텀 커맨드만 지원합니다. 단축키 탭에서는 단축 버튼을 관리하며 JSON 가져오기/내보내기를 지원합니다.";
 "Checking for Updates" = "업데이트 확인";
 "Open Clarc → Check for Updates… to run Sparkle's update check manually. Updates are also checked automatically on launch." = "Clarc → 업데이트 확인…을 통해 Sparkle 업데이트 확인을 수동으로 실행할 수 있습니다. 앱 시작 시에도 자동으로 확인됩니다.";
+
+// User Guide — Sessions & Chat additions
+"While Claude is responding, the send button turns into a stop button — click it or press Escape to cancel." = "Claude가 응답하는 동안에는 전송 버튼이 중지 버튼으로 바뀝니다. 버튼을 클릭하거나 Escape를 눌러 취소할 수 있습니다.";
+"Thinking Traces" = "사고 과정";
+"When the model reasons before answering, its thinking appears in a collapsible block above the response. It expands automatically while Claude is thinking so you can follow along, then collapses once the answer begins. Click the header to expand or collapse it yourself." = "모델이 답변하기 전에 추론하면 응답 위에 접을 수 있는 블록으로 사고 과정이 표시됩니다. Claude가 생각하는 동안에는 자동으로 펼쳐져 과정을 따라갈 수 있고, 답변이 시작되면 접힙니다. 헤더를 클릭하면 직접 펼치거나 접을 수 있습니다.";
+"Forking a Conversation" = "대화 분기";
+"Hover over any assistant message and click the branch icon to fork the conversation from that point. Clarc opens a new session with the history up to that message, leaves the original untouched, and switches to the new branch. Forked branches also appear in the external claude --resume picker." = "어시스턴트 메시지 위에 마우스를 올리고 분기 아이콘을 클릭하면 해당 지점에서 대화가 분기됩니다. Clarc은 그 메시지까지의 기록을 담은 새 세션을 열고, 원본은 그대로 둔 채 새 분기로 전환합니다. 분기된 세션은 외부 claude --resume 선택 목록에도 표시됩니다.";
+"Completing & Selecting Sessions" = "세션 완료 및 선택";
+"Click the circle to the left of a session title to mark it complete; completed sessions appear dimmed with a strikethrough. Use the checkmark button in the Sessions header to hide or show completed sessions." = "세션 제목 왼쪽의 원을 클릭하면 완료로 표시됩니다. 완료된 세션은 흐리게 표시되고 제목에 취소선이 그어집니다. 세션 헤더의 체크 버튼으로 완료된 세션을 숨기거나 표시할 수 있습니다.";
+"Add or remove a session from the selection" = "선택 항목에 세션 추가 또는 제거";
+"Select a range of sessions" = "세션 범위 선택";
+"With multiple sessions selected, right-click to pin, complete, or delete them all at once." = "여러 세션을 선택한 상태에서 우클릭하면 한 번에 고정, 완료, 삭제할 수 있습니다.";

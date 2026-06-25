@@ -272,6 +272,15 @@ enum ManualTopic: String, CaseIterable, Identifiable {
                     note: "Use the trash icon in the History header to delete all sessions at once."
                 ),
                 ManualSection(
+                    title: "Completing & Selecting Sessions",
+                    body: "Click the circle to the left of a session title to mark it complete; completed sessions appear dimmed with a strikethrough. Use the checkmark button in the Sessions header to hide or show completed sessions.",
+                    items: [
+                        KeyValueItem(key: "⌘-click", value: "Add or remove a session from the selection"),
+                        KeyValueItem(key: "⇧-click", value: "Select a range of sessions"),
+                    ],
+                    note: "With multiple sessions selected, right-click to pin, complete, or delete them all at once."
+                ),
+                ManualSection(
                     title: "File Inspector",
                     body: "Click any file in the Files tab to preview it with syntax highlighting. Press the pencil button to enter edit mode and modify the file directly.",
                     items: [
@@ -300,7 +309,8 @@ enum ManualTopic: String, CaseIterable, Identifiable {
                         KeyValueItem(key: "⌘Return", value: "Send message (alternative)"),
                         KeyValueItem(key: "⇧Return", value: "Insert line break"),
                         KeyValueItem(key: "Escape", value: "Stop streaming (cancel response generation)"),
-                    ]
+                    ],
+                    note: "While Claude is responding, the send button turns into a stop button — click it or press Escape to cancel."
                 ),
                 ManualSection(
                     title: "Message Queue",
@@ -313,6 +323,14 @@ enum ManualTopic: String, CaseIterable, Identifiable {
                         KeyValueItem(key: "↑", value: "Recall previous message"),
                         KeyValueItem(key: "↓", value: "Next message / clear input"),
                     ]
+                ),
+                ManualSection(
+                    title: "Thinking Traces",
+                    body: "When the model reasons before answering, its thinking appears in a collapsible block above the response. It expands automatically while Claude is thinking so you can follow along, then collapses once the answer begins. Click the header to expand or collapse it yourself."
+                ),
+                ManualSection(
+                    title: "Forking a Conversation",
+                    body: "Hover over any assistant message and click the branch icon to fork the conversation from that point. Clarc opens a new session with the history up to that message, leaves the original untouched, and switches to the new branch. Forked branches also appear in the external claude --resume picker."
                 ),
                 ManualSection(
                     title: "Changing the Model",

@@ -515,3 +515,15 @@
 "The Slash Commands tab manages built-in and custom commands — edit, enable/disable, add, or delete. JSON import/export covers custom commands only. The Shortcuts tab manages shortcut buttons with JSON import/export support." = "スラッシュコマンドタブでは、組み込みおよびカスタムコマンドを管理します — 編集、有効化/無効化、追加、削除ができます。JSON のインポート/エクスポートはカスタムコマンドのみ対応します。ショートカットタブではショートカットボタンを管理し、JSON のインポート/エクスポートに対応します。";
 "Checking for Updates" = "アップデートの確認";
 "Open Clarc → Check for Updates… to run Sparkle's update check manually. Updates are also checked automatically on launch." = "Clarc → アップデートを確認… から Sparkle のアップデート確認を手動で実行できます。アプリ起動時にも自動的に確認されます。";
+
+// User Guide — Sessions & Chat additions
+"While Claude is responding, the send button turns into a stop button — click it or press Escape to cancel." = "Claude が応答している間、送信ボタンは停止ボタンに変わります。ボタンをクリックするか Escape を押すとキャンセルできます。";
+"Thinking Traces" = "思考トレース";
+"When the model reasons before answering, its thinking appears in a collapsible block above the response. It expands automatically while Claude is thinking so you can follow along, then collapses once the answer begins. Click the header to expand or collapse it yourself." = "モデルが回答前に推論すると、その思考が応答の上に折りたたみ可能なブロックとして表示されます。Claude が思考している間は自動的に展開され、リアルタイムで追えます。回答が始まると折りたたまれます。ヘッダーをクリックすると手動で展開・折りたたみできます。";
+"Forking a Conversation" = "会話の分岐";
+"Hover over any assistant message and click the branch icon to fork the conversation from that point. Clarc opens a new session with the history up to that message, leaves the original untouched, and switches to the new branch. Forked branches also appear in the external claude --resume picker." = "アシスタントのメッセージにカーソルを合わせて分岐アイコンをクリックすると、その時点から会話を分岐できます。Clarc はそのメッセージまでの履歴を含む新しいセッションを開き、元のセッションはそのままに新しい分岐へ切り替えます。分岐したセッションは外部の claude --resume の選択一覧にも表示されます。";
+"Completing & Selecting Sessions" = "セッションの完了と選択";
+"Click the circle to the left of a session title to mark it complete; completed sessions appear dimmed with a strikethrough. Use the checkmark button in the Sessions header to hide or show completed sessions." = "セッションタイトルの左にある円をクリックすると完了として表示されます。完了したセッションは淡色になり、タイトルに取り消し線が付きます。セッションヘッダーのチェックボタンで完了したセッションの表示・非表示を切り替えられます。";
+"Add or remove a session from the selection" = "セッションを選択に追加または解除";
+"Select a range of sessions" = "範囲でセッションを選択";
+"With multiple sessions selected, right-click to pin, complete, or delete them all at once." = "複数のセッションを選択した状態で右クリックすると、まとめてピン留め・完了・削除できます。";

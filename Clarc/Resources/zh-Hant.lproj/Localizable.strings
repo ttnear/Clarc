@@ -515,3 +515,15 @@
 "The Slash Commands tab manages built-in and custom commands — edit, enable/disable, add, or delete. JSON import/export covers custom commands only. The Shortcuts tab manages shortcut buttons with JSON import/export support." = "斜線指令分頁用於管理內建和自訂指令 — 編輯、啟用/停用、新增或刪除。JSON 匯入/匯出僅涵蓋自訂指令。快捷按鈕分頁用於管理快捷按鈕，並支援 JSON 匯入/匯出。";
 "Checking for Updates" = "檢查更新";
 "Open Clarc → Check for Updates… to run Sparkle's update check manually. Updates are also checked automatically on launch." = "開啟 Clarc → 檢查更新…可手動執行 Sparkle 的更新檢查。啟動時也會自動檢查更新。";
+
+// User Guide — Sessions & Chat additions
+"While Claude is responding, the send button turns into a stop button — click it or press Escape to cancel." = "Claude 回應時，傳送按鈕會變為停止按鈕——點按它或按 Escape 即可取消。";
+"Thinking Traces" = "思考過程";
+"When the model reasons before answering, its thinking appears in a collapsible block above the response. It expands automatically while Claude is thinking so you can follow along, then collapses once the answer begins. Click the header to expand or collapse it yourself." = "當模型在回答前進行推理時，其思考過程會以可折疊的區塊顯示在回應上方。Claude 思考時該區塊會自動展開，方便你即時跟進，回答開始後則自動折疊。點按標題可手動展開或折疊。";
+"Forking a Conversation" = "分支對話";
+"Hover over any assistant message and click the branch icon to fork the conversation from that point. Clarc opens a new session with the history up to that message, leaves the original untouched, and switches to the new branch. Forked branches also appear in the external claude --resume picker." = "將滑鼠游標停留在任一助理訊息上並點按分支圖示，即可從該處分支對話。Clarc 會新建一個包含該訊息之前歷史記錄的會話，保持原會話不變，並切換至新分支。分支後的會話也會出現在外部 claude --resume 選擇清單中。";
+"Completing & Selecting Sessions" = "完成與選擇會話";
+"Click the circle to the left of a session title to mark it complete; completed sessions appear dimmed with a strikethrough. Use the checkmark button in the Sessions header to hide or show completed sessions." = "點按會話標題左側的圓圈即可將其標記為完成；已完成的會話會變暗並顯示刪除線。使用會話標題列中的勾選按鈕可隱藏或顯示已完成的會話。";
+"Add or remove a session from the selection" = "將會話加入或移出所選項";
+"Select a range of sessions" = "選擇一段範圍內的會話";
+"With multiple sessions selected, right-click to pin, complete, or delete them all at once." = "選取多個會話後，按右鍵即可一次置頂、完成或刪除它們。";
