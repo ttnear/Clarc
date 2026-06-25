@@ -787,7 +787,7 @@ final class AppState {
         let command = parts.first.map { String($0.dropFirst()) } ?? ""
 
         switch command {
-        case "clear":
+        case "clear", "reset", "new":
             startNewChat(in: window)
             return true
         case "model":
@@ -822,7 +822,7 @@ final class AppState {
             .first.map { String($0.dropFirst()) } ?? ""
 
         let isInteractive = SlashCommandRegistry.commands
-            .first { $0.name == baseName }?.isInteractive ?? false
+            .first { $0.name == baseName || $0.aliases.contains(baseName) }?.isInteractive ?? false
 
         if isInteractive {
             await sendInteractiveCommand(trimmed, in: window)

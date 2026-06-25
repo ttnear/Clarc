@@ -8,15 +8,17 @@ public struct SlashCommand: Identifiable, Codable, Hashable {
     public var name: String
     public var description: String
     public var detailDescription: String?
+    public var aliases: [String]
     public var acceptsInput: Bool
     public var isInteractive: Bool
 
     public var command: String { "/\(name)" }
 
-    public init(name: String, description: String, detailDescription: String? = nil, acceptsInput: Bool = false, isInteractive: Bool = false) {
+    public init(name: String, description: String, detailDescription: String? = nil, aliases: [String] = [], acceptsInput: Bool = false, isInteractive: Bool = false) {
         self.name = name
         self.description = description
         self.detailDescription = detailDescription
+        self.aliases = aliases
         self.acceptsInput = acceptsInput
         self.isInteractive = isInteractive
     }
@@ -26,6 +28,7 @@ public struct SlashCommand: Identifiable, Codable, Hashable {
         name = try c.decode(String.self, forKey: .name)
         description = try c.decode(String.self, forKey: .description)
         detailDescription = try c.decodeIfPresent(String.self, forKey: .detailDescription)
+        aliases = try c.decodeIfPresent([String].self, forKey: .aliases) ?? []
         acceptsInput = try c.decodeIfPresent(Bool.self, forKey: .acceptsInput) ?? false
         isInteractive = try c.decodeIfPresent(Bool.self, forKey: .isInteractive) ?? false
     }
@@ -80,13 +83,14 @@ public enum SlashCommandRegistry {
 
     public static let defaultCommands: [SlashCommand] = [
         // CLI built-in: conversation
-        SlashCommand(name: "clear", description: "Start a new conversation"),
+        SlashCommand(name: "clear", description: "Start a new conversation", aliases: ["reset", "new"]),
         SlashCommand(name: "btw", description: "Side question not added to conversation", acceptsInput: true),
         SlashCommand(name: "compact", description: "Compact conversation (focus instructions allowed)", acceptsInput: true),
         SlashCommand(name: "copy", description: "Copy last response to clipboard", acceptsInput: true),
         SlashCommand(name: "export", description: "Export conversation as text", acceptsInput: true, isInteractive: true),
         SlashCommand(name: "branch", description: "Create a branch of current conversation", acceptsInput: true),
-        SlashCommand(name: "rewind", description: "Rewind to a previous point", isInteractive: true),
+        SlashCommand(name: "fork", description: "Fork conversation to a background subagent", acceptsInput: true),
+        SlashCommand(name: "rewind", description: "Rewind to a previous point", aliases: ["checkpoint", "undo"], isInteractive: true),
         SlashCommand(name: "rename", description: "Rename session", acceptsInput: true),
         SlashCommand(name: "diff", description: "Diff viewer for uncommitted changes", isInteractive: true),
         SlashCommand(name: "recap", description: "Generate a one-line session summary"),
@@ -95,16 +99,17 @@ public enum SlashCommandRegistry {
         SlashCommand(name: "model", description: "Select/change AI model", acceptsInput: true, isInteractive: true),
         SlashCommand(name: "fast", description: "Toggle fast mode", acceptsInput: true, isInteractive: true),
         SlashCommand(name: "effort", description: "Set model effort level", acceptsInput: true, isInteractive: true),
+        SlashCommand(name: "advisor", description: "Enable/disable the advisor model", acceptsInput: true, isInteractive: true),
 
         // CLI built-in: usage & stats
-        SlashCommand(name: "cost", description: "Token usage statistics", isInteractive: true),
+        SlashCommand(name: "cost", description: "Session cost and usage (alias for /usage)", isInteractive: true),
         SlashCommand(name: "usage", description: "Plan usage limits and rate limits", isInteractive: true),
-        SlashCommand(name: "stats", description: "Daily usage and session history visualization", isInteractive: true),
-        SlashCommand(name: "extra-usage", description: "Configure extra usage", isInteractive: true),
+        SlashCommand(name: "stats", description: "Usage stats and history (alias for /usage)", isInteractive: true),
+        SlashCommand(name: "usage-credits", description: "Configure usage credits for when you hit a limit", aliases: ["extra-usage"], isInteractive: true),
 
         // CLI built-in: settings
-        SlashCommand(name: "config", description: "Settings interface", isInteractive: true),
-        SlashCommand(name: "permissions", description: "Manage permissions", isInteractive: true),
+        SlashCommand(name: "config", description: "Settings interface", aliases: ["settings"], isInteractive: true),
+        SlashCommand(name: "permissions", description: "Manage permissions", aliases: ["allowed-tools"], isInteractive: true),
         SlashCommand(name: "privacy-settings", description: "Privacy settings (Pro/Max)", isInteractive: true),
         SlashCommand(name: "theme", description: "Change color theme", isInteractive: true),
         SlashCommand(name: "color", description: "Set prompt bar color", acceptsInput: true, isInteractive: true),
@@ -117,21 +122,30 @@ public enum SlashCommandRegistry {
         SlashCommand(name: "init", description: "Initialize project with CLAUDE.md", isInteractive: true),
         SlashCommand(name: "memory", description: "Edit CLAUDE.md memory file", isInteractive: true),
         SlashCommand(name: "add-dir", description: "Add working directory to session", acceptsInput: true),
+        SlashCommand(name: "cd", description: "Change the session working directory", acceptsInput: true),
         SlashCommand(name: "context", description: "Visualize context usage"),
         SlashCommand(name: "plan", description: "Enter plan mode", acceptsInput: true),
-        SlashCommand(name: "tasks", description: "Manage background tasks"),
+        SlashCommand(name: "goal", description: "Keep working until a condition is met", acceptsInput: true),
+        SlashCommand(name: "tasks", description: "Manage background tasks", aliases: ["bashes"]),
+        SlashCommand(name: "background", description: "Detach session to run as a background agent", aliases: ["bg"], acceptsInput: true),
+        SlashCommand(name: "workflows", description: "Watch running and completed workflows", isInteractive: true),
         SlashCommand(name: "skills", description: "List available skills", isInteractive: true),
         SlashCommand(name: "insights", description: "Session analysis report"),
+        SlashCommand(name: "code-review", description: "Review the diff for bugs and cleanups", acceptsInput: true),
         SlashCommand(name: "simplify", description: "Review and fix code quality/efficiency of changes"),
         SlashCommand(name: "security-review", description: "Analyze security vulnerabilities"),
-        SlashCommand(name: "loop", description: "Repeat execution (e.g. /loop 5m /foo)", acceptsInput: true),
-        SlashCommand(name: "schedule", description: "Manage cloud scheduled tasks", acceptsInput: true),
+        SlashCommand(name: "loop", description: "Repeat execution (e.g. /loop 5m /foo)", aliases: ["proactive"], acceptsInput: true),
+        SlashCommand(name: "schedule", description: "Manage cloud scheduled tasks", aliases: ["routines"], acceptsInput: true),
         SlashCommand(name: "autofix-pr", description: "Auto-fix PR CI failures and review comments", acceptsInput: true),
         SlashCommand(name: "batch", description: "Orchestrate large-scale parallel changes", acceptsInput: true),
         SlashCommand(name: "claude-api", description: "Load Claude API reference for current project"),
         SlashCommand(name: "debug", description: "Enable debug logging and diagnose issues", acceptsInput: true),
         SlashCommand(name: "fewer-permission-prompts", description: "Reduce permission prompts by scanning transcripts"),
         SlashCommand(name: "review", description: "Review a pull request locally", acceptsInput: true),
+        SlashCommand(name: "deep-research", description: "Research a question into a cited report", acceptsInput: true),
+        SlashCommand(name: "run", description: "Launch and drive your app to verify a change"),
+        SlashCommand(name: "verify", description: "Build and run the app to confirm a change works"),
+        SlashCommand(name: "run-skill-generator", description: "Generate a per-project run/verify skill"),
         SlashCommand(name: "team-onboarding", description: "Generate a team onboarding guide"),
 
         // CLI built-in: extensions
@@ -139,15 +153,16 @@ public enum SlashCommandRegistry {
         SlashCommand(name: "hooks", description: "View hook configuration", isInteractive: true),
         SlashCommand(name: "plugin", description: "Manage plugins", isInteractive: true),
         SlashCommand(name: "reload-plugins", description: "Reload plugins", isInteractive: true),
+        SlashCommand(name: "reload-skills", description: "Re-scan skills and command directories", isInteractive: true),
         SlashCommand(name: "mcp", description: "Manage MCP servers", isInteractive: true),
         SlashCommand(name: "ide", description: "Manage IDE integration", isInteractive: true),
         SlashCommand(name: "chrome", description: "Configure Claude in Chrome", isInteractive: true),
-        SlashCommand(name: "desktop", description: "Continue in Desktop app", isInteractive: true),
-        SlashCommand(name: "remote-control", description: "Remote control from claude.ai", isInteractive: true),
+        SlashCommand(name: "desktop", description: "Continue in Desktop app", aliases: ["app"], isInteractive: true),
+        SlashCommand(name: "remote-control", description: "Remote control from claude.ai", aliases: ["rc"], isInteractive: true),
         SlashCommand(name: "remote-env", description: "Configure remote environment", isInteractive: true),
         SlashCommand(name: "voice", description: "Toggle voice dictation", isInteractive: true),
         SlashCommand(name: "powerup", description: "Interactive feature lessons with demos"),
-        SlashCommand(name: "teleport", description: "Pull a web session into this terminal", isInteractive: true),
+        SlashCommand(name: "teleport", description: "Pull a web session into this terminal", aliases: ["tp"], isInteractive: true),
         SlashCommand(name: "tui", description: "Set terminal UI renderer", acceptsInput: true, isInteractive: true),
         SlashCommand(name: "ultraplan", description: "Draft a plan in an ultraplan session", acceptsInput: true, isInteractive: true),
         SlashCommand(name: "ultrareview", description: "Deep multi-agent cloud code review", acceptsInput: true, isInteractive: true),
@@ -158,17 +173,17 @@ public enum SlashCommandRegistry {
         SlashCommand(name: "logout", description: "Log out of Anthropic account", isInteractive: true),
         SlashCommand(name: "install-github-app", description: "Set up GitHub Actions app", isInteractive: true),
         SlashCommand(name: "install-slack-app", description: "Install Slack app", isInteractive: true),
-        SlashCommand(name: "mobile", description: "Mobile app QR code", isInteractive: true),
+        SlashCommand(name: "mobile", description: "Mobile app QR code", aliases: ["ios", "android"], isInteractive: true),
         SlashCommand(name: "heapdump", description: "Write heap snapshot for memory diagnostics"),
         SlashCommand(name: "doctor", description: "Diagnose installation/configuration", isInteractive: true),
         SlashCommand(name: "status", description: "Version, model, and account status", isInteractive: true),
         SlashCommand(name: "help", description: "Show help", isInteractive: true),
-        SlashCommand(name: "feedback", description: "Submit feedback/bug report", isInteractive: true),
+        SlashCommand(name: "feedback", description: "Submit feedback/bug report", aliases: ["bug", "share"], isInteractive: true),
         SlashCommand(name: "release-notes", description: "View changelog", isInteractive: true),
         SlashCommand(name: "upgrade", description: "Upgrade plan", isInteractive: true),
         SlashCommand(name: "stickers", description: "Order Claude Code stickers", isInteractive: true),
         SlashCommand(name: "passes", description: "Share free 1-week passes", isInteractive: true),
-        SlashCommand(name: "exit", description: "Exit CLI"),
+        SlashCommand(name: "exit", description: "Exit CLI", aliases: ["quit"]),
     ]
 
     private static var defaultCommandKeys: Set<String> {
@@ -422,7 +437,8 @@ public enum SlashCommandRegistry {
         var nameMatches: [SlashCommand] = []
         var descriptionMatches: [SlashCommand] = []
         for cmd in enabledCommands {
-            if cmd.name.lowercased().contains(search) {
+            if cmd.name.lowercased().contains(search)
+                || cmd.aliases.contains(where: { $0.lowercased().contains(search) }) {
                 nameMatches.append(cmd)
             } else if cmd.description.lowercased().contains(search) {
                 descriptionMatches.append(cmd)
