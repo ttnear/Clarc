@@ -257,8 +257,17 @@ struct MessageBubble: View {
                     .textSelection(.enabled)
                     .frame(maxWidth: .infinity, alignment: .leading)
             } else {
-                MarkdownContentView(text: text)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                VStack(alignment: .leading, spacing: 0) {
+                    MarkdownContentView(text: text)
+                    // Trailing empty paragraph: the markdown renderer strips trailing
+                    // newlines, so a finished response's last line can get clipped at the
+                    // bubble edge. Reserve one line of space below the final text block.
+                    if isLastBlock {
+                        Text(" ")
+                            .font(.system(size: ClaudeTheme.messageSize(15)))
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
             if message.isStreaming && isLastBlock {
                 Text("|")
