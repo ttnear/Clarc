@@ -2016,7 +2016,30 @@ final class AppState {
     /// the in-memory slice; otherwise SwiftUI would re-render on every
     /// self-write event.
     private func reloadSessionSummaries(for project: Project) async {
-        let summaries = await mergedSummaries(for: project)
+        let loaded = await mergedSummaries(for: project)
+
+        // The sidecar fields (pin/complete/model/effort/permissionMode) are
+        // owned solely by Clarc, so for a session already in memory the
+        // in-memory value is never staler than disk. This reload only exists to
+        // pick up CLI-side jsonl changes, so carry those Clarc-owned fields over
+        // from memory — otherwise a watcher reload that races a just-issued
+        // toggle (e.g. mark-complete) re-reads the sidecar before its write has
+        // flushed and clobbers the correct in-memory state with stale disk data.
+        let inMemory = Dictionary(
+            allSessionSummaries.lazy.map { ($0.id, $0) },
+            uniquingKeysWith: { current, _ in current }
+        )
+        let summaries = loaded.map { summary -> ChatSession.Summary in
+            guard let mem = inMemory[summary.id] else { return summary }
+            var merged = summary
+            merged.isPinned = mem.isPinned
+            merged.isCompleted = mem.isCompleted
+            merged.model = mem.model
+            merged.effort = mem.effort
+            merged.permissionMode = mem.permissionMode
+            return merged
+        }
+
         let existing = allSessionSummaries
             .filter { $0.projectId == project.id }
             .sorted { $0.updatedAt > $1.updatedAt }
