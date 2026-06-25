@@ -49,6 +49,7 @@ actor PersistenceService {
                 meta: SessionMetaStore.Meta(
                     title: titleToWrite,
                     isPinned: session.isPinned,
+                    isCompleted: session.isCompleted,
                     model: session.model,
                     effort: session.effort,
                     permissionMode: session.permissionMode,

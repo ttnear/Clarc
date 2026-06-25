@@ -7,6 +7,7 @@ struct HistoryListView: View {
     @State private var renamingSession: ChatSession?
     @State private var renameText = ""
     @AppStorage("historyShowAllProjects") private var showAllProjects = true
+    @AppStorage("historyHideCompleted") private var hideCompleted = false
     @State private var showDeleteAllAlert = false
 
     var body: some View {
@@ -65,6 +66,16 @@ struct HistoryListView: View {
 
             Spacer()
 
+            Button {
+                hideCompleted.toggle()
+            } label: {
+                Image(systemName: hideCompleted ? "checkmark.circle" : "checkmark.circle.fill")
+                    .font(.system(size: ClaudeTheme.size(11)))
+                    .foregroundStyle(hideCompleted ? ClaudeTheme.textTertiary : ClaudeTheme.accent)
+            }
+            .buttonStyle(.borderless)
+            .help(hideCompleted ? "Show completed sessions" : "Hide completed sessions")
+
             // No need to toggle all/current in the project window
             if !windowState.isProjectWindow {
                 Button {
@@ -113,11 +124,22 @@ struct HistoryListView: View {
     }
 
     private func sessionRow(_ session: DisplaySession) -> some View {
-        return HStack(spacing: 4) {
+        return HStack(spacing: 6) {
+            Button {
+                Task { await appState.toggleCompleteSession(id: session.id) }
+            } label: {
+                Image(systemName: session.isCompleted ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: ClaudeTheme.size(14)))
+                    .foregroundStyle(session.isCompleted ? ClaudeTheme.accent : ClaudeTheme.textTertiary)
+            }
+            .buttonStyle(.borderless)
+            .help(session.isCompleted ? "Mark as incomplete" : "Mark as complete")
+
             VStack(alignment: .leading, spacing: 3) {
                 Text(session.title)
                     .font(.system(size: ClaudeTheme.size(13)))
-                    .foregroundStyle(.primary.opacity(0.8))
+                    .foregroundStyle(.primary.opacity(session.isCompleted ? 0.45 : 0.8))
+                    .strikethrough(session.isCompleted, color: ClaudeTheme.textTertiary)
                     .lineLimit(1)
 
                 HStack(spacing: 4) {
@@ -179,6 +201,16 @@ struct HistoryListView: View {
                     }
                 }
 
+                Button {
+                    Task { await appState.toggleCompleteSession(id: session.id) }
+                } label: {
+                    if session.isCompleted {
+                        Label("Mark as Incomplete", systemImage: "circle")
+                    } else {
+                        Label("Mark as Complete", systemImage: "checkmark.circle")
+                    }
+                }
+
                 Divider()
 
                 Button(role: .destructive) {
@@ -214,16 +246,16 @@ struct HistoryListView: View {
         let title: String
         let updatedAt: Date
         let isPinned: Bool
+        let isCompleted: Bool
         let isBackgroundStreaming: Bool
         let projectName: String?
     }
 
     private var sessions: [DisplaySession] {
-        if windowState.isProjectWindow || !showAllProjects {
-            return currentProjectSessions
-        } else {
-            return allProjectSessions
-        }
+        let base = (windowState.isProjectWindow || !showAllProjects)
+            ? currentProjectSessions
+            : allProjectSessions
+        return hideCompleted ? base.filter { !$0.isCompleted } : base
     }
 
     private static func sessionOrder(
@@ -246,6 +278,7 @@ struct HistoryListView: View {
                     title: summary.title,
                     updatedAt: summary.updatedAt,
                     isPinned: summary.isPinned,
+                    isCompleted: summary.isCompleted,
                     isBackgroundStreaming: streamingIds.contains(summary.id),
                     projectName: nil
                 )
@@ -268,6 +301,7 @@ struct HistoryListView: View {
                     title: summary.title,
                     updatedAt: summary.updatedAt,
                     isPinned: summary.isPinned,
+                    isCompleted: summary.isCompleted,
                     isBackgroundStreaming: streamingIds.contains(summary.id),
                     projectName: projectNames[summary.projectId]
                 )

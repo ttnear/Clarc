@@ -9,6 +9,7 @@ public actor SessionMetaStore {
     public struct Meta: Codable, Sendable {
         public var title: String?
         public var isPinned: Bool
+        public var isCompleted: Bool
         public var model: String?
         public var effort: String?
         public var permissionMode: PermissionMode?
@@ -17,6 +18,7 @@ public actor SessionMetaStore {
         public init(
             title: String? = nil,
             isPinned: Bool = false,
+            isCompleted: Bool = false,
             model: String? = nil,
             effort: String? = nil,
             permissionMode: PermissionMode? = nil,
@@ -24,10 +26,26 @@ public actor SessionMetaStore {
         ) {
             self.title = title
             self.isPinned = isPinned
+            self.isCompleted = isCompleted
             self.model = model
             self.effort = effort
             self.permissionMode = permissionMode
             self.updatedAt = updatedAt
+        }
+
+        private enum CodingKeys: String, CodingKey {
+            case title, isPinned, isCompleted, model, effort, permissionMode, updatedAt
+        }
+
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            title = try container.decodeIfPresent(String.self, forKey: .title)
+            isPinned = try container.decodeIfPresent(Bool.self, forKey: .isPinned) ?? false
+            isCompleted = try container.decodeIfPresent(Bool.self, forKey: .isCompleted) ?? false
+            model = try container.decodeIfPresent(String.self, forKey: .model)
+            effort = try container.decodeIfPresent(String.self, forKey: .effort)
+            permissionMode = try container.decodeIfPresent(PermissionMode.self, forKey: .permissionMode)
+            updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
         }
     }
 

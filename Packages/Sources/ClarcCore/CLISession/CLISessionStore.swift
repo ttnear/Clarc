@@ -206,6 +206,7 @@ public actor CLISessionStore {
                 createdAt: snippet.firstTimestamp ?? mtimeDate,
                 updatedAt: snippet.lastTimestamp ?? mtimeDate,
                 isPinned: meta.isPinned,
+                isCompleted: meta.isCompleted,
                 model: meta.model,
                 effort: meta.effort,
                 permissionMode: meta.permissionMode,

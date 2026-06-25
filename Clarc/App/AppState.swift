@@ -1845,8 +1845,9 @@ final class AppState {
            let currentProject = window.selectedProject,
            let state = sessionStates[currentId],
            !state.allMessages.isEmpty {
-            let title = allSessionSummaries.first(where: { $0.id == currentId })?.title ?? "Session"
-            let session = ChatSession(id: currentId, projectId: currentProject.id, title: title, messages: state.allMessages, updatedAt: lastResponseDate(from: state.allMessages))
+            let existing = allSessionSummaries.first(where: { $0.id == currentId })
+            let title = existing?.title ?? "Session"
+            let session = ChatSession(id: currentId, projectId: currentProject.id, title: title, messages: state.allMessages, updatedAt: lastResponseDate(from: state.allMessages), isCompleted: existing?.isCompleted ?? false)
             Task {
                 do { try await self.persistence.saveSession(session) }
                 catch { self.logger.error("Failed to save current session before project switch: \(error.localizedDescription)") }
@@ -1951,6 +1952,7 @@ final class AppState {
                     meta: SessionMetaStore.Meta(
                         title: summary.title == ChatSession.defaultTitle ? nil : summary.title,
                         isPinned: summary.isPinned,
+                        isCompleted: summary.isCompleted,
                         model: summary.model,
                         effort: summary.effort,
                         permissionMode: summary.permissionMode,
@@ -2128,8 +2130,9 @@ final class AppState {
         Task { [weak self] in
             guard let self else { return }
             if !outgoingMessages.isEmpty, let project = window.selectedProject {
-                let title = allSessionSummaries.first(where: { $0.id == outgoingId })?.title ?? "Session"
-                let outgoing = ChatSession(id: outgoingId, projectId: project.id, title: title, messages: outgoingMessages, updatedAt: lastResponseDate(from: outgoingMessages))
+                let existing = allSessionSummaries.first(where: { $0.id == outgoingId })
+                let title = existing?.title ?? "Session"
+                let outgoing = ChatSession(id: outgoingId, projectId: project.id, title: title, messages: outgoingMessages, updatedAt: lastResponseDate(from: outgoingMessages), isCompleted: existing?.isCompleted ?? false)
                 do { try await persistence.saveSession(outgoing) }
                 catch { logger.error("Failed to save outgoing session: \(error.localizedDescription)") }
             }
@@ -2238,6 +2241,13 @@ final class AppState {
         allSessionSummaries[si].isPinned.toggle()
         let newIsPinned = allSessionSummaries[si].isPinned
         await updateSessionMetadata(session) { $0.isPinned = newIsPinned }
+    }
+
+    func toggleCompleteSession(id: String) async {
+        guard let si = allSessionSummaries.firstIndex(where: { $0.id == id }) else { return }
+        allSessionSummaries[si].isCompleted.toggle()
+        let updated = allSessionSummaries[si]
+        await updateSessionMetadata(updated.makeSession()) { $0.isCompleted = updated.isCompleted }
     }
 
     /// Persist a metadata-only edit (title, pin, etc.) routing by session
@@ -2547,10 +2557,12 @@ final class AppState {
     private func saveSession(sessionId: String, projectId: UUID, messages: [ChatMessage]) async {
         guard !messages.isEmpty else { return }
 
+        let existing = allSessionSummaries.first(where: { $0.id == sessionId })
+
         // Preserve the existing title (which may have been renamed by the user).
         // Only auto-generate a title when no summary exists yet for this session.
         let title: String
-        if let existing = allSessionSummaries.first(where: { $0.id == sessionId }), !existing.title.isEmpty {
+        if let existing, !existing.title.isEmpty {
             title = existing.title
         } else {
             let firstUserContent = messages.first(where: { $0.role == .user })?.content
@@ -2560,8 +2572,9 @@ final class AppState {
         let sessionModel = sessionStates[sessionId]?.model
         let sessionEffort = sessionStates[sessionId]?.effort
         let sessionPermissionMode = sessionStates[sessionId]?.permissionMode
-        let origin = allSessionSummaries.first(where: { $0.id == sessionId })?.origin ?? .cliBacked
-        let session = ChatSession(id: sessionId, projectId: projectId, title: title, messages: messages, updatedAt: lastResponseDate(from: messages), model: sessionModel, effort: sessionEffort, permissionMode: sessionPermissionMode, origin: origin)
+        let origin = existing?.origin ?? .cliBacked
+        let isCompleted = existing?.isCompleted ?? false
+        let session = ChatSession(id: sessionId, projectId: projectId, title: title, messages: messages, updatedAt: lastResponseDate(from: messages), isCompleted: isCompleted, model: sessionModel, effort: sessionEffort, permissionMode: sessionPermissionMode, origin: origin)
 
         do {
             try await persistence.saveSession(session)
