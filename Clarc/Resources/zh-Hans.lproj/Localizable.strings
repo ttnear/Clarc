@@ -1,0 +1,517 @@
+/* Simplified Chinese localization — main app */
+
+// MARK: - ClarcApp
+"New Chat" = "新建对话";
+"Check for Updates..." = "检查更新...";
+"Theme" = "主题";
+
+// MARK: - SettingsView
+"General" = "通用";
+"Message" = "消息";
+"Focus Mode" = "专注模式";
+"Enable Focus Mode" = "启用专注模式";
+"focus.mode.desc" = "在流式输出过程中隐藏消息气泡，仅在历史记录中显示已完成的响应。";
+"Auto-preview Attachments" = "自动预览附件";
+"auto.preview.desc" = "启用后，粘贴以下内容类型时会自动创建附件预览。禁用后则以纯文本形式插入。";
+"URL links" = "URL 链接";
+"File paths" = "文件路径";
+"Images" = "图片";
+"Long text (200+ characters)" = "长文本（200 字符以上）";
+"Shortcuts" = "快捷按钮";
+"Browse and manage Claude Code skills" = "浏览并管理 Claude Code 技能";
+"Default Model" = "默认模型";
+"Used for new sessions. You can override the model per session from the toolbar." = "用于新会话。你可以在工具栏中按会话单独更改模型。";
+"Default Permission Mode" = "默认权限模式";
+"Used for new sessions. You can override the permission mode per session from the toolbar." = "用于新会话。你可以在工具栏中按会话单独更改权限模式。";
+"Default Effort Level" = "默认工作量级别";
+"Used for new sessions. You can override the effort level per session from the toolbar." = "用于新会话。你可以在工具栏中按会话单独更改工作量级别。";
+"Font Size" = "字体大小";
+"Interface" = "界面";
+"Messages" = "消息";
+"Default" = "默认值";
+"Reset" = "重置";
+"font.size.hint" = "分别调整界面和消息的字体大小。";
+"Notifications" = "通知";
+"Notify when response completes" = "响应完成时通知";
+"Sends a system notification while Clarc is in the background." = "当 Clarc 在后台时发送系统通知。";
+"Open Source" = "开源";
+"Response complete" = "响应完成";
+
+// MARK: - MainView / ProjectWindowView
+"Manage GitHub Repos" = "管理 GitHub 仓库";
+"Connect GitHub" = "连接 GitHub";
+"Add Project" = "添加项目";
+"History" = "历史";
+"Files" = "文件";
+"Select a Project" = "请选择一个项目";
+"Select a project from the sidebar or add a new one." = "从侧边栏选择一个项目，或添加新项目。";
+"Error" = "错误";
+"OK" = "确定";
+"Manage Slash Commands" = "管理斜杠命令";
+"Manage Shortcuts" = "管理快捷按钮";
+"Claude Code Terminal" = "Claude Code 终端";
+"Skill Marketplace" = "技能市场";
+"Change Theme" = "更改主题";
+"User Guide" = "使用指南";
+"Claude Code" = "Claude Code";
+"Skip Permissions: ON" = "跳过权限：开";
+"Skip Permissions: OFF" = "跳过权限：关";
+"Select Model" = "选择模型";
+"Select Effort Level" = "选择工作量级别";
+"↑↓ Select  ↵ Confirm  esc Cancel" = "↑↓ 选择  ↵ 确认  esc 取消";
+
+// MARK: - SkillMarketView
+"Refresh" = "刷新";
+"Close" = "关闭";
+"Search skills..." = "搜索技能...";
+"All" = "全部";
+"Installed" = "已安装";
+"Loading catalog..." = "正在加载目录...";
+"No results found" = "未找到结果";
+"Installing..." = "正在安装...";
+"Failed" = "失败";
+"Back" = "返回";
+"Author" = "作者";
+"Market" = "市场";
+"Category" = "类别";
+"Homepage" = "主页";
+"Install Command" = "安装命令";
+"Remove" = "移除";
+"Retry" = "重试";
+"Install" = "安装";
+
+// MARK: - GitHubSheet / GitHubRepoListView
+"GitHub" = "GitHub";
+"Connect GitHub to\nimport repos instantly" = "连接 GitHub\n即刻导入仓库";
+"Search repos..." = "搜索仓库...";
+"Loading repos..." = "正在加载仓库...";
+"No repos found" = "未找到仓库";
+"Don't see your org repos? →" = "看不到你的组织仓库？ →";
+"Don't see your org repos?" = "看不到你的组织仓库？";
+"Configure org access →" = "配置组织访问权限 →";
+"Added" = "已添加";
+"Add" = "添加";
+"Add to projects" = "添加到项目";
+
+// MARK: - FileTreeView
+"Search Files (⌘F)" = "搜索文件 (⌘F)";
+"Search filename..." = "搜索文件名...";
+"Loading..." = "正在加载...";
+"No results for '%@'" = "未找到“%@”的结果";
+"%d files" = "%d 个文件";
+"Unable to load files" = "无法加载文件";
+"Add path to message" = "将路径添加到消息";
+"Show in Finder" = "在 Finder 中显示";
+
+// MARK: - ProjectListView
+"Projects" = "项目";
+"Rename Project" = "重命名项目";
+"Delete Project" = "删除项目";
+"This will remove the project from Clarc. The files on disk will not be deleted." = "这将从 Clarc 中移除该项目。磁盘上的文件不会被删除。";
+"Project name" = "项目名称";
+
+// MARK: - HistoryListView
+"Show current project only" = "仅显示当前项目";
+"Show all projects" = "显示所有项目";
+"Show completed sessions" = "显示已完成的会话";
+"Hide completed sessions" = "隐藏已完成的会话";
+"Mark as Complete" = "标记为已完成";
+"Mark as Incomplete" = "标记为未完成";
+"Delete All" = "全部删除";
+"Delete" = "删除";
+"Delete %lld Sessions" = "删除 %lld 个会话";
+"Cancel" = "取消";
+"All sessions in the current project will be deleted. This action cannot be undone." = "当前项目中的所有会话将被删除。此操作无法撤销。";
+"All sessions will be deleted. This action cannot be undone." = "所有会话将被删除。此操作无法撤销。";
+"Rename Session" = "重命名会话";
+"Session name" = "会话名称";
+"Rename" = "重命名";
+"Response in progress in the background" = "响应正在后台进行中";
+"Unpin" = "取消置顶";
+"Pin" = "置顶";
+"No chat history" = "无对话历史";
+
+// MARK: - GitStatusView
+"Checking..." = "正在检查...";
+"Not a Git repository" = "不是 Git 仓库";
+"No changes" = "无更改";
+"%d changed" = "%d 项更改";
+"Failed to check status" = "检查状态失败";
+"Local" = "本地";
+"Remote (origin)" = "远程 (origin)";
+"No local branches" = "无本地分支";
+"No remote branches" = "无远程分支";
+"Switch Branch" = "切换分支";
+
+// MARK: - FileInspectorView
+"Preview" = "预览";
+"Edit" = "编辑";
+"Copied" = "已复制";
+"Copy" = "复制";
+"loading..." = "正在加载...";
+"Binary file — preview not available" = "二进制文件 — 无法预览";
+"File is too large (>1MB)" = "文件过大（>1MB）";
+"Read failed: %@" = "读取失败：%@";
+"Save failed: %@" = "保存失败：%@";
+
+// MARK: - ChatToolbarControls
+"Permission Mode" = "权限模式";
+"Ask" = "询问";
+"Accept Edits" = "接受编辑";
+"Plan" = "计划模式";
+"Auto" = "自动模式";
+"Bypass" = "跳过权限";
+"Model Picker" = "模型";
+"Effort Picker" = "工作量";
+"Auto Effort" = "自动";
+"Low" = "低";
+"Medium" = "中";
+"High" = "高";
+"XHigh" = "极高";
+"Max" = "最高";
+"Permission mode: %@" = "权限模式：%@";
+"Effort level (--effort)" = "工作量级别 (--effort)";
+
+// MARK: - PermissionModal
+"Permission Request" = "权限请求";
+"Command" = "命令";
+"File" = "文件";
+"Input" = "输入";
+"Auto-deny in %@" = "%@ 后自动拒绝";
+"Deny" = "拒绝";
+"Allow" = "允许";
+"Allow this tool for the session" = "本次会话内允许此工具";
+"Always allow this command" = "始终允许此命令";
+
+// MARK: - OnboardingView
+"Claude CLI Installation Check" = "Claude CLI 安装检查";
+"Installed — %@" = "已安装 — %@";
+"Claude CLI not found" = "未找到 Claude CLI";
+"Install command:" = "安装命令：";
+"Check Again" = "重新检查";
+"Get Started" = "开始使用";
+"Share session history with the terminal CLI in ~/.claude/projects/. Turn off to keep Clarc sessions separate. You can change this later in Settings." = "与 ~/.claude/projects/ 中的终端 CLI 共享会话历史。关闭后 Clarc 会话将单独保存。你之后可在设置中更改此项。";
+
+// MARK: - GitHubLoginView
+"Connect GitHub to fetch your repo list and add projects with a single click." = "连接 GitHub 即可获取你的仓库列表，并一键添加项目。";
+"Sign in with GitHub" = "使用 GitHub 登录";
+"Authentication Code" = "验证码";
+"Copy Code" = "复制验证码";
+"Authenticate on GitHub" = "在 GitHub 上验证";
+"Waiting for authentication..." = "正在等待验证...";
+"Connected" = "已连接";
+
+// MARK: - InspectorTabControl
+"Memo" = "备忘";
+"Terminal" = "终端";
+
+// MARK: - Model Descriptions
+"model.desc.default" = "恢复为适合你账户类型的推荐模型";
+"model.desc.best" = "当前可用的最强模型（目前等同于 Opus）";
+"model.desc.opus" = "适用于复杂推理任务的最新 Opus 模型";
+"model.desc.opus1m" = "适用于长会话、具有 100 万令牌上下文窗口的 Opus";
+"model.desc.opusplan" = "在计划模式中使用 Opus，执行时切换为 Sonnet";
+"model.desc.sonnet" = "适用于日常编码任务的最新 Sonnet 模型";
+"model.desc.sonnet1m" = "适用于长会话、具有 100 万令牌上下文窗口的 Sonnet";
+"model.desc.haiku" = "适用于简单任务的快速高效模型";
+
+// MARK: - Permission Mode Descriptions
+"perm.desc.default" = "在每次编辑文件或执行 shell 命令前请求确认。适合处理敏感操作或刚开始使用时。";
+"perm.desc.acceptEdits" = "自动批准文件编辑及常见文件系统命令（mkdir、touch、mv、cp）。其他 shell 命令仍会请求确认。";
+"perm.desc.plan" = "只读模式。Claude 在不做任何更改的情况下分析代码库并提出计划。其他操作与默认模式采用相同的确认方式。";
+"perm.desc.auto" = "无需权限确认即可运行。后台分类器会在每个操作执行前检查其是否安全。";
+"perm.desc.bypassPermissions" = "跳过所有权限检查和安全防护。请仅在无网络的隔离容器或虚拟机环境中使用。";
+
+// MARK: - Effort Level Descriptions
+"effort.desc.auto" = "使用根据当前模型和套餐自动决定的模型默认级别。";
+"effort.desc.low" = "适用于对延迟敏感、范围明确且不复杂的短任务。";
+"effort.desc.medium" = "适合在愿意牺牲部分准确度的情况下降低令牌成本。";
+"effort.desc.high" = "在令牌用量与智能水平之间取得平衡。是对准确度有要求的任务的最低推荐级别。";
+"effort.desc.xhigh" = "在大多数编码和智能体任务中提供最佳结果。是 Opus 4.7 的推荐默认值。";
+"effort.desc.max" = "在无令牌限制下提供最深入的推理。仅对当前会话生效。适合复杂、棘手的任务。";
+
+// MARK: - AppState
+"Previous conversation has been compacted" = "之前的对话已被压缩";
+"No response received" = "未收到响应";
+"Done" = "完成";
+
+// MARK: - UserManualView
+// Topic titles
+"About Clarc" = "关于 Clarc";
+"Project Management" = "项目管理";
+"Chat Basics" = "对话基础";
+"Keyboard Shortcuts" = "键盘快捷键";
+"Slash Commands" = "斜杠命令";
+"File & Image Attachments" = "文件和图片附件";
+"Shortcut Buttons" = "快捷按钮";
+"Inspector Panel" = "检查器面板";
+"GitHub Integration" = "GitHub 集成";
+"Permission Requests" = "权限请求";
+"Status Line" = "状态栏";
+
+// Overview
+"What is Clarc?" = "什么是 Clarc？";
+"A native macOS desktop client for the Claude Code CLI. Use all Claude Code features via a polished GUI without needing a terminal." = "面向 Claude Code CLI 的原生 macOS 桌面客户端。无需终端，即可通过精致的图形界面使用 Claude Code 的全部功能。";
+"Main Layout" = "主界面布局";
+"The left sidebar has History and Files tabs. Project tabs appear at the top of the chat area — click to switch projects. The right inspector panel contains the Terminal and Memo tabs." = "左侧边栏包含历史和文件标签页。项目标签显示在对话区域顶部 — 点击即可切换项目。右侧检查器面板包含终端和备忘标签页。";
+"Chat is disabled when no project is selected." = "未选择项目时无法使用对话。";
+"Top Toolbar" = "顶部工具栏";
+"The toolbar contains: New Chat, Manage Slash Commands, Manage Shortcut Buttons, Skip Permissions toggle, Model picker, Inspector panel toggle, Settings, and the GitHub integration button." = "工具栏包含：新建对话、管理斜杠命令、管理快捷按钮、跳过权限开关、模型选择器、检查器面板开关、设置以及 GitHub 集成按钮。";
+
+// Project Management
+"Adding a Project" = "添加项目";
+"Click the + button at the top of the sidebar or drag a folder from Finder. Claude Code uses that folder as its working directory." = "点击侧边栏顶部的 + 按钮，或从 Finder 拖入一个文件夹。Claude Code 会将该文件夹用作工作目录。";
+"Project Tabs" = "项目标签";
+"Project tabs appear at the top of the chat area. Click a tab to switch projects. You can switch even while Claude is streaming — the active stream continues in the background." = "项目标签显示在对话区域顶部。点击标签即可切换项目。即使在 Claude 流式输出时也能切换 — 进行中的流式输出会在后台继续运行。";
+"Dedicated Project Window" = "专用项目窗口";
+"Double-click a project tab to open it in its own independent window. Each window manages its own sessions independently, allowing you to work on multiple projects at once." = "双击项目标签可在独立的专用窗口中打开。每个窗口独立管理各自的会话，让你能够同时处理多个项目。";
+"In a dedicated project window, only the project name is shown — there are no project tabs." = "在专用项目窗口中仅显示项目名称 — 没有项目标签。";
+"Sidebar Tabs" = "侧边栏标签页";
+"History tab: shows previous conversations\nFiles tab: browse the project file tree" = "历史标签页：显示以往的对话\n文件标签页：浏览项目文件树";
+"Go to History tab" = "前往历史标签页";
+"Go to Files tab" = "前往文件标签页";
+"Files tab + activate search" = "文件标签页 + 激活搜索";
+"History Management" = "历史管理";
+"Right-click a session in the History tab for context menu options." = "在历史标签页中右键点击会话可显示上下文菜单选项。";
+"Pin / Unpin — pinned sessions stay at the top of the list" = "置顶 / 取消置顶 — 置顶的会话始终显示在列表最上方";
+"Rename — change the session title" = "重命名 — 修改会话标题";
+"Delete — remove the session" = "删除 — 移除该会话";
+"Use the trash icon in the History header to delete all sessions at once." = "使用历史标题栏中的垃圾桶图标可一次性删除所有会话。";
+"File Inspector" = "文件检查器";
+"Click any file in the Files tab to preview it with syntax highlighting. Press the pencil button to enter edit mode and modify the file directly." = "在文件标签页中点击任意文件，即可带语法高亮地预览。按下铅笔按钮进入编辑模式，直接修改文件。";
+"Save file changes" = "保存文件更改";
+"Exit edit mode" = "退出编辑模式";
+"Files larger than 1 MB cannot be previewed." = "超过 1 MB 的文件无法预览。";
+"Git Status" = "Git 状态";
+"The number of changed files is shown at the bottom of the sidebar." = "更改的文件数量显示在侧边栏底部。";
+
+// Chat Basics
+"Sending Messages" = "发送消息";
+"Type a message in the input field and press Return or the send button." = "在输入框中输入消息，然后按 Return 键或发送按钮。";
+"Send message" = "发送消息";
+"Send message (alternative)" = "发送消息（替代方式）";
+"Insert line break" = "插入换行";
+"Stop streaming (cancel response generation)" = "停止流式输出（取消响应生成）";
+"Message Queue" = "消息队列";
+"You can send messages even while Claude is responding. New messages are queued automatically and sent once the current response finishes. Queued messages appear as a badge above the input field — click the × on each item to remove it from the queue." = "即使在 Claude 响应时也能发送消息。新消息会自动加入队列，并在当前响应完成后发送。排队中的消息会以标记形式显示在输入框上方 — 点击每项上的 × 即可将其从队列中移除。";
+"Recalling Previous Messages" = "调取以往消息";
+"When the input field is empty, use ↑/↓ to navigate your message history." = "当输入框为空时，使用 ↑/↓ 浏览你的消息历史。";
+"Recall previous message" = "调取上一条消息";
+"Next message / clear input" = "下一条消息 / 清空输入";
+"Changing the Model" = "更改模型";
+"Use the model dropdown at the top of the chat area to switch Claude models." = "使用对话区域顶部的模型下拉菜单切换 Claude 模型。";
+"Skip Permissions" = "跳过权限";
+"Toggle the shield icon at the top of the chat to auto-approve all permission prompts. Use with caution." = "切换对话顶部的盾牌图标可自动批准所有权限请求。请谨慎使用。";
+"Normal mode — permission prompts appear as usual" = "正常模式 — 正常显示权限请求弹窗";
+"Skip mode — all permissions auto-approved" = "跳过模式 — 所有权限自动批准";
+"Only enable Skip Permissions on projects you fully trust." = "仅在你完全信任的项目上启用跳过权限。";
+
+// Keyboard Shortcuts
+"Global Shortcuts" = "全局快捷键";
+"Start new chat" = "开始新对话";
+"Close current window" = "关闭当前窗口";
+"Sidebar — History tab (expands sidebar if hidden)" = "侧边栏 — 历史标签页（侧边栏隐藏时会展开）";
+"Sidebar — Files tab (expands sidebar if hidden)" = "侧边栏 — 文件标签页（侧边栏隐藏时会展开）";
+"Toggle left sidebar" = "展开/隐藏左侧边栏";
+"Toggle right inspector panel" = "展开/隐藏右侧检查器面板";
+"Sidebar — Files tab + search" = "侧边栏 — 文件标签页 + 搜索";
+"Project tab — open in dedicated window" = "项目标签 — 在专用窗口中打开";
+"Input Field Shortcuts" = "输入框快捷键";
+"Line break" = "换行";
+"Close popup / stop streaming" = "关闭弹窗 / 停止流式输出";
+"Select popup item or navigate message history" = "选择弹窗项目或浏览消息历史";
+"Autocomplete slash command / @ file" = "自动补全斜杠命令 / @ 文件";
+"Slash Command Popup" = "斜杠命令弹窗";
+"Select item" = "选择项目";
+"Execute command" = "执行命令";
+"Execute selected command" = "执行选定的命令";
+"View command details" = "查看命令详情";
+"Autocomplete command" = "自动补全命令";
+"Close popup" = "关闭弹窗";
+"@ File Popup" = "@ 文件弹窗";
+"Insert file path" = "插入文件路径";
+"Insert file path into message" = "将文件路径插入消息";
+
+// Slash Commands
+"What are Slash Commands?" = "什么是斜杠命令？";
+"Type / in the input field to open a popup list of available commands. Slash commands let you quickly trigger Claude Code CLI operations without typing them manually." = "在输入框中输入 / 即可打开可用命令的弹出列表。斜杠命令让你无需手动输入即可快速触发 Claude Code CLI 操作。";
+"How to Use" = "使用方法";
+"Type / to open the popup, then continue typing to filter results. Use ↑/↓ to navigate." = "输入 / 打开弹窗，然后继续输入以筛选结果。使用 ↑/↓ 浏览。";
+"Interactive Commands" = "交互式命令";
+"Some commands (such as /config, /permissions, /model) open in a full interactive terminal popup sheet, where you can use the interactive CLI interface. The popup closes automatically when the command finishes." = "某些命令（例如 /config、/permissions、/model）会在完整的交互式终端弹出面板中打开，你可在其中使用交互式 CLI 界面。命令完成后弹窗会自动关闭。";
+"Managing Commands" = "管理命令";
+"Click the / button in the toolbar, or open Settings → Slash Commands to add, edit, delete, or disable custom commands. Built-in commands can be edited and enabled or disabled in the app." = "点击工具栏中的 / 按钮，或打开设置 → 斜杠命令，即可添加、编辑、删除或禁用自定义命令。内置命令可在应用内编辑内容并启用或禁用。";
+"JSON import/export backs up or shares custom commands only. Built-in commands in imported files are ignored." = "JSON 导入/导出仅备份或共享自定义命令。导入文件中的内置命令将被忽略。";
+
+// File & Image Attachments
+"Attaching Files" = "附加文件";
+"Click the clip icon to the left of the input field, or drag and drop files onto the input field. When dragging, the input field border highlights in the accent color to show the drop zone." = "点击输入框左侧的回形针图标，或将文件拖放到输入框上。拖动时，输入框边框会以强调色高亮以显示放置区域。";
+"Clipboard Detection" = "剪贴板检测";
+"Pasting (⌘V) is smart — Clarc detects what's in the clipboard and handles it automatically." = "粘贴 (⌘V) 很智能 — Clarc 会检测剪贴板中的内容并自动处理。";
+"Image data (PNG/TIFF) → attached as an image" = "图片数据（PNG/TIFF）→ 作为图片附加";
+"File path → attached as a file" = "文件路径 → 作为文件附加";
+"URL → attached as a URL reference" = "URL → 作为 URL 引用附加";
+"Long text (>2 KB) → converted to a text attachment" = "长文本（>2 KB）→ 转换为文本附件";
+"Screenshots can be pasted directly — they are automatically attached as images." = "截图可直接粘贴 — 它们会自动作为图片附加。";
+"@ File References" = "@ 文件引用";
+"Type @ in the input field to open a project file search popup. Files are filtered in real time as you type." = "在输入框中输入 @ 即可打开项目文件搜索弹窗。随着你的输入，文件会实时筛选。";
+
+// Shortcut Buttons
+"What are Shortcut Buttons?" = "什么是快捷按钮？";
+"Quick-access buttons shown at the top of the chat area. Run frequently used messages or shell commands with a single click." = "显示在对话区域顶部的快速访问按钮。一键运行常用消息或 shell 命令。";
+"Adding a Shortcut" = "添加快捷按钮";
+"Click the ⚡ button in the toolbar to open the Shortcut Manager, or press the + button on the right side of the shortcut bar. You can set a name, message/command, icon, and color." = "点击工具栏中的 ⚡ 按钮打开快捷按钮管理器，或按下快捷按钮栏右侧的 + 按钮。你可以设置名称、消息/命令、图标和颜色。";
+"Terminal Command Mode" = "终端命令模式";
+"Enable the \"Run as terminal command\" option to execute the shortcut as a shell command in the inspector terminal instead of sending it as a chat message. The project directory is used as the working directory." = "启用“作为终端命令运行”选项后，快捷按钮将在检查器终端中作为 shell 命令执行，而不是作为对话消息发送。项目目录会被用作工作目录。";
+"Managing Shortcuts" = "管理快捷按钮";
+"Open Settings → Shortcuts to reorder, edit, or delete shortcuts. Shortcut configurations are saved per project." = "打开设置 → 快捷按钮，即可重新排序、编辑或删除快捷按钮。快捷按钮配置按项目分别保存。";
+"JSON import/export is supported for backing up or sharing your shortcut set." = "支持通过 JSON 导入/导出来备份或共享你的快捷按钮集合。";
+
+// Inspector Panel
+"Opening the Inspector Panel" = "打开检查器面板";
+"Click the sidebar.trailing (⊟) button at the top right of the toolbar to toggle the inspector panel. The panel docks to the right side of the window and contains two tabs: Terminal and Memo." = "点击工具栏右上角的 ⊟ 按钮可展开或收起检查器面板。该面板停靠在窗口右侧，包含两个标签页：终端和备忘。";
+"Terminal Tab" = "终端标签页";
+"An embedded zsh terminal that opens at the current project's directory. Use it to run shell commands, inspect files, or manage git — all without leaving the app." = "在当前项目目录下打开的内置 zsh 终端。你可用它运行 shell 命令、查看文件或管理 git — 全程无需离开应用。";
+"Memo Tab" = "备忘标签页";
+"A per-project rich text memo editor. Notes are auto-saved after a short pause and persist across sessions. Markdown formatting is supported." = "按项目划分的富文本备忘编辑器。停顿片刻后备忘会自动保存，并跨会话保留。支持 Markdown 格式。";
+"Heading levels (# / ## / ###)" = "标题级别 (# / ## / ###)";
+"Bold" = "加粗";
+"Italic" = "斜体";
+"Inline code" = "行内代码";
+"Strikethrough" = "删除线";
+"Unordered list (auto-continues on Return)" = "无序列表（按 Return 时自动延续）";
+"Interactive Terminal Popup" = "交互式终端弹窗";
+"Some slash commands (such as /config, /permissions, /model) open in a separate interactive terminal sheet. The popup runs the command automatically and closes when it exits." = "某些斜杠命令（例如 /config、/permissions、/model）会在单独的交互式终端面板中打开。弹窗会自动运行该命令，并在其退出时关闭。";
+"The exit code is shown at the bottom — \"exit 0\" means the command completed successfully." = "退出代码显示在底部 — “exit 0”表示命令已成功完成。";
+
+// GitHub Integration
+"Click the GitHub Mark button at the top of the sidebar to open the GitHub panel. After connecting your GitHub account, your repositories are listed and can be added to Clarc with one click." = "点击侧边栏顶部的 GitHub 标志按钮可打开 GitHub 面板。连接 GitHub 账户后，你的仓库会列出，并可一键添加到 Clarc。";
+"Adding a Repository" = "添加仓库";
+"Search for a repository by name, then click Add. Clarc clones it automatically and opens it as a new project." = "按名称搜索仓库，然后点击添加。Clarc 会自动克隆它并将其作为新项目打开。";
+"Private repository" = "私有仓库";
+"Public repository" = "公开仓库";
+"Already added to Clarc" = "已添加到 Clarc";
+
+// Skill Marketplace
+"Click the brain icon (🧠) in the toolbar to browse the MCP plugin catalog published on Anthropic's GitHub. Plugins can be filtered by category or searched by name, description, or author." = "点击工具栏中的大脑图标 (🧠) 可浏览发布在 Anthropic GitHub 上的 MCP 插件目录。可按类别筛选插件，或按名称、描述或作者搜索。";
+"Installing Plugins" = "安装插件";
+"Click a plugin to view its details, then press Install. An interactive terminal popup opens and runs the install command automatically." = "点击插件查看其详情，然后按下安装。交互式终端弹窗会打开并自动运行安装命令。";
+"Not installed" = "未安装";
+"Installing…" = "正在安装…";
+"The catalog refreshes automatically every 5 minutes." = "目录每 5 分钟自动刷新一次。";
+
+// Status Line
+"What is the Status Line?" = "什么是状态栏？";
+"A fixed information bar at the bottom of the chat area. It shows the current project path, model, rate limit usage, context window usage, and total response time at a glance." = "固定在对话区域底部的信息栏。它一目了然地显示当前项目路径、模型、用量限制、上下文窗口用量和总响应时间。";
+"Displayed Items" = "显示项目";
+"Items are shown left to right in the status line." = "状态栏中的项目按从左到右的顺序显示。";
+"Project path — folder path of the currently selected project (home directory abbreviated as ~)" = "项目路径 — 当前所选项目的文件夹路径（主目录缩写为 ~）";
+"Model — name of the Claude model in use for this session" = "模型 — 当前会话所使用的 Claude 模型名称";
+"5h limit — API usage over the last 5 hours (bar + % + time until reset)" = "5h 限制 — 最近 5 小时的 API 用量（进度条 + % + 距重置剩余时间）";
+"7d limit — API usage over the last 7 days (bar + % + time until reset)" = "7d 限制 — 最近 7 天的 API 用量（进度条 + % + 距重置剩余时间）";
+"context — context window usage for the current session (bar + %)" = "context — 当前会话的上下文窗口用量（进度条 + %）";
+"Total response time — cumulative time Claude spent generating responses in this session" = "总响应时间 — 本次会话中 Claude 生成响应所花费时间的累计值";
+"Usage Colors" = "用量颜色";
+"The bar graph and percentage change color based on usage level." = "进度条和百分比会根据用量级别改变颜色。";
+"Below 70% — normal" = "低于 70% — 正常";
+"70–89% — caution" = "70–89% — 注意";
+"90% or above — critical" = "90% 及以上 — 危险";
+"Usage data refreshes automatically after each response. If the initial fetch fails on launch, it retries once after 5 seconds." = "用量数据在每次响应后自动刷新。如果启动时首次获取失败，将在 5 秒后重试一次。";
+
+// Permission Requests
+"What are Permission Requests?" = "什么是权限请求？";
+"Before Claude edits files or runs commands, it pauses and asks for your approval. A modal appears showing the tool name and its arguments." = "在 Claude 编辑文件或运行命令之前，它会暂停并请求你的批准。届时会弹出一个显示工具名称及其参数的模态框。";
+"Approval Options" = "批准选项";
+"Each permission request offers three choices." = "每个权限请求提供三种选择。";
+"Approve this single action" = "仅批准这一次操作";
+"Approve all future requests of this type for the current session" = "在当前会话内批准此类型的所有后续请求";
+"Reject the action" = "拒绝该操作";
+"If no action is taken, the request is automatically denied after 5 minutes. Press Return to Allow, or Escape to Deny." = "如果未做任何操作，请求将在 5 分钟后自动被拒绝。按 Return 允许，或按 Escape 拒绝。";
+// Permission Mode sections
+"Use the permission mode dropdown at the top of the chat to control how Claude requests approval before running actions." = "使用对话顶部的权限模式下拉菜单可控制 Claude 在执行操作前请求批准的方式。";
+"Use the permission mode dropdown at the top of the chat to switch how Claude handles permissions." = "使用对话顶部的权限模式下拉菜单可切换 Claude 处理权限的方式。";
+"Default — prompts for approval before file edits and commands" = "默认模式 — 在编辑文件和执行命令前请求批准";
+"Auto-accepts file edits in the working directory (commands still require approval)" = "自动接受工作目录中的文件编辑（命令仍需批准）";
+"Read-only — analyzes and plans without making edits" = "只读 — 在不进行编辑的情况下分析并制定计划";
+"AI auto-approves safe operations, prompts only for risky ones (requires Max/Team/Enterprise/API plan + Sonnet/Opus 4.6+)" = "AI 自动批准安全操作，仅对有风险的操作请求批准（需要 Max/Team/Enterprise/API 套餐 + Sonnet/Opus 4.6+）";
+"Skips all permission checks — use only in isolated environments" = "跳过所有权限检查 — 仅建议在隔离环境中使用";
+"Skips all permission checks — writes to .git/.vscode/.claude directories still require approval" = "跳过所有权限检查 — 写入 .git/.vscode/.claude 目录仍需批准";
+"Only enable Skip Permissions on projects you fully trust. Mode changes take effect from the next message." = "仅在你完全信任的项目上启用。模式更改将从下一条消息发送时生效。";
+"Double-click" = "双击";
+
+"Skip Permissions Mode" = "跳过权限模式";
+"Toggle the shield icon at the top of the chat to auto-approve all permission requests. This speeds up tasks but also auto-executes potentially dangerous operations — use with caution." = "切换对话顶部的盾牌图标可自动批准所有权限请求。这能加快任务速度，但也会自动执行潜在危险的操作 — 请谨慎使用。";
+
+// MARK: - UserManualView additions
+// Effort Level (Chat Basics)
+"Effort Level" = "工作量级别";
+"Use the effort dropdown next to the model picker to control how much reasoning Claude applies. The selection is per-session." = "使用模型选择器旁的工作量下拉菜单可控制 Claude 投入的推理强度。该选择按会话分别保存。";
+
+// Memo Tab formatting
+"Use the toolbar at the bottom for formatting, or the keyboard shortcuts below." = "使用底部工具栏或下方的键盘快捷键进行格式设置。";
+"Toggle checkbox" = "切换复选框";
+"Insert link" = "插入链接";
+"Underline" = "下划线";
+
+// Inspector Panel reset buttons
+"Reset Buttons" = "重置按钮";
+"Each inspector tab has a reset button (the circular arrow at the top right of the panel)." = "每个检查器标签页都有一个重置按钮（面板右上角的环形箭头）。";
+"Reset Terminal" = "重置终端";
+"Clear Memo" = "清空备忘";
+"Terminate the current shell and start a fresh zsh session" = "终止当前 shell 并启动一个全新的 zsh 会话";
+"Erase the memo for the current project (cannot be undone)" = "删除当前项目的全部备忘（无法撤销）";
+
+// Hidden files toggle
+"Hidden Files" = "隐藏文件";
+"Toggle the eye icon in the Files tab header to show or hide dotfiles (files starting with a period, such as .env or .gitignore)." = "切换文件标签页标题栏中的眼睛图标，可显示或隐藏以点（.）开头的文件（例如 .env 或 .gitignore）。";
+
+// Git Status (updated)
+"The Git status panel at the bottom of the sidebar shows changed-file counts and the current branch. Click the branch name to switch between local or remote branches." = "侧边栏底部的 Git 状态面板会显示更改的文件数量和当前分支。点击分支名称即可在本地或远程分支之间切换。";
+
+// File & Image Attachments — Auto-Preview Settings
+"Auto-Preview Settings" = "自动预览设置";
+"By default, pasting certain content automatically creates a preview chip. You can toggle each category independently in Settings → Message." = "默认情况下，粘贴某些内容会自动创建预览标签。你可以在设置 → 消息中分别开关每个类别。";
+"Show a preview chip when a URL is detected" = "检测到 URL 时显示预览标签。";
+"Show a preview chip when a file path is detected" = "检测到文件路径时显示预览标签。";
+"Show a preview chip when image data is detected" = "检测到图片数据时显示预览标签。";
+"Convert long text (200+ characters) into an attachment chip" = "将长文本（200 字符以上）转换为附件标签。";
+
+// Settings & Themes topic
+"Settings & Themes" = "设置与主题";
+"Opening Settings" = "打开设置";
+"Choose Clarc → Settings from the menu bar or press ⌘, to open the Settings window. Settings are organized into four tabs: General, Message, Slash Commands, and Shortcuts." = "从菜单栏选择 Clarc → 设置，或按 ⌘, 打开设置窗口。设置分为四个标签页：通用、消息、斜杠命令和快捷按钮。";
+"General Tab" = "通用标签页";
+"The General tab configures session defaults. Changes apply to newly created sessions — existing sessions keep their current values." = "通用标签页用于配置会话默认值。更改适用于新创建的会话 — 现有会话会保留其当前值。";
+"Accent color palette (Terracotta, Ocean, Forest, Lavender, Midnight, Amber)" = "强调色调色板（Terracotta、Ocean、Forest、Lavender、Midnight、Amber）";
+"Adjust the font size for the app UI (sidebar, toolbars, labels)" = "调整应用界面（侧边栏、工具栏、标签）的字体大小。";
+"Adjust the font size in the chat message area" = "调整对话消息区域的字体大小。";
+"Claude model used when starting a new session" = "开始新会话时使用的 Claude 模型";
+"Permission mode applied to new sessions" = "应用于新会话的权限模式";
+"Reasoning effort applied to new sessions" = "应用于新会话的推理工作量";
+"Show a system notification when a response completes while Clarc is in the background" = "当 Clarc 在后台时，响应完成会显示系统通知";
+"Model, permission mode, and effort can also be overridden per session from the toolbar — the chosen value sticks to that session." = "模型、权限模式和工作量也可在工具栏中按会话单独更改 — 所选值仅对该会话生效。";
+"Message Tab" = "消息标签页";
+"The Message tab controls chat display and attachment behavior." = "消息标签页用于控制对话显示和附件行为。";
+"Enable a focused chat layout that hides the project tab bar and sidebar controls — useful when you want to concentrate on a single conversation" = "启用专注的对话布局，隐藏项目标签栏和侧边栏控件 — 当你想专注于单个对话时很有用。";
+"Automatically show a preview chip when a URL is pasted" = "粘贴 URL 时自动显示预览标签。";
+"Automatically show a preview chip when a file path is pasted" = "粘贴文件路径时自动显示预览标签。";
+"Automatically show a preview chip when image data is pasted" = "粘贴图片数据时自动显示预览标签。";
+"Automatically convert long text (200+ characters) into an attachment chip when pasted" = "粘贴长文本（200 字符以上）时自动转换为附件标签。";
+"Themes" = "主题";
+"Clarc ships with six accent color themes. Preview each one directly from the theme picker — the whole app recolors live as you choose." = "Clarc 提供六种强调色主题。你可在主题选择器中直接预览每一种 — 选择时整个应用会即时变色。";
+"Terracotta" = "Terracotta";
+"Ocean" = "Ocean";
+"Forest" = "Forest";
+"Lavender" = "Lavender";
+"Midnight" = "Midnight";
+"Amber" = "Amber";
+"Claude default — warm orange-red" = "Claude 默认 — 温暖的橙红色";
+"Cool blue" = "清凉蓝";
+"Deep green" = "深绿色";
+"Soft purple" = "柔和紫";
+"Dark indigo" = "深靛蓝";
+"Warm yellow" = "暖黄色";
+"Slash Commands & Shortcuts Tabs" = "斜杠命令与快捷按钮标签页";
+"The Slash Commands tab manages built-in and custom commands — edit, enable/disable, add, or delete. JSON import/export covers custom commands only. The Shortcuts tab manages shortcut buttons with JSON import/export support." = "斜杠命令标签页用于管理内置和自定义命令 — 编辑、启用/禁用、添加或删除。JSON 导入/导出仅涵盖自定义命令。快捷按钮标签页用于管理快捷按钮，并支持 JSON 导入/导出。";
+"Checking for Updates" = "检查更新";
+"Open Clarc → Check for Updates… to run Sparkle's update check manually. Updates are also checked automatically on launch." = "打开 Clarc → 检查更新…可手动运行 Sparkle 的更新检查。启动时也会自动检查更新。";

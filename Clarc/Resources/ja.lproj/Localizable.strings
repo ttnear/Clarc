@@ -1,0 +1,517 @@
+/* Japanese localization — main app */
+
+// MARK: - ClarcApp
+"New Chat" = "新規チャット";
+"Check for Updates..." = "アップデートを確認...";
+"Theme" = "テーマ";
+
+// MARK: - SettingsView
+"General" = "一般";
+"Message" = "メッセージ";
+"Focus Mode" = "集中モード";
+"Enable Focus Mode" = "集中モードを有効化";
+"focus.mode.desc" = "ストリーミング中はメッセージバブルを非表示にし、完了した応答のみ履歴に表示します。";
+"Auto-preview Attachments" = "添付ファイルの自動プレビュー";
+"auto.preview.desc" = "有効にすると、次のコンテンツタイプを貼り付けたときに自動的に添付ファイルのプレビューが作成されます。無効にすると、プレーンテキストとして挿入されます。";
+"URL links" = "URL リンク";
+"File paths" = "ファイルパス";
+"Images" = "画像";
+"Long text (200+ characters)" = "長文テキスト（200 文字以上）";
+"Shortcuts" = "ショートカット";
+"Browse and manage Claude Code skills" = "Claude Code のスキルを閲覧・管理します";
+"Default Model" = "デフォルトモデル";
+"Used for new sessions. You can override the model per session from the toolbar." = "新規セッションのデフォルトです。ツールバーからセッションごとにモデルを変更できます。";
+"Default Permission Mode" = "デフォルト権限モード（Permission Mode）";
+"Used for new sessions. You can override the permission mode per session from the toolbar." = "新規セッションのデフォルトです。ツールバーからセッションごとに権限モードを変更できます。";
+"Default Effort Level" = "デフォルト作業量レベル（Effort Level）";
+"Used for new sessions. You can override the effort level per session from the toolbar." = "新規セッションのデフォルトです。ツールバーからセッションごとに Effort レベルを変更できます。";
+"Font Size" = "フォントサイズ";
+"Interface" = "インターフェース";
+"Messages" = "メッセージ";
+"Default" = "デフォルト";
+"Reset" = "リセット";
+"font.size.hint" = "インターフェースとメッセージのフォントサイズをそれぞれ調整します。";
+"Notifications" = "通知";
+"Notify when response completes" = "応答完了時に通知";
+"Sends a system notification while Clarc is in the background." = "Clarc がバックグラウンドにあるときにシステム通知を送信します。";
+"Open Source" = "オープンソース";
+"Response complete" = "応答完了";
+
+// MARK: - MainView / ProjectWindowView
+"Manage GitHub Repos" = "GitHub リポジトリの管理";
+"Connect GitHub" = "GitHub に接続";
+"Add Project" = "プロジェクトを追加";
+"History" = "履歴";
+"Files" = "ファイル";
+"Select a Project" = "プロジェクトを選択してください";
+"Select a project from the sidebar or add a new one." = "サイドバーからプロジェクトを選択するか、新しく追加してください。";
+"Error" = "エラー";
+"OK" = "OK";
+"Manage Slash Commands" = "スラッシュコマンドの管理";
+"Manage Shortcuts" = "ショートカットの管理";
+"Claude Code Terminal" = "Claude Code ターミナル";
+"Skill Marketplace" = "スキルマーケットプレイス";
+"Change Theme" = "テーマを変更";
+"User Guide" = "ユーザーガイド";
+"Claude Code" = "Claude Code";
+"Skip Permissions: ON" = "権限スキップ: オン";
+"Skip Permissions: OFF" = "権限スキップ: オフ";
+"Select Model" = "モデルを選択";
+"Select Effort Level" = "Effort レベルを選択";
+"↑↓ Select  ↵ Confirm  esc Cancel" = "↑↓ 選択  ↵ 確定  esc キャンセル";
+
+// MARK: - SkillMarketView
+"Refresh" = "更新";
+"Close" = "閉じる";
+"Search skills..." = "スキルを検索...";
+"All" = "すべて";
+"Installed" = "インストール済み";
+"Loading catalog..." = "カタログを読み込み中...";
+"No results found" = "検索結果がありません";
+"Installing..." = "インストール中...";
+"Failed" = "失敗";
+"Back" = "戻る";
+"Author" = "作者";
+"Market" = "マーケット";
+"Category" = "カテゴリ";
+"Homepage" = "ホームページ";
+"Install Command" = "インストールコマンド";
+"Remove" = "削除";
+"Retry" = "再試行";
+"Install" = "インストール";
+
+// MARK: - GitHubSheet / GitHubRepoListView
+"GitHub" = "GitHub";
+"Connect GitHub to\nimport repos instantly" = "GitHub に接続して\nリポジトリをすぐにインポート";
+"Search repos..." = "リポジトリを検索...";
+"Loading repos..." = "リポジトリを読み込み中...";
+"No repos found" = "リポジトリが見つかりません";
+"Don't see your org repos? →" = "組織のリポジトリが表示されませんか？ →";
+"Don't see your org repos?" = "組織のリポジトリが表示されませんか？";
+"Configure org access →" = "組織アクセスを設定 →";
+"Added" = "追加済み";
+"Add" = "追加";
+"Add to projects" = "プロジェクトに追加";
+
+// MARK: - FileTreeView
+"Search Files (⌘F)" = "ファイルを検索（⌘F）";
+"Search filename..." = "ファイル名を検索...";
+"Loading..." = "読み込み中...";
+"No results for '%@'" = "'%@' の検索結果がありません";
+"%d files" = "%d 件のファイル";
+"Unable to load files" = "ファイルを読み込めません";
+"Add path to message" = "メッセージにパスを追加";
+"Show in Finder" = "Finder で表示";
+
+// MARK: - ProjectListView
+"Projects" = "プロジェクト";
+"Rename Project" = "プロジェクト名を変更";
+"Delete Project" = "プロジェクトを削除";
+"This will remove the project from Clarc. The files on disk will not be deleted." = "Clarc からプロジェクトが削除されます。ディスク上のファイルは削除されません。";
+"Project name" = "プロジェクト名";
+
+// MARK: - HistoryListView
+"Show current project only" = "現在のプロジェクトのみ表示";
+"Show all projects" = "すべてのプロジェクトを表示";
+"Show completed sessions" = "完了したセッションを表示";
+"Hide completed sessions" = "完了したセッションを非表示";
+"Mark as Complete" = "完了としてマーク";
+"Mark as Incomplete" = "未完了としてマーク";
+"Delete All" = "すべて削除";
+"Delete" = "削除";
+"Delete %lld Sessions" = "%lld 件のセッションを削除";
+"Cancel" = "キャンセル";
+"All sessions in the current project will be deleted. This action cannot be undone." = "現在のプロジェクトのすべてのセッションが削除されます。この操作は取り消せません。";
+"All sessions will be deleted. This action cannot be undone." = "すべてのセッションが削除されます。この操作は取り消せません。";
+"Rename Session" = "セッション名を変更";
+"Session name" = "セッション名";
+"Rename" = "名前を変更";
+"Response in progress in the background" = "バックグラウンドで応答を処理中";
+"Unpin" = "ピン留めを解除";
+"Pin" = "ピン留め";
+"No chat history" = "チャット履歴がありません";
+
+// MARK: - GitStatusView
+"Checking..." = "確認中...";
+"Not a Git repository" = "Git リポジトリではありません";
+"No changes" = "変更なし";
+"%d changed" = "%d 件変更";
+"Failed to check status" = "ステータスの確認に失敗しました";
+"Local" = "ローカル";
+"Remote (origin)" = "リモート（origin）";
+"No local branches" = "ローカルブランチがありません";
+"No remote branches" = "リモートブランチがありません";
+"Switch Branch" = "ブランチを切り替え";
+
+// MARK: - FileInspectorView
+"Preview" = "プレビュー";
+"Edit" = "編集";
+"Copied" = "コピーしました";
+"Copy" = "コピー";
+"loading..." = "読み込み中...";
+"Binary file — preview not available" = "バイナリファイル — プレビューできません";
+"File is too large (>1MB)" = "ファイルが大きすぎます（>1MB）";
+"Read failed: %@" = "読み込み失敗: %@";
+"Save failed: %@" = "保存失敗: %@";
+
+// MARK: - ChatToolbarControls
+"Permission Mode" = "権限モード";
+"Ask" = "確認する";
+"Accept Edits" = "編集を許可";
+"Plan" = "プランモード";
+"Auto" = "自動モード";
+"Bypass" = "権限スキップ";
+"Model Picker" = "モデル";
+"Effort Picker" = "作業量";
+"Auto Effort" = "自動";
+"Low" = "低";
+"Medium" = "中";
+"High" = "高";
+"XHigh" = "非常に高い";
+"Max" = "最大";
+"Permission mode: %@" = "権限モード: %@";
+"Effort level (--effort)" = "作業量（--effort）の設定";
+
+// MARK: - PermissionModal
+"Permission Request" = "権限リクエスト";
+"Command" = "コマンド";
+"File" = "ファイル";
+"Input" = "入力";
+"Auto-deny in %@" = "%@ 後に自動拒否";
+"Deny" = "拒否";
+"Allow" = "許可";
+"Allow this tool for the session" = "このセッション中は許可";
+"Always allow this command" = "このコマンドを常に許可";
+
+// MARK: - OnboardingView
+"Claude CLI Installation Check" = "Claude CLI のインストール確認";
+"Installed — %@" = "インストール済み — %@";
+"Claude CLI not found" = "Claude CLI が見つかりません";
+"Install command:" = "インストールコマンド:";
+"Check Again" = "再確認";
+"Get Started" = "はじめる";
+"Share session history with the terminal CLI in ~/.claude/projects/. Turn off to keep Clarc sessions separate. You can change this later in Settings." = "~/.claude/projects/ のターミナル CLI とセッション履歴を共有します。オフにすると Clarc のセッションを分離して使用します。後で設定から変更できます。";
+
+// MARK: - GitHubLoginView
+"Connect GitHub to fetch your repo list and add projects with a single click." = "GitHub に接続すると、リポジトリ一覧を取得し、ワンクリックでプロジェクトを追加できます。";
+"Sign in with GitHub" = "GitHub でサインイン";
+"Authentication Code" = "認証コード";
+"Copy Code" = "コードをコピー";
+"Authenticate on GitHub" = "GitHub で認証";
+"Waiting for authentication..." = "認証を待機中...";
+"Connected" = "接続済み";
+
+// MARK: - InspectorTabControl
+"Memo" = "メモ";
+"Terminal" = "ターミナル";
+
+// MARK: - Model Descriptions
+"model.desc.default" = "アカウントタイプに応じた推奨モデルに戻します";
+"model.desc.best" = "現在利用可能な最も高性能なモデル（現在は Opus と同等）";
+"model.desc.opus" = "複雑な推論タスク向けの最新 Opus モデル";
+"model.desc.opus1m" = "長いセッション向けの 100 万トークンコンテキストウィンドウの Opus";
+"model.desc.opusplan" = "Plan Mode では Opus を使用し、実行時に Sonnet へ切り替え";
+"model.desc.sonnet" = "日常的なコーディングタスク向けの最新 Sonnet モデル";
+"model.desc.sonnet1m" = "長いセッション向けの 100 万トークンコンテキストウィンドウの Sonnet";
+"model.desc.haiku" = "シンプルなタスク向けの高速で効率的なモデル";
+
+// MARK: - Permission Mode Descriptions
+"perm.desc.default" = "ファイル編集やシェルコマンド実行のたびに確認を求めます。機密性の高い作業や使い始めに適しています。";
+"perm.desc.acceptEdits" = "ファイル編集および一般的なファイルシステムコマンド（mkdir、touch、mv、cp）を自動承認します。その他のシェルコマンドは引き続き確認を求めます。";
+"perm.desc.plan" = "読み取り専用モードです。Claude が変更を加えずにコードベースを分析し、計画を提案します。その他の操作にはデフォルトモードと同じ確認を適用します。";
+"perm.desc.auto" = "権限確認なしで実行します。バックグラウンドの分類器が各操作を実行前に安全かどうか確認します。";
+"perm.desc.bypassPermissions" = "すべての権限確認と安全ガードをスキップします。インターネットを遮断したコンテナや VM 環境でのみ使用してください。";
+
+// MARK: - Effort Level Descriptions
+"effort.desc.auto" = "アクティブなモデルとプランに応じて自動的に決定されるモデルのデフォルト値を使用します。";
+"effort.desc.low" = "レイテンシに敏感で複雑でない、短く範囲が明確なタスクに使用してください。";
+"effort.desc.medium" = "多少の精度を犠牲にしてでもトークンコストを抑えたい場合に適しています。";
+"effort.desc.high" = "トークン使用量と知能のバランスを保ちます。精度が重要なタスクの最低推奨レベルです。";
+"effort.desc.xhigh" = "ほとんどのコーディングおよびエージェントタスクで最良の結果をもたらします。Opus 4.7 の推奨デフォルトです。";
+"effort.desc.max" = "トークン制限なしで最も深い推論を提供します。現在のセッションにのみ適用されます。複雑で難易度の高いタスクに適しています。";
+
+// MARK: - AppState
+"Previous conversation has been compacted" = "前の会話が圧縮されました";
+"No response received" = "応答を受信できませんでした";
+"Done" = "完了";
+
+// MARK: - UserManualView
+// Topic titles
+"About Clarc" = "Clarc について";
+"Project Management" = "プロジェクト管理";
+"Chat Basics" = "チャットの基本";
+"Keyboard Shortcuts" = "キーボードショートカット";
+"Slash Commands" = "スラッシュコマンド";
+"File & Image Attachments" = "ファイルと画像の添付";
+"Shortcut Buttons" = "ショートカットボタン";
+"Inspector Panel" = "インスペクターパネル";
+"GitHub Integration" = "GitHub 連携";
+"Permission Requests" = "権限リクエスト";
+"Status Line" = "ステータスライン";
+
+// Overview
+"What is Clarc?" = "Clarc とは？";
+"A native macOS desktop client for the Claude Code CLI. Use all Claude Code features via a polished GUI without needing a terminal." = "Claude Code CLI のためのネイティブ macOS デスクトップクライアントです。ターミナルなしで洗練された GUI から Claude Code のすべての機能を使用できます。";
+"Main Layout" = "基本レイアウト";
+"The left sidebar has History and Files tabs. Project tabs appear at the top of the chat area — click to switch projects. The right inspector panel contains the Terminal and Memo tabs." = "左サイドバーには履歴とファイルのタブがあります。チャットエリアの上部にプロジェクトタブが表示され、クリックして切り替えられます。右側のインスペクターパネルにはターミナルとメモのタブがあります。";
+"Chat is disabled when no project is selected." = "プロジェクトが選択されていない場合、チャットは使用できません。";
+"Top Toolbar" = "上部ツールバー";
+"The toolbar contains: New Chat, Manage Slash Commands, Manage Shortcut Buttons, Skip Permissions toggle, Model picker, Inspector panel toggle, Settings, and the GitHub integration button." = "ツールバーの構成: 新規チャット、スラッシュコマンドの管理、ショートカットボタンの管理、権限スキップのトグル、モデル選択、インスペクターパネルのトグル、設定、GitHub 連携ボタン。";
+
+// Project Management
+"Adding a Project" = "プロジェクトの追加";
+"Click the + button at the top of the sidebar or drag a folder from Finder. Claude Code uses that folder as its working directory." = "サイドバー上部の + ボタンをクリックするか、Finder からフォルダをドラッグしてください。Claude Code はそのフォルダを作業ディレクトリとして使用します。";
+"Project Tabs" = "プロジェクトタブ";
+"Project tabs appear at the top of the chat area. Click a tab to switch projects. You can switch even while Claude is streaming — the active stream continues in the background." = "チャットエリアの上部にプロジェクトタブが表示されます。タブをクリックして切り替えてください。Claude がストリーミング中でも切り替え可能で、進行中のストリームはバックグラウンドで継続されます。";
+"Dedicated Project Window" = "専用プロジェクトウィンドウ";
+"Double-click a project tab to open it in its own independent window. Each window manages its own sessions independently, allowing you to work on multiple projects at once." = "プロジェクトタブをダブルクリックすると、独立した専用ウィンドウで開きます。各ウィンドウはセッションを独立して管理するため、複数のプロジェクトを同時に作業できます。";
+"In a dedicated project window, only the project name is shown — there are no project tabs." = "専用プロジェクトウィンドウではプロジェクト名のみが表示され、プロジェクトタブはありません。";
+"Sidebar Tabs" = "サイドバータブ";
+"History tab: shows previous conversations\nFiles tab: browse the project file tree" = "履歴タブ: 以前の会話を表示\nファイルタブ: プロジェクトのファイルツリーを閲覧";
+"Go to History tab" = "履歴タブへ移動";
+"Go to Files tab" = "ファイルタブへ移動";
+"Files tab + activate search" = "ファイルタブ + 検索を有効化";
+"History Management" = "履歴管理";
+"Right-click a session in the History tab for context menu options." = "履歴タブでセッションを右クリックするとコンテキストメニューが表示されます。";
+"Pin / Unpin — pinned sessions stay at the top of the list" = "ピン留め / ピン留め解除 — ピン留めしたセッションは常にリストの最上部に表示されます";
+"Rename — change the session title" = "名前を変更 — セッションのタイトルを変更します";
+"Delete — remove the session" = "削除 — セッションを削除します";
+"Use the trash icon in the History header to delete all sessions at once." = "履歴ヘッダーのゴミ箱アイコンを使うと、すべてのセッションを一度に削除できます。";
+"File Inspector" = "ファイルインスペクター";
+"Click any file in the Files tab to preview it with syntax highlighting. Press the pencil button to enter edit mode and modify the file directly." = "ファイルタブでファイルをクリックすると、シンタックスハイライト付きでプレビューできます。鉛筆ボタンを押すと編集モードに切り替わり、ファイルを直接編集できます。";
+"Save file changes" = "ファイルの変更を保存";
+"Exit edit mode" = "編集モードを終了";
+"Files larger than 1 MB cannot be previewed." = "1 MB を超えるファイルはプレビューできません。";
+"Git Status" = "Git ステータス";
+"The number of changed files is shown at the bottom of the sidebar." = "変更されたファイル数がサイドバー下部に表示されます。";
+
+// Chat Basics
+"Sending Messages" = "メッセージの送信";
+"Type a message in the input field and press Return or the send button." = "入力欄にメッセージを入力し、Return キーまたは送信ボタンを押してください。";
+"Send message" = "メッセージを送信";
+"Send message (alternative)" = "メッセージを送信（代替）";
+"Insert line break" = "改行を挿入";
+"Stop streaming (cancel response generation)" = "ストリーミングを停止（応答生成をキャンセル）";
+"Message Queue" = "メッセージキュー";
+"You can send messages even while Claude is responding. New messages are queued automatically and sent once the current response finishes. Queued messages appear as a badge above the input field — click the × on each item to remove it from the queue." = "Claude が応答している間もメッセージを送信できます。新しいメッセージは自動的にキューに追加され、現在の応答が完了すると送信されます。キュー内のメッセージは入力欄の上にバッジとして表示され、各項目の × ボタンでキューから削除できます。";
+"Recalling Previous Messages" = "以前のメッセージを呼び出す";
+"When the input field is empty, use ↑/↓ to navigate your message history." = "入力欄が空のときに ↑/↓ を押すと、メッセージ履歴をたどることができます。";
+"Recall previous message" = "前のメッセージを呼び出す";
+"Next message / clear input" = "次のメッセージ / 入力をクリア";
+"Changing the Model" = "モデルの変更";
+"Use the model dropdown at the top of the chat area to switch Claude models." = "チャットエリア上部のモデルドロップダウンを使って Claude のモデルを切り替えてください。";
+"Skip Permissions" = "権限スキップ";
+"Toggle the shield icon at the top of the chat to auto-approve all permission prompts. Use with caution." = "チャット上部の盾アイコンをトグルすると、すべての権限リクエストが自動承認されます。注意して使用してください。";
+"Normal mode — permission prompts appear as usual" = "通常モード — 権限リクエストのポップアップが通常どおり表示されます";
+"Skip mode — all permissions auto-approved" = "スキップモード — すべての権限が自動承認されます";
+"Only enable Skip Permissions on projects you fully trust." = "完全に信頼できるプロジェクトでのみ権限スキップを有効にしてください。";
+
+// Keyboard Shortcuts
+"Global Shortcuts" = "全体のショートカット";
+"Start new chat" = "新規チャットを開始";
+"Close current window" = "現在のウィンドウを閉じる";
+"Sidebar — History tab (expands sidebar if hidden)" = "サイドバー — 履歴タブ（非表示の場合はサイドバーを展開）";
+"Sidebar — Files tab (expands sidebar if hidden)" = "サイドバー — ファイルタブ（非表示の場合はサイドバーを展開）";
+"Toggle left sidebar" = "左サイドバーの表示/非表示";
+"Toggle right inspector panel" = "右インスペクターパネルの表示/非表示";
+"Sidebar — Files tab + search" = "サイドバー — ファイルタブ + 検索";
+"Project tab — open in dedicated window" = "プロジェクトタブ — 専用ウィンドウで開く";
+"Input Field Shortcuts" = "入力欄のショートカット";
+"Line break" = "改行";
+"Close popup / stop streaming" = "ポップアップを閉じる / ストリーミングを停止";
+"Select popup item or navigate message history" = "ポップアップ項目を選択またはメッセージ履歴をたどる";
+"Autocomplete slash command / @ file" = "スラッシュコマンド / @ ファイルのオートコンプリート";
+"Slash Command Popup" = "スラッシュコマンドのポップアップ";
+"Select item" = "項目を選択";
+"Execute command" = "コマンドを実行";
+"Execute selected command" = "選択したコマンドを実行";
+"View command details" = "コマンドの詳細を表示";
+"Autocomplete command" = "コマンドのオートコンプリート";
+"Close popup" = "ポップアップを閉じる";
+"@ File Popup" = "@ ファイルのポップアップ";
+"Insert file path" = "ファイルパスを挿入";
+"Insert file path into message" = "メッセージにファイルパスを挿入";
+
+// Slash Commands
+"What are Slash Commands?" = "スラッシュコマンドとは？";
+"Type / in the input field to open a popup list of available commands. Slash commands let you quickly trigger Claude Code CLI operations without typing them manually." = "入力欄に / を入力すると、利用可能なコマンドのポップアップ一覧が開きます。スラッシュコマンドを使うと、Claude Code CLI の操作を素早く実行できます。";
+"How to Use" = "使い方";
+"Type / to open the popup, then continue typing to filter results. Use ↑/↓ to navigate." = "/ を入力してポップアップを開き、入力を続けると結果がフィルタリングされます。↑/↓ でたどってください。";
+"Interactive Commands" = "インタラクティブコマンド";
+"Some commands (such as /config, /permissions, /model) open in a full interactive terminal popup sheet, where you can use the interactive CLI interface. The popup closes automatically when the command finishes." = "/config、/permissions、/model など一部のコマンドは、別のインタラクティブなターミナルポップアップシートで実行されます。コマンドが完了すると自動的に閉じます。";
+"Managing Commands" = "コマンドの管理";
+"Click the / button in the toolbar, or open Settings → Slash Commands to add, edit, delete, or disable custom commands. Built-in commands can be edited and enabled or disabled in the app." = "ツールバーの / ボタンをクリックするか、設定 → スラッシュコマンドを開いて、カスタムコマンドの追加、編集、削除、無効化ができます。組み込みコマンドはアプリ内で内容の編集や有効化/無効化ができます。";
+"JSON import/export backs up or shares custom commands only. Built-in commands in imported files are ignored." = "JSON のインポート/エクスポートはカスタムコマンドのみをバックアップまたは共有します。インポートしたファイル内の組み込みコマンドは無視されます。";
+
+// File & Image Attachments
+"Attaching Files" = "ファイルの添付";
+"Click the clip icon to the left of the input field, or drag and drop files onto the input field. When dragging, the input field border highlights in the accent color to show the drop zone." = "入力欄の左にあるクリップアイコンをクリックするか、ファイルを入力欄にドラッグしてください。ドラッグ中は入力欄の枠線がアクセントカラーで強調表示されます。";
+"Clipboard Detection" = "クリップボードの検出";
+"Pasting (⌘V) is smart — Clarc detects what's in the clipboard and handles it automatically." = "貼り付け（⌘V）はスマートです — Clarc がクリップボードの内容を自動的に検出して処理します。";
+"Image data (PNG/TIFF) → attached as an image" = "画像データ（PNG/TIFF）→ 画像として添付";
+"File path → attached as a file" = "ファイルパス → ファイルとして添付";
+"URL → attached as a URL reference" = "URL → URL 参照として添付";
+"Long text (>2 KB) → converted to a text attachment" = "長文テキスト（>2 KB）→ テキスト添付ファイルに変換";
+"Screenshots can be pasted directly — they are automatically attached as images." = "スクリーンショットはそのまま貼り付けられ、自動的に画像として添付されます。";
+"@ File References" = "@ ファイル参照";
+"Type @ in the input field to open a project file search popup. Files are filtered in real time as you type." = "入力欄に @ を入力すると、プロジェクトのファイル検索ポップアップが開きます。入力するほどリアルタイムでフィルタリングされます。";
+
+// Shortcut Buttons
+"What are Shortcut Buttons?" = "ショートカットボタンとは？";
+"Quick-access buttons shown at the top of the chat area. Run frequently used messages or shell commands with a single click." = "チャットエリア上部に表示されるクイックアクセスボタンです。よく使うメッセージやシェルコマンドをワンクリックで実行できます。";
+"Adding a Shortcut" = "ショートカットの追加";
+"Click the ⚡ button in the toolbar to open the Shortcut Manager, or press the + button on the right side of the shortcut bar. You can set a name, message/command, icon, and color." = "ツールバーの ⚡ ボタンをクリックしてショートカットマネージャーを開くか、ショートカットバー右側の + ボタンを押してください。名前、メッセージ/コマンド、アイコン、色を設定できます。";
+"Terminal Command Mode" = "ターミナルコマンドモード";
+"Enable the \"Run as terminal command\" option to execute the shortcut as a shell command in the inspector terminal instead of sending it as a chat message. The project directory is used as the working directory." = "「ターミナルコマンドとして実行」オプションを有効にすると、チャットメッセージの代わりにインスペクターターミナルでシェルコマンドとして実行されます。プロジェクトディレクトリが作業ディレクトリとして使用されます。";
+"Managing Shortcuts" = "ショートカットの管理";
+"Open Settings → Shortcuts to reorder, edit, or delete shortcuts. Shortcut configurations are saved per project." = "設定 → ショートカットを開くと、ショートカットの並べ替え、編集、削除ができます。設定はプロジェクトごとに保存されます。";
+"JSON import/export is supported for backing up or sharing your shortcut set." = "ショートカットセットのバックアップや共有のために JSON のインポート/エクスポートに対応しています。";
+
+// Inspector Panel
+"Opening the Inspector Panel" = "インスペクターパネルを開く";
+"Click the sidebar.trailing (⊟) button at the top right of the toolbar to toggle the inspector panel. The panel docks to the right side of the window and contains two tabs: Terminal and Memo." = "ツールバー右上の ⊟ ボタンをクリックしてインスペクターパネルの表示/非表示を切り替えます。パネルはウィンドウの右側に固定され、ターミナルとメモのタブを含みます。";
+"Terminal Tab" = "ターミナルタブ";
+"An embedded zsh terminal that opens at the current project's directory. Use it to run shell commands, inspect files, or manage git — all without leaving the app." = "現在のプロジェクトディレクトリで起動する組み込みの zsh ターミナルです。アプリを離れることなく、シェルコマンドの実行、ファイルの確認、git の管理などができます。";
+"Memo Tab" = "メモタブ";
+"A per-project rich text memo editor. Notes are auto-saved after a short pause and persist across sessions. Markdown formatting is supported." = "プロジェクトごとのメモエディターです。メモはしばらくすると自動保存され、セッションをまたいで保持されます。";
+"Heading levels (# / ## / ###)" = "見出しレベル（# / ## / ###）";
+"Bold" = "太字";
+"Italic" = "斜体";
+"Inline code" = "インラインコード";
+"Strikethrough" = "取り消し線";
+"Unordered list (auto-continues on Return)" = "箇条書きリスト（Return で自動継続）";
+"Interactive Terminal Popup" = "インタラクティブターミナルのポップアップ";
+"Some slash commands (such as /config, /permissions, /model) open in a separate interactive terminal sheet. The popup runs the command automatically and closes when it exits." = "一部のスラッシュコマンド（/config、/permissions、/model など）は、別のインタラクティブなターミナルシートで開きます。ポップアップがコマンドを自動的に実行し、終了時に閉じます。";
+"The exit code is shown at the bottom — \"exit 0\" means the command completed successfully." = "下部に終了コードが表示されます — 「exit 0」はコマンドが正常に完了したことを意味します。";
+
+// GitHub Integration
+"Click the GitHub Mark button at the top of the sidebar to open the GitHub panel. After connecting your GitHub account, your repositories are listed and can be added to Clarc with one click." = "サイドバー上部の GitHub マークボタンをクリックして GitHub パネルを開いてください。GitHub アカウントを接続すると、リポジトリ一覧が表示され、ワンクリックで Clarc に追加できます。";
+"Adding a Repository" = "リポジトリの追加";
+"Search for a repository by name, then click Add. Clarc clones it automatically and opens it as a new project." = "名前でリポジトリを検索し、追加ボタンをクリックしてください。Clarc が自動的にクローンし、新しいプロジェクトとして開きます。";
+"Private repository" = "非公開リポジトリ";
+"Public repository" = "公開リポジトリ";
+"Already added to Clarc" = "すでに Clarc に追加済み";
+
+// Skill Marketplace
+"Click the brain icon (🧠) in the toolbar to browse the MCP plugin catalog published on Anthropic's GitHub. Plugins can be filtered by category or searched by name, description, or author." = "ツールバーの 🧠 アイコンをクリックすると、Anthropic の GitHub で公開されている MCP プラグインカタログを閲覧できます。プラグインはカテゴリで絞り込んだり、名前・説明・作者で検索したりできます。";
+"Installing Plugins" = "プラグインのインストール";
+"Click a plugin to view its details, then press Install. An interactive terminal popup opens and runs the install command automatically." = "プラグインをクリックして詳細を確認し、インストールボタンを押してください。インタラクティブなターミナルポップアップが開き、インストールコマンドが自動的に実行されます。";
+"Not installed" = "未インストール";
+"Installing…" = "インストール中…";
+"The catalog refreshes automatically every 5 minutes." = "カタログは 5 分ごとに自動的に更新されます。";
+
+// Status Line
+"What is the Status Line?" = "ステータスラインとは？";
+"A fixed information bar at the bottom of the chat area. It shows the current project path, model, rate limit usage, context window usage, and total response time at a glance." = "チャットエリア下部に固定された情報バーです。現在のプロジェクトパス、モデル、使用量上限、コンテキスト使用量、合計応答時間を一目で確認できます。";
+"Displayed Items" = "表示項目";
+"Items are shown left to right in the status line." = "ステータスラインには左から右の順に次の情報が表示されます。";
+"Project path — folder path of the currently selected project (home directory abbreviated as ~)" = "プロジェクトパス — 現在選択されているプロジェクトのフォルダパス（ホームディレクトリは ~ に短縮）";
+"Model — name of the Claude model in use for this session" = "モデル — 現在のセッションで使用中の Claude モデル名";
+"5h limit — API usage over the last 5 hours (bar + % + time until reset)" = "5h 上限 — 直近 5 時間の API 使用量（バーグラフ + % + リセットまでの残り時間）";
+"7d limit — API usage over the last 7 days (bar + % + time until reset)" = "7d 上限 — 直近 7 日間の API 使用量（バーグラフ + % + リセットまでの残り時間）";
+"context — context window usage for the current session (bar + %)" = "context — 現在のセッションのコンテキストウィンドウ使用率（バーグラフ + %）";
+"Total response time — cumulative time Claude spent generating responses in this session" = "合計応答時間 — 現在のセッションで Claude が応答に費やした時間の合計";
+"Usage Colors" = "使用量の色";
+"The bar graph and percentage change color based on usage level." = "バーグラフとパーセンテージは使用量に応じて色が変わります。";
+"Below 70% — normal" = "70% 未満 — 正常";
+"70–89% — caution" = "70〜89% — 注意";
+"90% or above — critical" = "90% 以上 — 危険";
+"Usage data refreshes automatically after each response. If the initial fetch fails on launch, it retries once after 5 seconds." = "使用量情報は応答が完了するたびに自動的に更新されます。アプリ起動時の初回取得に失敗した場合は、5 秒後に一度だけ再試行します。";
+
+// Permission Requests
+"What are Permission Requests?" = "権限リクエストとは？";
+"Before Claude edits files or runs commands, it pauses and asks for your approval. A modal appears showing the tool name and its arguments." = "Claude がファイルを編集したりコマンドを実行したりする前に、いったん停止して承認を求めます。ツール名とその引数を表示するモーダルが現れます。";
+"Approval Options" = "承認オプション";
+"Each permission request offers three choices." = "各権限リクエストは 3 つの選択肢を提供します。";
+"Approve this single action" = "この単一の操作のみ承認";
+"Approve all future requests of this type for the current session" = "現在のセッション中、このタイプのすべてのリクエストを承認";
+"Reject the action" = "操作を拒否";
+"If no action is taken, the request is automatically denied after 5 minutes. Press Return to Allow, or Escape to Deny." = "5 分以内に応答がない場合、リクエストは自動的に拒否されます。Return で許可、Escape で拒否できます。";
+// Permission Mode sections
+"Use the permission mode dropdown at the top of the chat to control how Claude requests approval before running actions." = "チャット上部の権限モードドロップダウンで、Claude が操作前に承認を求める方法を制御できます。";
+"Use the permission mode dropdown at the top of the chat to switch how Claude handles permissions." = "チャット上部の権限モードドロップダウンで、Claude の権限処理方法を切り替えられます。";
+"Default — prompts for approval before file edits and commands" = "デフォルトモード — ファイル編集とコマンド実行時に承認を求める";
+"Auto-accepts file edits in the working directory (commands still require approval)" = "作業ディレクトリのファイル編集を自動承認（コマンドは引き続き承認が必要）";
+"Read-only — analyzes and plans without making edits" = "ファイル読み取りのみ許可、実際の編集なしで計画のみ提示";
+"AI auto-approves safe operations, prompts only for risky ones (requires Max/Team/Enterprise/API plan + Sonnet/Opus 4.6+)" = "AI が安全な操作は自動承認し、危険な操作のみ承認を求める（Max/Team/Enterprise/API プラン + Sonnet/Opus 4.6+ が必要）";
+"Skips all permission checks — use only in isolated environments" = "すべての権限チェックを省略 — 隔離された環境でのみ使用を推奨";
+"Skips all permission checks — writes to .git/.vscode/.claude directories still require approval" = "すべての権限チェックを省略 — .git/.vscode/.claude ディレクトリへの書き込みは引き続き承認が必要";
+"Only enable Skip Permissions on projects you fully trust. Mode changes take effect from the next message." = "完全に信頼できるプロジェクトでのみ有効にしてください。モードの変更は次のメッセージ送信から適用されます。";
+"Double-click" = "ダブルクリック";
+
+"Skip Permissions Mode" = "権限スキップモード";
+"Toggle the shield icon at the top of the chat to auto-approve all permission requests. This speeds up tasks but also auto-executes potentially dangerous operations — use with caution." = "チャット上部の盾アイコンをトグルすると、すべての権限リクエストが自動承認されます。作業は速くなりますが、潜在的に危険な操作も自動実行されるため、注意して使用してください。";
+
+// MARK: - UserManualView additions
+// Effort Level (Chat Basics)
+"Effort Level" = "作業量レベル";
+"Use the effort dropdown next to the model picker to control how much reasoning Claude applies. The selection is per-session." = "モデル選択の隣にある作業量ドロップダウンで、Claude が使用する推論の強さを調整できます。選択値はセッションごとに保存されます。";
+
+// Memo Tab formatting
+"Use the toolbar at the bottom for formatting, or the keyboard shortcuts below." = "下部のツールバーを使うか、以下のキーボードショートカットで書式を指定できます。";
+"Toggle checkbox" = "チェックボックスの切り替え";
+"Insert link" = "リンクを挿入";
+"Underline" = "下線";
+
+// Inspector Panel reset buttons
+"Reset Buttons" = "リセットボタン";
+"Each inspector tab has a reset button (the circular arrow at the top right of the panel)." = "各インスペクタータブにはリセットボタン（パネル右上の円形矢印）があります。";
+"Reset Terminal" = "ターミナルをリセット";
+"Clear Memo" = "メモをクリア";
+"Terminate the current shell and start a fresh zsh session" = "現在のシェルを終了し、新しい zsh セッションを開始します";
+"Erase the memo for the current project (cannot be undone)" = "現在のプロジェクトのメモをすべて削除します（取り消せません）";
+
+// Hidden files toggle
+"Hidden Files" = "隠しファイル";
+"Toggle the eye icon in the Files tab header to show or hide dotfiles (files starting with a period, such as .env or .gitignore)." = "ファイルタブヘッダーの目のアイコンをトグルすると、ドット（.）で始まるファイル（例: .env、.gitignore）の表示/非表示を切り替えられます。";
+
+// Git Status (updated)
+"The Git status panel at the bottom of the sidebar shows changed-file counts and the current branch. Click the branch name to switch between local or remote branches." = "サイドバー下部の Git ステータスパネルで、変更されたファイル数と現在のブランチを確認できます。ブランチ名をクリックすると、ローカルまたはリモートのブランチに切り替えられます。";
+
+// File & Image Attachments — Auto-Preview Settings
+"Auto-Preview Settings" = "自動プレビュー設定";
+"By default, pasting certain content automatically creates a preview chip. You can toggle each category independently in Settings → Message." = "デフォルトでは、特定のコンテンツを貼り付けると自動的にプレビューチップが作成されます。設定 → メッセージで各カテゴリを個別に切り替えられます。";
+"Show a preview chip when a URL is detected" = "URL を検出したときにプレビューチップを表示します。";
+"Show a preview chip when a file path is detected" = "ファイルパスを検出したときにプレビューチップを表示します。";
+"Show a preview chip when image data is detected" = "画像データを検出したときにプレビューチップを表示します。";
+"Convert long text (200+ characters) into an attachment chip" = "長文テキスト（200 文字以上）を添付ファイルチップに変換します。";
+
+// Settings & Themes topic
+"Settings & Themes" = "設定とテーマ";
+"Opening Settings" = "設定を開く";
+"Choose Clarc → Settings from the menu bar or press ⌘, to open the Settings window. Settings are organized into four tabs: General, Message, Slash Commands, and Shortcuts." = "メニューバーから Clarc → 設定を選択するか、⌘, を押して設定ウィンドウを開きます。設定は一般、メッセージ、スラッシュコマンド、ショートカットの 4 つのタブで構成されています。";
+"General Tab" = "一般タブ";
+"The General tab configures session defaults. Changes apply to newly created sessions — existing sessions keep their current values." = "一般タブでセッションのデフォルト値を設定します。変更は新しく作成されるセッションに適用され、既存のセッションは現在の値を保持します。";
+"Accent color palette (Terracotta, Ocean, Forest, Lavender, Midnight, Amber)" = "アクセントカラーパレット（Terracotta、Ocean、Forest、Lavender、Midnight、Amber）";
+"Adjust the font size for the app UI (sidebar, toolbars, labels)" = "アプリ UI（サイドバー、ツールバー、ラベル）のフォントサイズを調整します。";
+"Adjust the font size in the chat message area" = "チャットメッセージエリアのフォントサイズを調整します。";
+"Claude model used when starting a new session" = "新規セッション開始時に使用する Claude モデル";
+"Permission mode applied to new sessions" = "新規セッションに適用される権限モード";
+"Reasoning effort applied to new sessions" = "新規セッションに適用される推論作業量";
+"Show a system notification when a response completes while Clarc is in the background" = "Clarc がバックグラウンドにあるときに応答が完了するとシステム通知を表示";
+"Model, permission mode, and effort can also be overridden per session from the toolbar — the chosen value sticks to that session." = "モデル、権限モード、作業量はツールバーからセッションごとに変更することもでき、選択した値はそのセッションにのみ適用されます。";
+"Message Tab" = "メッセージタブ";
+"The Message tab controls chat display and attachment behavior." = "メッセージタブでチャット表示と添付ファイルの動作を設定します。";
+"Enable a focused chat layout that hides the project tab bar and sidebar controls — useful when you want to concentrate on a single conversation" = "プロジェクトタブバーとサイドバーコントロールを非表示にする集中レイアウトを有効にします — 単一の会話に集中したいときに便利です。";
+"Automatically show a preview chip when a URL is pasted" = "URL を貼り付けたときに自動的にプレビューチップを表示します。";
+"Automatically show a preview chip when a file path is pasted" = "ファイルパスを貼り付けたときに自動的にプレビューチップを表示します。";
+"Automatically show a preview chip when image data is pasted" = "画像データを貼り付けたときに自動的にプレビューチップを表示します。";
+"Automatically convert long text (200+ characters) into an attachment chip when pasted" = "長文テキスト（200 文字以上）を貼り付けたときに自動的に添付ファイルチップに変換します。";
+"Themes" = "テーマ";
+"Clarc ships with six accent color themes. Preview each one directly from the theme picker — the whole app recolors live as you choose." = "Clarc は 6 種類のアクセントカラーテーマを提供します。テーマ選択ですぐに各テーマをプレビューでき、選択と同時にアプリ全体の色が即座に変わります。";
+"Terracotta" = "テラコッタ";
+"Ocean" = "オーシャン";
+"Forest" = "フォレスト";
+"Lavender" = "ラベンダー";
+"Midnight" = "ミッドナイト";
+"Amber" = "アンバー";
+"Claude default — warm orange-red" = "Claude のデフォルト — 暖かいオレンジレッド";
+"Cool blue" = "クールなブルー";
+"Deep green" = "深いグリーン";
+"Soft purple" = "柔らかなパープル";
+"Dark indigo" = "暗いインディゴ";
+"Warm yellow" = "暖かいイエロー";
+"Slash Commands & Shortcuts Tabs" = "スラッシュコマンドとショートカットのタブ";
+"The Slash Commands tab manages built-in and custom commands — edit, enable/disable, add, or delete. JSON import/export covers custom commands only. The Shortcuts tab manages shortcut buttons with JSON import/export support." = "スラッシュコマンドタブでは、組み込みおよびカスタムコマンドを管理します — 編集、有効化/無効化、追加、削除ができます。JSON のインポート/エクスポートはカスタムコマンドのみ対応します。ショートカットタブではショートカットボタンを管理し、JSON のインポート/エクスポートに対応します。";
+"Checking for Updates" = "アップデートの確認";
+"Open Clarc → Check for Updates… to run Sparkle's update check manually. Updates are also checked automatically on launch." = "Clarc → アップデートを確認… から Sparkle のアップデート確認を手動で実行できます。アプリ起動時にも自動的に確認されます。";

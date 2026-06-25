@@ -1,0 +1,259 @@
+/* Spanish localization — ClarcChatKit */
+
+// MARK: - InputBarView
+"Attach file" = "Adjuntar archivo";
+"Type a message..." = "Escribe un mensaje...";
+"Send message" = "Enviar mensaje";
+"Stop streaming (cancel response generation)" = "Detener la transmisión (cancelar la generación de la respuesta)";
+
+// MARK: - FileDiffView
+"Diff" = "Diff";
+"No changes" = "Sin cambios";
+"Copy" = "Copiar";
+"Copied" = "Copiado";
+"loading..." = "cargando...";
+
+// MARK: - SlashCommandManagerView
+"Slash Command Manager" = "Gestor de comandos de barra";
+"%lld commands" = "%lld comandos";
+"Reset Defaults" = "Restablecer valores predeterminados";
+"Restore modified default commands to their original state" = "Restaura los comandos predeterminados modificados a su estado original";
+"Export" = "Exportar";
+"Export custom commands to a JSON file" = "Exporta los comandos personalizados a un archivo JSON";
+"Import" = "Importar";
+"Import commands from a JSON file" = "Importa comandos desde un archivo JSON";
+"New Command" = "Nuevo comando";
+"Search commands..." = "Buscar comandos...";
+"default" = "predeterminado";
+"accepts input" = "acepta entrada";
+"terminal" = "terminal";
+"Disable" = "Desactivar";
+"Enable" = "Activar";
+"Delete" = "Eliminar";
+"No results found" = "No se encontraron resultados";
+"Try a different keyword" = "Prueba con otra palabra clave";
+"Reset Default Commands" = "Restablecer comandos predeterminados";
+"Reset" = "Restablecer";
+"Cancel" = "Cancelar";
+"All modified default commands will be restored to their original state." = "Todos los comandos predeterminados modificados se restaurarán a su estado original.";
+"Import Succeeded" = "Importación correcta";
+"Import Failed" = "Error de importación";
+"OK" = "Aceptar";
+"Edit Command" = "Editar comando";
+"Add New Command" = "Añadir nuevo comando";
+"Name" = "Nombre";
+"Command name (e.g. my-command)" = "Nombre del comando (p. ej. my-command)";
+"Description" = "Descripción";
+"Short description" = "Descripción breve";
+"Detail Description (optional)" = "Descripción detallada (opcional)";
+"Accepts Input" = "Acepta entrada";
+"Allows additional text to be entered after the command" = "Permite escribir texto adicional después del comando";
+"Interactive (Terminal)" = "Interactivo (terminal)";
+"Commands requiring TUI will run in the inline terminal" = "Los comandos que requieren TUI se ejecutarán en el terminal integrado";
+"Restore Default" = "Restaurar valor predeterminado";
+"Save" = "Guardar";
+"Add" = "Añadir";
+"Export Slash Commands" = "Exportar comandos de barra";
+"Import Slash Commands" = "Importar comandos de barra";
+"Invalid JSON format." = "Formato JSON no válido.";
+"Imported %lld custom commands." = "Se importaron %lld comandos personalizados.";
+"A command with this name already exists." = "Ya existe un comando con este nombre.";
+"Clarc slash command export file." = "Archivo de exportación de comandos de barra de Clarc.";
+"Usage:" = "Uso:";
+"Edit the array below to add, remove, or change custom slash commands." = "Edita el arreglo de abajo para añadir, eliminar o cambiar comandos de barra personalizados.";
+"The leading slash is optional while editing names; Clarc saves names without it." = "La barra inicial es opcional al editar los nombres; Clarc guarda los nombres sin ella.";
+"Built-in command names are ignored on import and are never exported." = "Los nombres de los comandos integrados se ignoran al importar y nunca se exportan.";
+"Each custom command supports these properties:" = "Cada comando personalizado admite estas propiedades:";
+"name: command name without the leading slash." = "name: nombre del comando sin la barra inicial.";
+"description: short text shown in the command picker." = "description: texto breve que se muestra en el selector de comandos.";
+"detailDescription: optional longer text shown in command details. Use null or omit it when empty." = "detailDescription: texto más largo opcional que se muestra en los detalles del comando. Usa null u omítelo cuando esté vacío.";
+"acceptsInput: true lets users type additional text after the command." = "acceptsInput: true permite a los usuarios escribir texto adicional después del comando.";
+"isInteractive: true runs the command in the interactive terminal." = "isInteractive: true ejecuta el comando en el terminal interactivo.";
+"All properties example:" = "Ejemplo con todas las propiedades:";
+"Short description shown in the command picker" = "Descripción breve que se muestra en el selector de comandos";
+"Optional longer description shown in command details" = "Descripción más larga opcional que se muestra en los detalles del comando";
+"Clarc shortcut export file." = "Archivo de exportación de atajos de Clarc.";
+"Edit the array below to add, remove, or change shortcuts." = "Edita el arreglo de abajo para añadir, eliminar o cambiar atajos.";
+"Each shortcut supports these properties:" = "Cada atajo admite estas propiedades:";
+"id: optional unique identifier (UUID). Auto-generated on import if omitted." = "id: identificador único opcional (UUID). Se genera automáticamente al importar si se omite.";
+"name: label shown on the shortcut button." = "name: etiqueta que se muestra en el botón de atajo.";
+"message: text sent to Claude, or command run in the terminal." = "message: texto enviado a Claude o comando que se ejecuta en el terminal.";
+"isTerminalCommand: true runs the message as a terminal command instead of sending it to chat." = "isTerminalCommand: true ejecuta el mensaje como comando de terminal en lugar de enviarlo al chat.";
+"Shortcut button label" = "Etiqueta del botón de atajo";
+"Message sent to Claude or command run in terminal" = "Mensaje enviado a Claude o comando que se ejecuta en el terminal";
+
+// MARK: - ShortcutManagerView
+"Shortcut Manager" = "Gestor de atajos";
+"%lld shortcuts" = "%lld atajos";
+"Export shortcuts to a JSON file" = "Exporta los atajos a un archivo JSON";
+"Import shortcuts from a JSON file" = "Importa atajos desde un archivo JSON";
+"New Shortcut" = "Nuevo atajo";
+"No shortcuts" = "Sin atajos";
+"Register frequently used messages as shortcuts" = "Registra los mensajes de uso frecuente como atajos";
+"Add First Shortcut" = "Añadir el primer atajo";
+"Edit Shortcut" = "Editar atajo";
+"Add New Shortcut" = "Añadir nuevo atajo";
+"Name shown on the button" = "Nombre que se muestra en el botón";
+"Command" = "Comando";
+"Message" = "Mensaje";
+"This command will run in the terminal when the button is clicked" = "Este comando se ejecutará en el terminal al hacer clic en el botón";
+"This message will be sent when the button is clicked" = "Este mensaje se enviará al hacer clic en el botón";
+"Execution Mode" = "Modo de ejecución";
+"Run as terminal command" = "Ejecutar como comando de terminal";
+"When enabled, the command runs in the terminal instead of chat" = "Si se activa, el comando se ejecuta en el terminal en lugar del chat";
+"Preview" = "Vista previa";
+"Shortcut" = "Atajo";
+"Export Shortcuts" = "Exportar atajos";
+"Import Shortcuts" = "Importar atajos";
+
+// MARK: - SlashCommandBar / CommandMenuButton / UsagePopoverView
+"Slash Commands" = "Comandos de barra";
+"Close" = "Cerrar";
+"Copied" = "Copiado";
+"Copy Conversation" = "Copiar conversación";
+"Usage" = "Uso";
+"Manage Commands" = "Gestionar comandos";
+"Commands" = "Comandos";
+"Session Usage" = "Uso de la sesión";
+"Cost" = "Costo";
+"Input tokens" = "Tokens de entrada";
+"Output tokens" = "Tokens de salida";
+"Cache creation" = "Creación de caché";
+"Cache read" = "Lectura de caché";
+"Duration" = "Duración";
+"Turns" = "Turnos";
+"File Search" = "Búsqueda de archivos";
+
+// MARK: - MessageListView
+"Show %lld earlier messages" = "Mostrar %lld mensajes anteriores";
+"Collapse earlier messages" = "Contraer mensajes anteriores";
+"%lld tools executed" = "%lld herramientas ejecutadas";
+"How can I help you?" = "¿En qué puedo ayudarte?";
+"Thinking..." = "Pensando...";
+"Generating response..." = "Generando respuesta...";
+
+// MARK: - MessageBubble
+"Edit message..." = "Editar mensaje...";
+"Send" = "Enviar";
+"Collapse" = "Contraer";
+"Show more" = "Mostrar más";
+"Copy Message" = "Copiar mensaje";
+"Edit Message" = "Editar mensaje";
+"Fork from here" = "Bifurcar desde aquí";
+
+// MARK: - ChatView
+"Manage shortcuts" = "Gestionar atajos";
+
+// MARK: - StatusLineView
+"context" = "contexto";
+"5h" = "5h";
+"7d" = "7d";
+
+// MARK: - ToolResultView
+"Show less" = "Mostrar menos";
+"Show more" = "Mostrar más";
+"Error occurred" = "Se produjo un error";
+"Completed" = "Completado";
+"Running" = "En ejecución";
+"Interrupted" = "Interrumpido";
+"Read file" = "Leer archivo";
+"Edit file" = "Editar archivo";
+"Create new file" = "Crear archivo nuevo";
+"Run command" = "Ejecutar comando";
+"Find files" = "Buscar archivos";
+"Search in code" = "Buscar en el código";
+"Edit multiple locations" = "Editar varias ubicaciones";
+"Edit notebook" = "Editar cuaderno";
+"Subagent" = "Subagente";
+"Skill" = "Skill";
+"Interactive terminal" = "Terminal interactivo";
+
+// MARK: - MarkdownView / TextPreviewSheet
+"Copy" = "Copiar";
+"Copied" = "Copiado";
+
+// MARK: - WebPreviewButton
+"View Result" = "Ver resultado";
+"Open in browser" = "Abrir en el navegador";
+
+// MARK: - Slash Command Descriptions
+"Start a new conversation" = "Iniciar una nueva conversación";
+"Side question not added to conversation" = "Pregunta adicional que no se añade a la conversación";
+"Compact conversation (focus instructions allowed)" = "Compactar la conversación (se admiten instrucciones de enfoque opcionales)";
+"Copy last response to clipboard" = "Copiar la última respuesta al portapapeles";
+"Export conversation as text" = "Exportar la conversación como texto";
+"Create a branch of current conversation" = "Crear una rama de la conversación actual";
+"Rewind to a previous point" = "Retroceder a un punto anterior";
+"Rename session" = "Renombrar sesión";
+"Diff viewer for uncommitted changes" = "Visor de diferencias para cambios sin confirmar";
+"Generate a one-line session summary" = "Generar un resumen de una línea de la sesión";
+"Select/change AI model" = "Seleccionar/cambiar el modelo de IA";
+"Toggle fast mode" = "Activar/desactivar el modo rápido";
+"Set model effort level" = "Establecer el nivel de esfuerzo del modelo";
+"Token usage statistics" = "Estadísticas de uso de tokens";
+"Plan usage limits and rate limits" = "Límites de uso del plan y límites de tasa";
+"Daily usage and session history visualization" = "Visualización del uso diario, el historial de sesiones y las rachas";
+"Configure extra usage" = "Configurar el uso adicional cuando se superan los límites de tasa";
+"Settings interface" = "Interfaz de configuración";
+"Manage permissions" = "Gestionar las reglas de permisos";
+"Privacy settings (Pro/Max)" = "Configuración de privacidad (Pro/Max)";
+"Change color theme" = "Cambiar el tema de color";
+"Set prompt bar color" = "Establecer el color de la barra de prompt";
+"Configure status line" = "Configurar la barra de estado";
+"Configure keybindings" = "Configurar las combinaciones de teclas";
+"Configure terminal keybindings" = "Configurar las combinaciones de teclas del terminal";
+"Toggle sandbox mode" = "Activar/desactivar el modo aislado (sandbox)";
+"Initialize project with CLAUDE.md" = "Inicializar el proyecto con CLAUDE.md";
+"Edit CLAUDE.md memory file" = "Editar el archivo de memoria CLAUDE.md";
+"Add working directory to session" = "Añadir el directorio de trabajo a la sesión";
+"Visualize context usage" = "Visualizar el uso del contexto";
+"Enter plan mode" = "Entrar en el modo plan";
+"Manage background tasks" = "Gestionar las tareas en segundo plano";
+"List available skills" = "Listar las skills disponibles";
+"Session analysis report" = "Generar un informe de análisis de la sesión";
+"Review and fix code quality/efficiency of changes" = "Revisar y corregir la calidad/eficiencia del código de los cambios";
+"Analyze security vulnerabilities" = "Analizar las vulnerabilidades de seguridad de los cambios de la rama actual";
+"Repeat execution (e.g. /loop 5m /foo)" = "Ejecución repetida (p. ej. /loop 5m /foo)";
+"Manage cloud scheduled tasks" = "Gestionar las tareas programadas en la nube";
+"Auto-fix PR CI failures and review comments" = "Corregir automáticamente los fallos de CI y los comentarios de revisión del PR";
+"Orchestrate large-scale parallel changes" = "Orquestar cambios paralelos a gran escala";
+"Load Claude API reference for current project" = "Cargar la referencia de la API de Claude para el proyecto actual";
+"Enable debug logging and diagnose issues" = "Activar el registro de depuración y diagnosticar problemas";
+"Reduce permission prompts by scanning transcripts" = "Reducir las solicitudes de permiso analizando las transcripciones";
+"Review a pull request locally" = "Revisar un pull request localmente";
+"Generate a team onboarding guide" = "Generar una guía de incorporación para el equipo";
+"Manage agent configuration" = "Gestionar la configuración del agente";
+"View hook configuration" = "Ver la configuración de hooks";
+"Manage plugins" = "Gestionar complementos";
+"Reload plugins" = "Recargar complementos";
+"Manage MCP servers" = "Gestionar las conexiones de servidores MCP";
+"Manage IDE integration" = "Gestionar la integración con el IDE";
+"Configure Claude in Chrome" = "Configurar Claude en Chrome";
+"Continue in Desktop app" = "Continuar la sesión en la app de escritorio";
+"Remote control from claude.ai" = "Control remoto desde claude.ai";
+"Configure remote environment" = "Configurar el entorno remoto";
+"Toggle voice dictation" = "Activar/desactivar el dictado por voz";
+"Interactive feature lessons with demos" = "Lecciones de funciones con demostraciones animadas";
+"Pull a web session into this terminal" = "Traer una sesión web a este terminal";
+"Set terminal UI renderer" = "Establecer el renderizador de la interfaz del terminal";
+"Draft a plan in an ultraplan session" = "Redactar un plan en una sesión de Ultraplan";
+"Deep multi-agent cloud code review" = "Revisión de código en la nube en profundidad con varios agentes";
+"Connect GitHub account to Claude Code on the web" = "Conectar la cuenta de GitHub a Claude Code en la web";
+"Log in to Anthropic account" = "Iniciar sesión en la cuenta de Anthropic";
+"Log out of Anthropic account" = "Cerrar sesión en la cuenta de Anthropic";
+"Set up GitHub Actions app" = "Configurar la app de GitHub Actions";
+"Install Slack app" = "Instalar la app de Slack";
+"Mobile app QR code" = "Código QR de la app móvil";
+"Write heap snapshot for memory diagnostics" = "Guardar una instantánea del heap para diagnósticos de memoria";
+"Diagnose installation/configuration" = "Diagnosticar la instalación/configuración";
+"Version, model, and account status" = "Versión, modelo y estado de la cuenta";
+"Show help" = "Mostrar la ayuda";
+"Submit feedback/bug report" = "Enviar comentarios/informe de error";
+"View changelog" = "Ver el registro de cambios";
+"Upgrade plan" = "Cambiar a un plan superior";
+"Order Claude Code stickers" = "Pedir pegatinas de Claude Code";
+"Share free 1-week passes" = "Compartir pases gratuitos de 1 semana";
+"Exit CLI" = "Salir de la CLI";
+
+// MARK: - AskUserQuestionView
+"Question" = "Pregunta";

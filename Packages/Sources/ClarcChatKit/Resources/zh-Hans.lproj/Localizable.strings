@@ -1,0 +1,259 @@
+/* Simplified Chinese localization — ClarcChatKit */
+
+// MARK: - InputBarView
+"Attach file" = "附加文件";
+"Type a message..." = "请输入消息...";
+"Send message" = "发送消息";
+"Stop streaming (cancel response generation)" = "停止流式输出（取消响应生成）";
+
+// MARK: - FileDiffView
+"Diff" = "Diff";
+"No changes" = "无更改";
+"Copy" = "复制";
+"Copied" = "已复制";
+"loading..." = "正在加载...";
+
+// MARK: - SlashCommandManagerView
+"Slash Command Manager" = "斜杠命令管理器";
+"%lld commands" = "%lld 个命令";
+"Reset Defaults" = "重置默认值";
+"Restore modified default commands to their original state" = "将修改过的默认命令恢复到原始状态";
+"Export" = "导出";
+"Export custom commands to a JSON file" = "将自定义命令导出为 JSON 文件";
+"Import" = "导入";
+"Import commands from a JSON file" = "从 JSON 文件导入命令";
+"New Command" = "新建命令";
+"Search commands..." = "搜索命令...";
+"default" = "默认";
+"accepts input" = "允许输入";
+"terminal" = "终端";
+"Disable" = "禁用";
+"Enable" = "启用";
+"Delete" = "删除";
+"No results found" = "未找到结果";
+"Try a different keyword" = "请尝试其他关键词";
+"Reset Default Commands" = "重置默认命令";
+"Reset" = "重置";
+"Cancel" = "取消";
+"All modified default commands will be restored to their original state." = "所有修改过的默认命令都将恢复到原始状态。";
+"Import Succeeded" = "导入成功";
+"Import Failed" = "导入失败";
+"OK" = "确定";
+"Edit Command" = "编辑命令";
+"Add New Command" = "添加新命令";
+"Name" = "名称";
+"Command name (e.g. my-command)" = "命令名称（例如 my-command）";
+"Description" = "描述";
+"Short description" = "简短描述";
+"Detail Description (optional)" = "详细描述（可选）";
+"Accepts Input" = "允许输入";
+"Allows additional text to be entered after the command" = "允许在命令后输入额外文本";
+"Interactive (Terminal)" = "交互式（终端）";
+"Commands requiring TUI will run in the inline terminal" = "需要 TUI 的命令将在内联终端中运行";
+"Restore Default" = "恢复默认值";
+"Save" = "保存";
+"Add" = "添加";
+"Export Slash Commands" = "导出斜杠命令";
+"Import Slash Commands" = "导入斜杠命令";
+"Invalid JSON format." = "JSON 格式无效。";
+"Imported %lld custom commands." = "已导入 %lld 个自定义命令。";
+"A command with this name already exists." = "已存在同名命令。";
+"Clarc slash command export file." = "Clarc 斜杠命令导出文件。";
+"Usage:" = "用法：";
+"Edit the array below to add, remove, or change custom slash commands." = "编辑下方数组即可添加、删除或更改自定义斜杠命令。";
+"The leading slash is optional while editing names; Clarc saves names without it." = "编辑名称时开头的 / 是可选的；Clarc 保存名称时会去掉它。";
+"Built-in command names are ignored on import and are never exported." = "内置命令名称在导入时会被忽略，且永远不会被导出。";
+"Each custom command supports these properties:" = "每个自定义命令支持以下属性：";
+"name: command name without the leading slash." = "name：不含开头 / 的命令名称。";
+"description: short text shown in the command picker." = "description：显示在命令选择器中的简短文本。";
+"detailDescription: optional longer text shown in command details. Use null or omit it when empty." = "detailDescription：显示在命令详情中的可选长文本。为空时请使用 null 或省略。";
+"acceptsInput: true lets users type additional text after the command." = "acceptsInput：为 true 时允许用户在命令后输入额外文本。";
+"isInteractive: true runs the command in the interactive terminal." = "isInteractive：为 true 时在交互式终端中运行该命令。";
+"All properties example:" = "全部属性示例：";
+"Short description shown in the command picker" = "显示在命令选择器中的简短描述";
+"Optional longer description shown in command details" = "显示在命令详情中的可选长描述";
+"Clarc shortcut export file." = "Clarc 快捷按钮导出文件。";
+"Edit the array below to add, remove, or change shortcuts." = "编辑下方数组即可添加、删除或更改快捷按钮。";
+"Each shortcut supports these properties:" = "每个快捷按钮支持以下属性：";
+"id: optional unique identifier (UUID). Auto-generated on import if omitted." = "id：可选的唯一标识符（UUID）。省略时会在导入时自动生成。";
+"name: label shown on the shortcut button." = "name：显示在快捷按钮上的标签。";
+"message: text sent to Claude, or command run in the terminal." = "message：发送给 Claude 的文本，或在终端中运行的命令。";
+"isTerminalCommand: true runs the message as a terminal command instead of sending it to chat." = "isTerminalCommand：为 true 时将该消息作为终端命令运行，而不是发送到对话。";
+"Shortcut button label" = "快捷按钮标签";
+"Message sent to Claude or command run in terminal" = "发送给 Claude 的消息或在终端中运行的命令";
+
+// MARK: - ShortcutManagerView
+"Shortcut Manager" = "快捷按钮管理器";
+"%lld shortcuts" = "%lld 个快捷按钮";
+"Export shortcuts to a JSON file" = "将快捷按钮导出为 JSON 文件";
+"Import shortcuts from a JSON file" = "从 JSON 文件导入快捷按钮";
+"New Shortcut" = "新建快捷按钮";
+"No shortcuts" = "无快捷按钮";
+"Register frequently used messages as shortcuts" = "将常用消息注册为快捷按钮";
+"Add First Shortcut" = "添加第一个快捷按钮";
+"Edit Shortcut" = "编辑快捷按钮";
+"Add New Shortcut" = "添加新快捷按钮";
+"Name shown on the button" = "显示在按钮上的名称";
+"Command" = "命令";
+"Message" = "消息";
+"This command will run in the terminal when the button is clicked" = "点击按钮时，此命令将在终端中运行";
+"This message will be sent when the button is clicked" = "点击按钮时，此消息将被发送";
+"Execution Mode" = "执行模式";
+"Run as terminal command" = "作为终端命令运行";
+"When enabled, the command runs in the terminal instead of chat" = "启用后，命令将在终端中运行，而不是在对话中";
+"Preview" = "预览";
+"Shortcut" = "快捷按钮";
+"Export Shortcuts" = "导出快捷按钮";
+"Import Shortcuts" = "导入快捷按钮";
+
+// MARK: - SlashCommandBar / CommandMenuButton / UsagePopoverView
+"Slash Commands" = "斜杠命令";
+"Close" = "关闭";
+"Copied" = "已复制";
+"Copy Conversation" = "复制对话";
+"Usage" = "用量";
+"Manage Commands" = "管理命令";
+"Commands" = "命令";
+"Session Usage" = "会话用量";
+"Cost" = "费用";
+"Input tokens" = "输入令牌";
+"Output tokens" = "输出令牌";
+"Cache creation" = "缓存创建";
+"Cache read" = "缓存读取";
+"Duration" = "耗时";
+"Turns" = "对话轮次";
+"File Search" = "文件搜索";
+
+// MARK: - MessageListView
+"Show %lld earlier messages" = "显示 %lld 条更早的消息";
+"Collapse earlier messages" = "折叠更早的消息";
+"%lld tools executed" = "已执行 %lld 个工具";
+"How can I help you?" = "有什么可以帮你的吗？";
+"Thinking..." = "正在思考...";
+"Generating response..." = "正在生成响应...";
+
+// MARK: - MessageBubble
+"Edit message..." = "编辑消息...";
+"Send" = "发送";
+"Collapse" = "折叠";
+"Show more" = "显示更多";
+"Copy Message" = "复制消息";
+"Edit Message" = "编辑消息";
+"Fork from here" = "从此处分支";
+
+// MARK: - ChatView
+"Manage shortcuts" = "管理快捷按钮";
+
+// MARK: - StatusLineView
+"context" = "上下文";
+"5h" = "5 小时";
+"7d" = "7 天";
+
+// MARK: - ToolResultView
+"Show less" = "收起";
+"Show more" = "显示更多";
+"Error occurred" = "发生错误";
+"Completed" = "已完成";
+"Running" = "运行中";
+"Interrupted" = "已中断";
+"Read file" = "读取文件";
+"Edit file" = "编辑文件";
+"Create new file" = "创建新文件";
+"Run command" = "运行命令";
+"Find files" = "查找文件";
+"Search in code" = "在代码中搜索";
+"Edit multiple locations" = "编辑多个位置";
+"Edit notebook" = "编辑 notebook";
+"Subagent" = "子代理";
+"Skill" = "技能";
+"Interactive terminal" = "交互式终端";
+
+// MARK: - MarkdownView / TextPreviewSheet
+"Copy" = "复制";
+"Copied" = "已复制";
+
+// MARK: - WebPreviewButton
+"View Result" = "查看结果";
+"Open in browser" = "在浏览器中打开";
+
+// MARK: - Slash Command Descriptions
+"Start a new conversation" = "开始新对话";
+"Side question not added to conversation" = "不加入对话的旁支提问";
+"Compact conversation (focus instructions allowed)" = "压缩对话（允许可选的聚焦指令）";
+"Copy last response to clipboard" = "将最后一条响应复制到剪贴板";
+"Export conversation as text" = "将当前对话导出为文本";
+"Create a branch of current conversation" = "创建当前对话的分支";
+"Rewind to a previous point" = "回退到之前的某个时间点";
+"Rename session" = "重命名会话";
+"Diff viewer for uncommitted changes" = "未提交更改的 diff 查看器";
+"Generate a one-line session summary" = "生成会话的单行摘要";
+"Select/change AI model" = "选择/更改 AI 模型";
+"Toggle fast mode" = "开启/关闭快速模式";
+"Set model effort level" = "设置模型工作量级别";
+"Token usage statistics" = "令牌使用统计";
+"Plan usage limits and rate limits" = "套餐用量限制和速率限制";
+"Daily usage and session history visualization" = "每日用量、会话历史及连续记录可视化";
+"Configure extra usage" = "配置超出速率限制后的额外用量";
+"Settings interface" = "设置界面";
+"Manage permissions" = "管理权限规则";
+"Privacy settings (Pro/Max)" = "隐私设置（Pro/Max）";
+"Change color theme" = "更改色彩主题";
+"Set prompt bar color" = "设置提示栏颜色";
+"Configure status line" = "配置状态栏";
+"Configure keybindings" = "配置按键绑定";
+"Configure terminal keybindings" = "配置终端按键绑定";
+"Toggle sandbox mode" = "切换沙盒模式";
+"Initialize project with CLAUDE.md" = "用 CLAUDE.md 初始化项目";
+"Edit CLAUDE.md memory file" = "编辑 CLAUDE.md 记忆文件";
+"Add working directory to session" = "将工作目录添加到会话";
+"Visualize context usage" = "可视化上下文用量";
+"Enter plan mode" = "进入计划模式";
+"Manage background tasks" = "管理后台任务";
+"List available skills" = "列出可用技能";
+"Session analysis report" = "生成会话分析报告";
+"Review and fix code quality/efficiency of changes" = "审查并修复更改的代码质量/效率";
+"Analyze security vulnerabilities" = "分析当前分支更改的安全漏洞";
+"Repeat execution (e.g. /loop 5m /foo)" = "重复执行（例如 /loop 5m /foo）";
+"Manage cloud scheduled tasks" = "管理云端预定任务";
+"Auto-fix PR CI failures and review comments" = "自动修复 PR 的 CI 失败和审查评论";
+"Orchestrate large-scale parallel changes" = "编排大规模并行更改";
+"Load Claude API reference for current project" = "为当前项目加载 Claude API 参考";
+"Enable debug logging and diagnose issues" = "启用调试日志并诊断问题";
+"Reduce permission prompts by scanning transcripts" = "通过分析对话记录减少权限请求次数";
+"Review a pull request locally" = "在本地审查拉取请求";
+"Generate a team onboarding guide" = "生成团队入门指南";
+"Manage agent configuration" = "管理代理配置";
+"View hook configuration" = "查看 hook 配置";
+"Manage plugins" = "管理插件";
+"Reload plugins" = "重新加载插件";
+"Manage MCP servers" = "管理 MCP 服务器连接";
+"Manage IDE integration" = "管理 IDE 集成";
+"Configure Claude in Chrome" = "在 Chrome 中配置 Claude";
+"Continue in Desktop app" = "在桌面应用中继续会话";
+"Remote control from claude.ai" = "从 claude.ai 远程控制";
+"Configure remote environment" = "配置远程环境";
+"Toggle voice dictation" = "切换语音听写";
+"Interactive feature lessons with demos" = "配有动画演示的功能学习";
+"Pull a web session into this terminal" = "将网页会话拉取到此终端";
+"Set terminal UI renderer" = "设置终端 UI 渲染器";
+"Draft a plan in an ultraplan session" = "在 Ultraplan 会话中撰写计划";
+"Deep multi-agent cloud code review" = "多代理深度云端代码审查";
+"Connect GitHub account to Claude Code on the web" = "将 GitHub 账户连接到网页版 Claude Code";
+"Log in to Anthropic account" = "登录 Anthropic 账户";
+"Log out of Anthropic account" = "退出 Anthropic 账户";
+"Set up GitHub Actions app" = "设置 GitHub Actions 应用";
+"Install Slack app" = "安装 Slack 应用";
+"Mobile app QR code" = "移动应用二维码";
+"Write heap snapshot for memory diagnostics" = "保存堆快照以进行内存诊断";
+"Diagnose installation/configuration" = "诊断安装/配置";
+"Version, model, and account status" = "版本、模型和账户状态";
+"Show help" = "显示帮助";
+"Submit feedback/bug report" = "提交反馈/错误报告";
+"View changelog" = "查看更新日志";
+"Upgrade plan" = "升级到更高套餐";
+"Order Claude Code stickers" = "订购 Claude Code 贴纸";
+"Share free 1-week passes" = "分享 1 周免费体验通行证";
+"Exit CLI" = "退出 CLI";
+
+// MARK: - AskUserQuestionView
+"Question" = "问题";

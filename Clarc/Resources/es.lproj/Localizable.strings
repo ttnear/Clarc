@@ -1,0 +1,517 @@
+/* Spanish localization — main app */
+
+// MARK: - ClarcApp
+"New Chat" = "Nuevo chat";
+"Check for Updates..." = "Buscar actualizaciones...";
+"Theme" = "Tema";
+
+// MARK: - SettingsView
+"General" = "General";
+"Message" = "Mensaje";
+"Focus Mode" = "Modo concentración";
+"Enable Focus Mode" = "Activar modo concentración";
+"focus.mode.desc" = "Oculta las burbujas durante la transmisión y muestra en el historial solo las respuestas completadas.";
+"Auto-preview Attachments" = "Vista previa automática de adjuntos";
+"auto.preview.desc" = "Si se activa, al pegar los siguientes tipos de contenido se crea automáticamente una vista previa del adjunto. Si se desactiva, el contenido se inserta como texto sin formato.";
+"URL links" = "Enlaces URL";
+"File paths" = "Rutas de archivo";
+"Images" = "Imágenes";
+"Long text (200+ characters)" = "Texto largo (más de 200 caracteres)";
+"Shortcuts" = "Atajos";
+"Browse and manage Claude Code skills" = "Explora y gestiona las skills de Claude Code";
+"Default Model" = "Modelo predeterminado";
+"Used for new sessions. You can override the model per session from the toolbar." = "Se usa en las sesiones nuevas. Puedes cambiar el modelo por sesión desde la barra de herramientas.";
+"Default Permission Mode" = "Modo de permisos predeterminado";
+"Used for new sessions. You can override the permission mode per session from the toolbar." = "Se usa en las sesiones nuevas. Puedes cambiar el modo de permisos por sesión desde la barra de herramientas.";
+"Default Effort Level" = "Nivel de esfuerzo predeterminado";
+"Used for new sessions. You can override the effort level per session from the toolbar." = "Se usa en las sesiones nuevas. Puedes cambiar el nivel de esfuerzo por sesión desde la barra de herramientas.";
+"Font Size" = "Tamaño de fuente";
+"Interface" = "Interfaz";
+"Messages" = "Mensajes";
+"Default" = "Predeterminado";
+"Reset" = "Restablecer";
+"font.size.hint" = "Ajusta de forma independiente el tamaño de fuente de la interfaz y de los mensajes.";
+"Notifications" = "Notificaciones";
+"Notify when response completes" = "Notificar al completar la respuesta";
+"Sends a system notification while Clarc is in the background." = "Envía una notificación del sistema cuando Clarc está en segundo plano.";
+"Open Source" = "Código abierto";
+"Response complete" = "Respuesta completada";
+
+// MARK: - MainView / ProjectWindowView
+"Manage GitHub Repos" = "Gestionar repositorios de GitHub";
+"Connect GitHub" = "Conectar GitHub";
+"Add Project" = "Añadir proyecto";
+"History" = "Historial";
+"Files" = "Archivos";
+"Select a Project" = "Selecciona un proyecto";
+"Select a project from the sidebar or add a new one." = "Selecciona un proyecto en la barra lateral o añade uno nuevo.";
+"Error" = "Error";
+"OK" = "Aceptar";
+"Manage Slash Commands" = "Gestionar comandos de barra";
+"Manage Shortcuts" = "Gestionar atajos";
+"Claude Code Terminal" = "Terminal de Claude Code";
+"Skill Marketplace" = "Mercado de skills";
+"Change Theme" = "Cambiar tema";
+"User Guide" = "Guía de usuario";
+"Claude Code" = "Claude Code";
+"Skip Permissions: ON" = "Omitir permisos: activado";
+"Skip Permissions: OFF" = "Omitir permisos: desactivado";
+"Select Model" = "Seleccionar modelo";
+"Select Effort Level" = "Seleccionar nivel de esfuerzo";
+"↑↓ Select  ↵ Confirm  esc Cancel" = "↑↓ Seleccionar  ↵ Confirmar  esc Cancelar";
+
+// MARK: - SkillMarketView
+"Refresh" = "Actualizar";
+"Close" = "Cerrar";
+"Search skills..." = "Buscar skills...";
+"All" = "Todas";
+"Installed" = "Instaladas";
+"Loading catalog..." = "Cargando catálogo...";
+"No results found" = "No se encontraron resultados";
+"Installing..." = "Instalando...";
+"Failed" = "Error";
+"Back" = "Atrás";
+"Author" = "Autor";
+"Market" = "Mercado";
+"Category" = "Categoría";
+"Homepage" = "Página de inicio";
+"Install Command" = "Comando de instalación";
+"Remove" = "Eliminar";
+"Retry" = "Reintentar";
+"Install" = "Instalar";
+
+// MARK: - GitHubSheet / GitHubRepoListView
+"GitHub" = "GitHub";
+"Connect GitHub to\nimport repos instantly" = "Conecta GitHub para\nimportar repositorios al instante";
+"Search repos..." = "Buscar repositorios...";
+"Loading repos..." = "Cargando repositorios...";
+"No repos found" = "No se encontraron repositorios";
+"Don't see your org repos? →" = "¿No ves los repositorios de tu organización? →";
+"Don't see your org repos?" = "¿No ves los repositorios de tu organización?";
+"Configure org access →" = "Configurar acceso de la organización →";
+"Added" = "Añadido";
+"Add" = "Añadir";
+"Add to projects" = "Añadir a proyectos";
+
+// MARK: - FileTreeView
+"Search Files (⌘F)" = "Buscar archivos (⌘F)";
+"Search filename..." = "Buscar nombre de archivo...";
+"Loading..." = "Cargando...";
+"No results for '%@'" = "Sin resultados para '%@'";
+"%d files" = "%d archivos";
+"Unable to load files" = "No se pueden cargar los archivos";
+"Add path to message" = "Añadir ruta al mensaje";
+"Show in Finder" = "Mostrar en Finder";
+
+// MARK: - ProjectListView
+"Projects" = "Proyectos";
+"Rename Project" = "Renombrar proyecto";
+"Delete Project" = "Eliminar proyecto";
+"This will remove the project from Clarc. The files on disk will not be deleted." = "Esto eliminará el proyecto de Clarc. Los archivos del disco no se eliminarán.";
+"Project name" = "Nombre del proyecto";
+
+// MARK: - HistoryListView
+"Show current project only" = "Mostrar solo el proyecto actual";
+"Show all projects" = "Mostrar todos los proyectos";
+"Show completed sessions" = "Mostrar sesiones completadas";
+"Hide completed sessions" = "Ocultar sesiones completadas";
+"Mark as Complete" = "Marcar como completada";
+"Mark as Incomplete" = "Marcar como incompleta";
+"Delete All" = "Eliminar todo";
+"Delete" = "Eliminar";
+"Delete %lld Sessions" = "Eliminar %lld sesiones";
+"Cancel" = "Cancelar";
+"All sessions in the current project will be deleted. This action cannot be undone." = "Se eliminarán todas las sesiones del proyecto actual. Esta acción no se puede deshacer.";
+"All sessions will be deleted. This action cannot be undone." = "Se eliminarán todas las sesiones. Esta acción no se puede deshacer.";
+"Rename Session" = "Renombrar sesión";
+"Session name" = "Nombre de la sesión";
+"Rename" = "Renombrar";
+"Response in progress in the background" = "Respuesta en curso en segundo plano";
+"Unpin" = "Desfijar";
+"Pin" = "Fijar";
+"No chat history" = "Sin historial de chat";
+
+// MARK: - GitStatusView
+"Checking..." = "Comprobando...";
+"Not a Git repository" = "No es un repositorio Git";
+"No changes" = "Sin cambios";
+"%d changed" = "%d cambiados";
+"Failed to check status" = "Error al comprobar el estado";
+"Local" = "Local";
+"Remote (origin)" = "Remoto (origin)";
+"No local branches" = "Sin ramas locales";
+"No remote branches" = "Sin ramas remotas";
+"Switch Branch" = "Cambiar de rama";
+
+// MARK: - FileInspectorView
+"Preview" = "Vista previa";
+"Edit" = "Editar";
+"Copied" = "Copiado";
+"Copy" = "Copiar";
+"loading..." = "cargando...";
+"Binary file — preview not available" = "Archivo binario — vista previa no disponible";
+"File is too large (>1MB)" = "El archivo es demasiado grande (>1 MB)";
+"Read failed: %@" = "Error de lectura: %@";
+"Save failed: %@" = "Error al guardar: %@";
+
+// MARK: - ChatToolbarControls
+"Permission Mode" = "Modo de permisos";
+"Ask" = "Preguntar";
+"Accept Edits" = "Aceptar ediciones";
+"Plan" = "Modo plan";
+"Auto" = "Modo automático";
+"Bypass" = "Omitir permisos";
+"Model Picker" = "Modelo";
+"Effort Picker" = "Esfuerzo";
+"Auto Effort" = "Automático";
+"Low" = "Bajo";
+"Medium" = "Medio";
+"High" = "Alto";
+"XHigh" = "Muy alto";
+"Max" = "Máximo";
+"Permission mode: %@" = "Modo de permisos: %@";
+"Effort level (--effort)" = "Nivel de esfuerzo (--effort)";
+
+// MARK: - PermissionModal
+"Permission Request" = "Solicitud de permiso";
+"Command" = "Comando";
+"File" = "Archivo";
+"Input" = "Entrada";
+"Auto-deny in %@" = "Denegación automática en %@";
+"Deny" = "Denegar";
+"Allow" = "Permitir";
+"Allow this tool for the session" = "Permitir esta herramienta durante la sesión";
+"Always allow this command" = "Permitir siempre este comando";
+
+// MARK: - OnboardingView
+"Claude CLI Installation Check" = "Comprobación de instalación de Claude CLI";
+"Installed — %@" = "Instalado — %@";
+"Claude CLI not found" = "No se encontró Claude CLI";
+"Install command:" = "Comando de instalación:";
+"Check Again" = "Volver a comprobar";
+"Get Started" = "Empezar";
+"Share session history with the terminal CLI in ~/.claude/projects/. Turn off to keep Clarc sessions separate. You can change this later in Settings." = "Comparte el historial de sesiones con la CLI del terminal en ~/.claude/projects/. Desactívalo para mantener las sesiones de Clarc separadas. Puedes cambiarlo más adelante en Configuración.";
+
+// MARK: - GitHubLoginView
+"Connect GitHub to fetch your repo list and add projects with a single click." = "Conecta GitHub para obtener tu lista de repositorios y añadir proyectos con un solo clic.";
+"Sign in with GitHub" = "Iniciar sesión con GitHub";
+"Authentication Code" = "Código de autenticación";
+"Copy Code" = "Copiar código";
+"Authenticate on GitHub" = "Autenticar en GitHub";
+"Waiting for authentication..." = "Esperando la autenticación...";
+"Connected" = "Conectado";
+
+// MARK: - InspectorTabControl
+"Memo" = "Nota";
+"Terminal" = "Terminal";
+
+// MARK: - Model Descriptions
+"model.desc.default" = "Vuelve al modelo recomendado según tu tipo de cuenta";
+"model.desc.best" = "El modelo más potente disponible actualmente (equivale a Opus por ahora)";
+"model.desc.opus" = "El último modelo Opus para tareas de razonamiento complejo";
+"model.desc.opus1m" = "Opus con ventana de contexto de 1 millón de tokens para sesiones largas";
+"model.desc.opusplan" = "Usa Opus en el modo plan y cambia a Sonnet al ejecutar";
+"model.desc.sonnet" = "El último modelo Sonnet para el trabajo diario de programación";
+"model.desc.sonnet1m" = "Sonnet con ventana de contexto de 1 millón de tokens para sesiones largas";
+"model.desc.haiku" = "Modelo rápido y eficiente para tareas sencillas";
+
+// MARK: - Permission Mode Descriptions
+"perm.desc.default" = "Pide confirmación antes de cada edición de archivo o comando de shell. Ideal para trabajo sensible o para empezar.";
+"perm.desc.acceptEdits" = "Aprueba automáticamente las ediciones de archivos y los comandos comunes del sistema de archivos (mkdir, touch, mv, cp). Sigue pidiendo confirmación para otros comandos de shell.";
+"perm.desc.plan" = "Modo de solo lectura. Claude investiga y propone un plan sin hacer cambios. Para el resto de acciones aplica las mismas confirmaciones que el modo predeterminado.";
+"perm.desc.auto" = "Se ejecuta sin confirmaciones de permiso. Un clasificador en segundo plano revisa la seguridad de cada acción antes de ejecutarla.";
+"perm.desc.bypassPermissions" = "Omite todas las comprobaciones de permisos y mecanismos de seguridad. Úsalo solo en contenedores o máquinas virtuales aislados y sin acceso a internet.";
+
+// MARK: - Effort Level Descriptions
+"effort.desc.auto" = "Usa el nivel de esfuerzo predeterminado del modelo, elegido automáticamente según el modelo y el plan activos.";
+"effort.desc.low" = "Resérvalo para tareas cortas, acotadas y sensibles a la latencia que no requieran mucha inteligencia.";
+"effort.desc.medium" = "Reduce el uso de tokens en trabajos sensibles al costo que pueden sacrificar algo de inteligencia.";
+"effort.desc.high" = "Equilibra el uso de tokens y la inteligencia. Buen mínimo para el trabajo que requiere precisión.";
+"effort.desc.xhigh" = "Los mejores resultados para la mayoría de las tareas de programación y agénticas. Valor predeterminado recomendado en Opus 4.7.";
+"effort.desc.max" = "El razonamiento más profundo sin límite de tokens. Solo para la sesión actual. Ideal para tareas exigentes y complejas.";
+
+// MARK: - AppState
+"Previous conversation has been compacted" = "La conversación anterior se ha compactado";
+"No response received" = "No se recibió respuesta";
+"Done" = "Listo";
+
+// MARK: - UserManualView
+// Topic titles
+"About Clarc" = "Acerca de Clarc";
+"Project Management" = "Gestión de proyectos";
+"Chat Basics" = "Conceptos básicos del chat";
+"Keyboard Shortcuts" = "Atajos de teclado";
+"Slash Commands" = "Comandos de barra";
+"File & Image Attachments" = "Adjuntos de archivos e imágenes";
+"Shortcut Buttons" = "Botones de atajo";
+"Inspector Panel" = "Panel del inspector";
+"GitHub Integration" = "Integración con GitHub";
+"Permission Requests" = "Solicitudes de permiso";
+"Status Line" = "Barra de estado";
+
+// Overview
+"What is Clarc?" = "¿Qué es Clarc?";
+"A native macOS desktop client for the Claude Code CLI. Use all Claude Code features via a polished GUI without needing a terminal." = "Un cliente de escritorio nativo de macOS para la CLI de Claude Code. Usa todas las funciones de Claude Code mediante una interfaz gráfica refinada, sin necesidad de un terminal.";
+"Main Layout" = "Diseño principal";
+"The left sidebar has History and Files tabs. Project tabs appear at the top of the chat area — click to switch projects. The right inspector panel contains the Terminal and Memo tabs." = "La barra lateral izquierda tiene las pestañas Historial y Archivos. Las pestañas de proyecto aparecen en la parte superior del área de chat: haz clic para cambiar de proyecto. El panel del inspector a la derecha contiene las pestañas Terminal y Nota.";
+"Chat is disabled when no project is selected." = "El chat se desactiva cuando no hay ningún proyecto seleccionado.";
+"Top Toolbar" = "Barra de herramientas superior";
+"The toolbar contains: New Chat, Manage Slash Commands, Manage Shortcut Buttons, Skip Permissions toggle, Model picker, Inspector panel toggle, Settings, and the GitHub integration button." = "La barra de herramientas contiene: Nuevo chat, Gestionar comandos de barra, Gestionar botones de atajo, interruptor de Omitir permisos, selector de modelo, interruptor del panel del inspector, Configuración y el botón de integración con GitHub.";
+
+// Project Management
+"Adding a Project" = "Añadir un proyecto";
+"Click the + button at the top of the sidebar or drag a folder from Finder. Claude Code uses that folder as its working directory." = "Haz clic en el botón + de la parte superior de la barra lateral o arrastra una carpeta desde Finder. Claude Code usa esa carpeta como su directorio de trabajo.";
+"Project Tabs" = "Pestañas de proyecto";
+"Project tabs appear at the top of the chat area. Click a tab to switch projects. You can switch even while Claude is streaming — the active stream continues in the background." = "Las pestañas de proyecto aparecen en la parte superior del área de chat. Haz clic en una pestaña para cambiar de proyecto. Puedes cambiar incluso mientras Claude está transmitiendo: la transmisión activa continúa en segundo plano.";
+"Dedicated Project Window" = "Ventana de proyecto dedicada";
+"Double-click a project tab to open it in its own independent window. Each window manages its own sessions independently, allowing you to work on multiple projects at once." = "Haz doble clic en una pestaña de proyecto para abrirla en su propia ventana independiente. Cada ventana gestiona sus sesiones de forma independiente, lo que te permite trabajar en varios proyectos a la vez.";
+"In a dedicated project window, only the project name is shown — there are no project tabs." = "En una ventana de proyecto dedicada solo se muestra el nombre del proyecto; no hay pestañas de proyecto.";
+"Sidebar Tabs" = "Pestañas de la barra lateral";
+"History tab: shows previous conversations\nFiles tab: browse the project file tree" = "Pestaña Historial: muestra las conversaciones anteriores\nPestaña Archivos: explora el árbol de archivos del proyecto";
+"Go to History tab" = "Ir a la pestaña Historial";
+"Go to Files tab" = "Ir a la pestaña Archivos";
+"Files tab + activate search" = "Pestaña Archivos + activar búsqueda";
+"History Management" = "Gestión del historial";
+"Right-click a session in the History tab for context menu options." = "Haz clic derecho en una sesión de la pestaña Historial para ver las opciones del menú contextual.";
+"Pin / Unpin — pinned sessions stay at the top of the list" = "Fijar / Desfijar — las sesiones fijadas permanecen en la parte superior de la lista";
+"Rename — change the session title" = "Renombrar — cambia el título de la sesión";
+"Delete — remove the session" = "Eliminar — elimina la sesión";
+"Use the trash icon in the History header to delete all sessions at once." = "Usa el icono de papelera en el encabezado del historial para eliminar todas las sesiones a la vez.";
+"File Inspector" = "Inspector de archivos";
+"Click any file in the Files tab to preview it with syntax highlighting. Press the pencil button to enter edit mode and modify the file directly." = "Haz clic en cualquier archivo de la pestaña Archivos para verlo en vista previa con resaltado de sintaxis. Pulsa el botón del lápiz para entrar en el modo de edición y modificar el archivo directamente.";
+"Save file changes" = "Guardar los cambios del archivo";
+"Exit edit mode" = "Salir del modo de edición";
+"Files larger than 1 MB cannot be previewed." = "Los archivos de más de 1 MB no se pueden previsualizar.";
+"Git Status" = "Estado de Git";
+"The number of changed files is shown at the bottom of the sidebar." = "El número de archivos modificados se muestra en la parte inferior de la barra lateral.";
+
+// Chat Basics
+"Sending Messages" = "Enviar mensajes";
+"Type a message in the input field and press Return or the send button." = "Escribe un mensaje en el campo de entrada y pulsa Retorno o el botón de enviar.";
+"Send message" = "Enviar mensaje";
+"Send message (alternative)" = "Enviar mensaje (alternativa)";
+"Insert line break" = "Insertar salto de línea";
+"Stop streaming (cancel response generation)" = "Detener la transmisión (cancelar la generación de la respuesta)";
+"Message Queue" = "Cola de mensajes";
+"You can send messages even while Claude is responding. New messages are queued automatically and sent once the current response finishes. Queued messages appear as a badge above the input field — click the × on each item to remove it from the queue." = "Puedes enviar mensajes incluso mientras Claude responde. Los mensajes nuevos se ponen en cola automáticamente y se envían cuando termina la respuesta actual. Los mensajes en cola aparecen como una insignia sobre el campo de entrada; haz clic en la × de cada elemento para quitarlo de la cola.";
+"Recalling Previous Messages" = "Recuperar mensajes anteriores";
+"When the input field is empty, use ↑/↓ to navigate your message history." = "Cuando el campo de entrada está vacío, usa ↑/↓ para navegar por tu historial de mensajes.";
+"Recall previous message" = "Recuperar el mensaje anterior";
+"Next message / clear input" = "Mensaje siguiente / borrar entrada";
+"Changing the Model" = "Cambiar el modelo";
+"Use the model dropdown at the top of the chat area to switch Claude models." = "Usa el menú desplegable de modelo en la parte superior del área de chat para cambiar de modelo de Claude.";
+"Skip Permissions" = "Omitir permisos";
+"Toggle the shield icon at the top of the chat to auto-approve all permission prompts. Use with caution." = "Activa el icono del escudo en la parte superior del chat para aprobar automáticamente todas las solicitudes de permiso. Úsalo con precaución.";
+"Normal mode — permission prompts appear as usual" = "Modo normal — las solicitudes de permiso aparecen con normalidad";
+"Skip mode — all permissions auto-approved" = "Modo de omisión — todos los permisos se aprueban automáticamente";
+"Only enable Skip Permissions on projects you fully trust." = "Activa Omitir permisos solo en proyectos en los que confíes plenamente.";
+
+// Keyboard Shortcuts
+"Global Shortcuts" = "Atajos globales";
+"Start new chat" = "Iniciar un nuevo chat";
+"Close current window" = "Cerrar la ventana actual";
+"Sidebar — History tab (expands sidebar if hidden)" = "Barra lateral — pestaña Historial (despliega la barra lateral si está oculta)";
+"Sidebar — Files tab (expands sidebar if hidden)" = "Barra lateral — pestaña Archivos (despliega la barra lateral si está oculta)";
+"Toggle left sidebar" = "Mostrar/ocultar la barra lateral izquierda";
+"Toggle right inspector panel" = "Mostrar/ocultar el panel del inspector derecho";
+"Sidebar — Files tab + search" = "Barra lateral — pestaña Archivos + búsqueda";
+"Project tab — open in dedicated window" = "Pestaña de proyecto — abrir en ventana dedicada";
+"Input Field Shortcuts" = "Atajos del campo de entrada";
+"Line break" = "Salto de línea";
+"Close popup / stop streaming" = "Cerrar el menú emergente / detener la transmisión";
+"Select popup item or navigate message history" = "Seleccionar elemento del menú emergente o navegar por el historial de mensajes";
+"Autocomplete slash command / @ file" = "Autocompletar comando de barra / archivo con @";
+"Slash Command Popup" = "Menú emergente de comandos de barra";
+"Select item" = "Seleccionar elemento";
+"Execute command" = "Ejecutar comando";
+"Execute selected command" = "Ejecutar el comando seleccionado";
+"View command details" = "Ver detalles del comando";
+"Autocomplete command" = "Autocompletar comando";
+"Close popup" = "Cerrar el menú emergente";
+"@ File Popup" = "Menú emergente de archivos con @";
+"Insert file path" = "Insertar ruta de archivo";
+"Insert file path into message" = "Insertar la ruta de archivo en el mensaje";
+
+// Slash Commands
+"What are Slash Commands?" = "¿Qué son los comandos de barra?";
+"Type / in the input field to open a popup list of available commands. Slash commands let you quickly trigger Claude Code CLI operations without typing them manually." = "Escribe / en el campo de entrada para abrir una lista emergente de comandos disponibles. Los comandos de barra te permiten lanzar rápidamente operaciones de la CLI de Claude Code sin escribirlas manualmente.";
+"How to Use" = "Cómo usarlos";
+"Type / to open the popup, then continue typing to filter results. Use ↑/↓ to navigate." = "Escribe / para abrir el menú emergente y sigue escribiendo para filtrar los resultados. Usa ↑/↓ para navegar.";
+"Interactive Commands" = "Comandos interactivos";
+"Some commands (such as /config, /permissions, /model) open in a full interactive terminal popup sheet, where you can use the interactive CLI interface. The popup closes automatically when the command finishes." = "Algunos comandos (como /config, /permissions, /model) se abren en una hoja emergente de terminal interactivo completo, donde puedes usar la interfaz interactiva de la CLI. El menú emergente se cierra automáticamente cuando el comando termina.";
+"Managing Commands" = "Gestionar comandos";
+"Click the / button in the toolbar, or open Settings → Slash Commands to add, edit, delete, or disable custom commands. Built-in commands can be edited and enabled or disabled in the app." = "Haz clic en el botón / de la barra de herramientas o abre Configuración → Comandos de barra para añadir, editar, eliminar o desactivar comandos personalizados. Los comandos integrados se pueden editar y activar o desactivar en la app.";
+"JSON import/export backs up or shares custom commands only. Built-in commands in imported files are ignored." = "La importación/exportación JSON solo respalda o comparte comandos personalizados. Los comandos integrados de los archivos importados se ignoran.";
+
+// File & Image Attachments
+"Attaching Files" = "Adjuntar archivos";
+"Click the clip icon to the left of the input field, or drag and drop files onto the input field. When dragging, the input field border highlights in the accent color to show the drop zone." = "Haz clic en el icono del clip a la izquierda del campo de entrada o arrastra y suelta archivos sobre el campo de entrada. Al arrastrar, el borde del campo de entrada se resalta con el color de acento para mostrar la zona de destino.";
+"Clipboard Detection" = "Detección del portapapeles";
+"Pasting (⌘V) is smart — Clarc detects what's in the clipboard and handles it automatically." = "Pegar (⌘V) es inteligente: Clarc detecta lo que hay en el portapapeles y lo gestiona automáticamente.";
+"Image data (PNG/TIFF) → attached as an image" = "Datos de imagen (PNG/TIFF) → se adjunta como imagen";
+"File path → attached as a file" = "Ruta de archivo → se adjunta como archivo";
+"URL → attached as a URL reference" = "URL → se adjunta como referencia URL";
+"Long text (>2 KB) → converted to a text attachment" = "Texto largo (>2 KB) → se convierte en un adjunto de texto";
+"Screenshots can be pasted directly — they are automatically attached as images." = "Las capturas de pantalla se pueden pegar directamente: se adjuntan automáticamente como imágenes.";
+"@ File References" = "Referencias de archivo con @";
+"Type @ in the input field to open a project file search popup. Files are filtered in real time as you type." = "Escribe @ en el campo de entrada para abrir un menú emergente de búsqueda de archivos del proyecto. Los archivos se filtran en tiempo real a medida que escribes.";
+
+// Shortcut Buttons
+"What are Shortcut Buttons?" = "¿Qué son los botones de atajo?";
+"Quick-access buttons shown at the top of the chat area. Run frequently used messages or shell commands with a single click." = "Botones de acceso rápido que se muestran en la parte superior del área de chat. Ejecuta mensajes o comandos de shell de uso frecuente con un solo clic.";
+"Adding a Shortcut" = "Añadir un atajo";
+"Click the ⚡ button in the toolbar to open the Shortcut Manager, or press the + button on the right side of the shortcut bar. You can set a name, message/command, icon, and color." = "Haz clic en el botón ⚡ de la barra de herramientas para abrir el Gestor de atajos, o pulsa el botón + del lado derecho de la barra de atajos. Puedes establecer un nombre, mensaje/comando, icono y color.";
+"Terminal Command Mode" = "Modo de comando de terminal";
+"Enable the \"Run as terminal command\" option to execute the shortcut as a shell command in the inspector terminal instead of sending it as a chat message. The project directory is used as the working directory." = "Activa la opción \"Ejecutar como comando de terminal\" para ejecutar el atajo como un comando de shell en el terminal del inspector en lugar de enviarlo como mensaje de chat. El directorio del proyecto se usa como directorio de trabajo.";
+"Managing Shortcuts" = "Gestionar atajos";
+"Open Settings → Shortcuts to reorder, edit, or delete shortcuts. Shortcut configurations are saved per project." = "Abre Configuración → Atajos para reordenar, editar o eliminar atajos. Las configuraciones de atajos se guardan por proyecto.";
+"JSON import/export is supported for backing up or sharing your shortcut set." = "Se admite la importación/exportación JSON para respaldar o compartir tu conjunto de atajos.";
+
+// Inspector Panel
+"Opening the Inspector Panel" = "Abrir el panel del inspector";
+"Click the sidebar.trailing (⊟) button at the top right of the toolbar to toggle the inspector panel. The panel docks to the right side of the window and contains two tabs: Terminal and Memo." = "Haz clic en el botón ⊟ de la parte superior derecha de la barra de herramientas para mostrar u ocultar el panel del inspector. El panel se acopla al lado derecho de la ventana y contiene dos pestañas: Terminal y Nota.";
+"Terminal Tab" = "Pestaña Terminal";
+"An embedded zsh terminal that opens at the current project's directory. Use it to run shell commands, inspect files, or manage git — all without leaving the app." = "Un terminal zsh integrado que se abre en el directorio del proyecto actual. Úsalo para ejecutar comandos de shell, inspeccionar archivos o gestionar git, todo sin salir de la app.";
+"Memo Tab" = "Pestaña Nota";
+"A per-project rich text memo editor. Notes are auto-saved after a short pause and persist across sessions. Markdown formatting is supported." = "Un editor de notas con texto enriquecido por proyecto. Las notas se guardan automáticamente tras una breve pausa y se conservan entre sesiones. Se admite el formato Markdown.";
+"Heading levels (# / ## / ###)" = "Niveles de encabezado (# / ## / ###)";
+"Bold" = "Negrita";
+"Italic" = "Cursiva";
+"Inline code" = "Código en línea";
+"Strikethrough" = "Tachado";
+"Unordered list (auto-continues on Return)" = "Lista sin orden (continúa automáticamente con Retorno)";
+"Interactive Terminal Popup" = "Menú emergente de terminal interactivo";
+"Some slash commands (such as /config, /permissions, /model) open in a separate interactive terminal sheet. The popup runs the command automatically and closes when it exits." = "Algunos comandos de barra (como /config, /permissions, /model) se abren en una hoja de terminal interactivo independiente. El menú emergente ejecuta el comando automáticamente y se cierra al salir.";
+"The exit code is shown at the bottom — \"exit 0\" means the command completed successfully." = "El código de salida se muestra en la parte inferior: \"exit 0\" significa que el comando se completó correctamente.";
+
+// GitHub Integration
+"Click the GitHub Mark button at the top of the sidebar to open the GitHub panel. After connecting your GitHub account, your repositories are listed and can be added to Clarc with one click." = "Haz clic en el botón con el logo de GitHub en la parte superior de la barra lateral para abrir el panel de GitHub. Tras conectar tu cuenta de GitHub, tus repositorios se enumeran y puedes añadirlos a Clarc con un solo clic.";
+"Adding a Repository" = "Añadir un repositorio";
+"Search for a repository by name, then click Add. Clarc clones it automatically and opens it as a new project." = "Busca un repositorio por nombre y haz clic en Añadir. Clarc lo clona automáticamente y lo abre como un nuevo proyecto.";
+"Private repository" = "Repositorio privado";
+"Public repository" = "Repositorio público";
+"Already added to Clarc" = "Ya añadido a Clarc";
+
+// Skill Marketplace
+"Click the brain icon (🧠) in the toolbar to browse the MCP plugin catalog published on Anthropic's GitHub. Plugins can be filtered by category or searched by name, description, or author." = "Haz clic en el icono de cerebro (🧠) de la barra de herramientas para explorar el catálogo de complementos MCP publicado en el GitHub de Anthropic. Los complementos se pueden filtrar por categoría o buscar por nombre, descripción o autor.";
+"Installing Plugins" = "Instalar complementos";
+"Click a plugin to view its details, then press Install. An interactive terminal popup opens and runs the install command automatically." = "Haz clic en un complemento para ver sus detalles y luego pulsa Instalar. Se abre un menú emergente de terminal interactivo que ejecuta el comando de instalación automáticamente.";
+"Not installed" = "No instalado";
+"Installing…" = "Instalando…";
+"The catalog refreshes automatically every 5 minutes." = "El catálogo se actualiza automáticamente cada 5 minutos.";
+
+// Status Line
+"What is the Status Line?" = "¿Qué es la barra de estado?";
+"A fixed information bar at the bottom of the chat area. It shows the current project path, model, rate limit usage, context window usage, and total response time at a glance." = "Una barra de información fija en la parte inferior del área de chat. Muestra de un vistazo la ruta del proyecto actual, el modelo, el uso del límite de tasa, el uso de la ventana de contexto y el tiempo total de respuesta.";
+"Displayed Items" = "Elementos mostrados";
+"Items are shown left to right in the status line." = "Los elementos se muestran de izquierda a derecha en la barra de estado.";
+"Project path — folder path of the currently selected project (home directory abbreviated as ~)" = "Ruta del proyecto — ruta de la carpeta del proyecto seleccionado actualmente (el directorio de inicio se abrevia como ~)";
+"Model — name of the Claude model in use for this session" = "Modelo — nombre del modelo de Claude en uso para esta sesión";
+"5h limit — API usage over the last 5 hours (bar + % + time until reset)" = "Límite 5h — uso de la API en las últimas 5 horas (barra + % + tiempo hasta el reinicio)";
+"7d limit — API usage over the last 7 days (bar + % + time until reset)" = "Límite 7d — uso de la API en los últimos 7 días (barra + % + tiempo hasta el reinicio)";
+"context — context window usage for the current session (bar + %)" = "context — uso de la ventana de contexto en la sesión actual (barra + %)";
+"Total response time — cumulative time Claude spent generating responses in this session" = "Tiempo total de respuesta — tiempo acumulado que Claude dedicó a generar respuestas en esta sesión";
+"Usage Colors" = "Colores de uso";
+"The bar graph and percentage change color based on usage level." = "El gráfico de barras y el porcentaje cambian de color según el nivel de uso.";
+"Below 70% — normal" = "Por debajo del 70 % — normal";
+"70–89% — caution" = "70–89 % — precaución";
+"90% or above — critical" = "90 % o más — crítico";
+"Usage data refreshes automatically after each response. If the initial fetch fails on launch, it retries once after 5 seconds." = "Los datos de uso se actualizan automáticamente después de cada respuesta. Si la consulta inicial falla al arrancar, se reintenta una vez tras 5 segundos.";
+
+// Permission Requests
+"What are Permission Requests?" = "¿Qué son las solicitudes de permiso?";
+"Before Claude edits files or runs commands, it pauses and asks for your approval. A modal appears showing the tool name and its arguments." = "Antes de que Claude edite archivos o ejecute comandos, se detiene y te pide aprobación. Aparece una ventana modal que muestra el nombre de la herramienta y sus argumentos.";
+"Approval Options" = "Opciones de aprobación";
+"Each permission request offers three choices." = "Cada solicitud de permiso ofrece tres opciones.";
+"Approve this single action" = "Aprobar solo esta acción";
+"Approve all future requests of this type for the current session" = "Aprobar todas las solicitudes futuras de este tipo durante la sesión actual";
+"Reject the action" = "Rechazar la acción";
+"If no action is taken, the request is automatically denied after 5 minutes. Press Return to Allow, or Escape to Deny." = "Si no se realiza ninguna acción, la solicitud se deniega automáticamente tras 5 minutos. Pulsa Retorno para Permitir o Escape para Denegar.";
+// Permission Mode sections
+"Use the permission mode dropdown at the top of the chat to control how Claude requests approval before running actions." = "Usa el menú desplegable de modo de permisos en la parte superior del chat para controlar cómo solicita Claude tu aprobación antes de ejecutar acciones.";
+"Use the permission mode dropdown at the top of the chat to switch how Claude handles permissions." = "Usa el menú desplegable de modo de permisos en la parte superior del chat para cambiar la forma en que Claude gestiona los permisos.";
+"Default — prompts for approval before file edits and commands" = "Predeterminado — pide aprobación antes de las ediciones de archivos y los comandos";
+"Auto-accepts file edits in the working directory (commands still require approval)" = "Acepta automáticamente las ediciones de archivos en el directorio de trabajo (los comandos siguen requiriendo aprobación)";
+"Read-only — analyzes and plans without making edits" = "Solo lectura — analiza y planifica sin hacer ediciones";
+"AI auto-approves safe operations, prompts only for risky ones (requires Max/Team/Enterprise/API plan + Sonnet/Opus 4.6+)" = "La IA aprueba automáticamente las operaciones seguras y solo pide confirmación para las arriesgadas (requiere plan Max/Team/Enterprise/API + Sonnet/Opus 4.6+)";
+"Skips all permission checks — use only in isolated environments" = "Omite todas las comprobaciones de permisos — úsalo solo en entornos aislados";
+"Skips all permission checks — writes to .git/.vscode/.claude directories still require approval" = "Omite todas las comprobaciones de permisos — las escrituras en los directorios .git/.vscode/.claude siguen requiriendo aprobación";
+"Only enable Skip Permissions on projects you fully trust. Mode changes take effect from the next message." = "Activa Omitir permisos solo en proyectos en los que confíes plenamente. Los cambios de modo se aplican a partir del siguiente mensaje.";
+"Double-click" = "Doble clic";
+
+"Skip Permissions Mode" = "Modo de omisión de permisos";
+"Toggle the shield icon at the top of the chat to auto-approve all permission requests. This speeds up tasks but also auto-executes potentially dangerous operations — use with caution." = "Activa el icono del escudo en la parte superior del chat para aprobar automáticamente todas las solicitudes de permiso. Esto acelera las tareas, pero también ejecuta automáticamente operaciones potencialmente peligrosas: úsalo con precaución.";
+
+// MARK: - UserManualView additions
+// Effort Level (Chat Basics)
+"Effort Level" = "Nivel de esfuerzo";
+"Use the effort dropdown next to the model picker to control how much reasoning Claude applies. The selection is per-session." = "Usa el menú desplegable de esfuerzo junto al selector de modelo para controlar cuánto razonamiento aplica Claude. La selección es por sesión.";
+
+// Memo Tab formatting
+"Use the toolbar at the bottom for formatting, or the keyboard shortcuts below." = "Usa la barra de herramientas de la parte inferior para dar formato, o los atajos de teclado siguientes.";
+"Toggle checkbox" = "Alternar casilla de verificación";
+"Insert link" = "Insertar enlace";
+"Underline" = "Subrayado";
+
+// Inspector Panel reset buttons
+"Reset Buttons" = "Botones de restablecimiento";
+"Each inspector tab has a reset button (the circular arrow at the top right of the panel)." = "Cada pestaña del inspector tiene un botón de restablecimiento (la flecha circular en la parte superior derecha del panel).";
+"Reset Terminal" = "Restablecer terminal";
+"Clear Memo" = "Borrar nota";
+"Terminate the current shell and start a fresh zsh session" = "Termina el shell actual e inicia una nueva sesión de zsh";
+"Erase the memo for the current project (cannot be undone)" = "Borra la nota del proyecto actual (no se puede deshacer)";
+
+// Hidden files toggle
+"Hidden Files" = "Archivos ocultos";
+"Toggle the eye icon in the Files tab header to show or hide dotfiles (files starting with a period, such as .env or .gitignore)." = "Activa el icono del ojo en el encabezado de la pestaña Archivos para mostrar u ocultar los dotfiles (archivos que empiezan por un punto, como .env o .gitignore).";
+
+// Git Status (updated)
+"The Git status panel at the bottom of the sidebar shows changed-file counts and the current branch. Click the branch name to switch between local or remote branches." = "El panel de estado de Git en la parte inferior de la barra lateral muestra el número de archivos modificados y la rama actual. Haz clic en el nombre de la rama para cambiar entre ramas locales o remotas.";
+
+// File & Image Attachments — Auto-Preview Settings
+"Auto-Preview Settings" = "Ajustes de vista previa automática";
+"By default, pasting certain content automatically creates a preview chip. You can toggle each category independently in Settings → Message." = "De forma predeterminada, al pegar cierto contenido se crea automáticamente un chip de vista previa. Puedes activar o desactivar cada categoría de forma independiente en Configuración → Mensaje.";
+"Show a preview chip when a URL is detected" = "Muestra un chip de vista previa cuando se detecta una URL.";
+"Show a preview chip when a file path is detected" = "Muestra un chip de vista previa cuando se detecta una ruta de archivo.";
+"Show a preview chip when image data is detected" = "Muestra un chip de vista previa cuando se detectan datos de imagen.";
+"Convert long text (200+ characters) into an attachment chip" = "Convierte el texto largo (más de 200 caracteres) en un chip de adjunto.";
+
+// Settings & Themes topic
+"Settings & Themes" = "Configuración y temas";
+"Opening Settings" = "Abrir Configuración";
+"Choose Clarc → Settings from the menu bar or press ⌘, to open the Settings window. Settings are organized into four tabs: General, Message, Slash Commands, and Shortcuts." = "Elige Clarc → Configuración en la barra de menús o pulsa ⌘, para abrir la ventana de Configuración. La configuración se organiza en cuatro pestañas: General, Mensaje, Comandos de barra y Atajos.";
+"General Tab" = "Pestaña General";
+"The General tab configures session defaults. Changes apply to newly created sessions — existing sessions keep their current values." = "La pestaña General configura los valores predeterminados de las sesiones. Los cambios se aplican a las sesiones nuevas; las sesiones existentes conservan sus valores actuales.";
+"Accent color palette (Terracotta, Ocean, Forest, Lavender, Midnight, Amber)" = "Paleta de colores de acento (Terracotta, Ocean, Forest, Lavender, Midnight, Amber)";
+"Adjust the font size for the app UI (sidebar, toolbars, labels)" = "Ajusta el tamaño de fuente de la interfaz de la app (barra lateral, barras de herramientas, etiquetas).";
+"Adjust the font size in the chat message area" = "Ajusta el tamaño de fuente en el área de mensajes del chat.";
+"Claude model used when starting a new session" = "Modelo de Claude que se usa al iniciar una nueva sesión";
+"Permission mode applied to new sessions" = "Modo de permisos aplicado a las sesiones nuevas";
+"Reasoning effort applied to new sessions" = "Esfuerzo de razonamiento aplicado a las sesiones nuevas";
+"Show a system notification when a response completes while Clarc is in the background" = "Muestra una notificación del sistema cuando se completa una respuesta mientras Clarc está en segundo plano";
+"Model, permission mode, and effort can also be overridden per session from the toolbar — the chosen value sticks to that session." = "El modelo, el modo de permisos y el esfuerzo también se pueden cambiar por sesión desde la barra de herramientas; el valor elegido se mantiene en esa sesión.";
+"Message Tab" = "Pestaña Mensaje";
+"The Message tab controls chat display and attachment behavior." = "La pestaña Mensaje controla la visualización del chat y el comportamiento de los adjuntos.";
+"Enable a focused chat layout that hides the project tab bar and sidebar controls — useful when you want to concentrate on a single conversation" = "Activa un diseño de chat concentrado que oculta la barra de pestañas de proyecto y los controles de la barra lateral; útil cuando quieres concentrarte en una sola conversación";
+"Automatically show a preview chip when a URL is pasted" = "Muestra automáticamente un chip de vista previa al pegar una URL.";
+"Automatically show a preview chip when a file path is pasted" = "Muestra automáticamente un chip de vista previa al pegar una ruta de archivo.";
+"Automatically show a preview chip when image data is pasted" = "Muestra automáticamente un chip de vista previa al pegar datos de imagen.";
+"Automatically convert long text (200+ characters) into an attachment chip when pasted" = "Convierte automáticamente el texto largo (más de 200 caracteres) en un chip de adjunto al pegarlo.";
+"Themes" = "Temas";
+"Clarc ships with six accent color themes. Preview each one directly from the theme picker — the whole app recolors live as you choose." = "Clarc incluye seis temas de color de acento. Previsualiza cada uno directamente desde el selector de temas: toda la app cambia de color en vivo a medida que eliges.";
+"Terracotta" = "Terracotta";
+"Ocean" = "Ocean";
+"Forest" = "Forest";
+"Lavender" = "Lavender";
+"Midnight" = "Midnight";
+"Amber" = "Amber";
+"Claude default — warm orange-red" = "Predeterminado de Claude — rojo anaranjado cálido";
+"Cool blue" = "Azul frío";
+"Deep green" = "Verde intenso";
+"Soft purple" = "Púrpura suave";
+"Dark indigo" = "Índigo oscuro";
+"Warm yellow" = "Amarillo cálido";
+"Slash Commands & Shortcuts Tabs" = "Pestañas Comandos de barra y Atajos";
+"The Slash Commands tab manages built-in and custom commands — edit, enable/disable, add, or delete. JSON import/export covers custom commands only. The Shortcuts tab manages shortcut buttons with JSON import/export support." = "La pestaña Comandos de barra gestiona los comandos integrados y personalizados: editar, activar/desactivar, añadir o eliminar. La importación/exportación JSON solo abarca los comandos personalizados. La pestaña Atajos gestiona los botones de atajo con compatibilidad para importación/exportación JSON.";
+"Checking for Updates" = "Buscar actualizaciones";
+"Open Clarc → Check for Updates… to run Sparkle's update check manually. Updates are also checked automatically on launch." = "Abre Clarc → Buscar actualizaciones… para ejecutar manualmente la comprobación de actualizaciones de Sparkle. Las actualizaciones también se comprueban automáticamente al arrancar.";

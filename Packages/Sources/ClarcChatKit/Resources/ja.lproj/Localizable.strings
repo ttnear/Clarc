@@ -1,0 +1,259 @@
+/* Japanese localization — ClarcChatKit */
+
+// MARK: - InputBarView
+"Attach file" = "ファイルを添付";
+"Type a message..." = "メッセージを入力してください...";
+"Send message" = "メッセージを送信";
+"Stop streaming (cancel response generation)" = "ストリーミングを停止（応答生成をキャンセル）";
+
+// MARK: - FileDiffView
+"Diff" = "Diff";
+"No changes" = "変更なし";
+"Copy" = "コピー";
+"Copied" = "コピーしました";
+"loading..." = "読み込み中...";
+
+// MARK: - SlashCommandManagerView
+"Slash Command Manager" = "スラッシュコマンドマネージャー";
+"%lld commands" = "%lld 件のコマンド";
+"Reset Defaults" = "デフォルトに初期化";
+"Restore modified default commands to their original state" = "編集した組み込みコマンドを元の状態に復元します";
+"Export" = "エクスポート";
+"Export custom commands to a JSON file" = "カスタムコマンドを JSON ファイルにエクスポートします";
+"Import" = "インポート";
+"Import commands from a JSON file" = "JSON ファイルからコマンドをインポートします";
+"New Command" = "新規コマンド";
+"Search commands..." = "コマンドを検索...";
+"default" = "デフォルト";
+"accepts input" = "入力許可";
+"terminal" = "ターミナル";
+"Disable" = "無効化";
+"Enable" = "有効化";
+"Delete" = "削除";
+"No results found" = "検索結果がありません";
+"Try a different keyword" = "別のキーワードで検索してみてください";
+"Reset Default Commands" = "組み込みコマンドを初期化";
+"Reset" = "初期化";
+"Cancel" = "キャンセル";
+"All modified default commands will be restored to their original state." = "編集したすべての組み込みコマンドが元の状態に復元されます。";
+"Import Succeeded" = "インポート成功";
+"Import Failed" = "インポート失敗";
+"OK" = "OK";
+"Edit Command" = "コマンドを編集";
+"Add New Command" = "新規コマンドを追加";
+"Name" = "名前";
+"Command name (e.g. my-command)" = "コマンド名（例: my-command）";
+"Description" = "説明";
+"Short description" = "短い説明";
+"Detail Description (optional)" = "詳細説明（任意）";
+"Accepts Input" = "入力許可";
+"Allows additional text to be entered after the command" = "コマンドの後に追加テキストを入力できるようにします";
+"Interactive (Terminal)" = "インタラクティブ（ターミナル）";
+"Commands requiring TUI will run in the inline terminal" = "TUI が必要なコマンドはインラインターミナルで実行されます";
+"Restore Default" = "デフォルトに復元";
+"Save" = "保存";
+"Add" = "追加";
+"Export Slash Commands" = "スラッシュコマンドをエクスポート";
+"Import Slash Commands" = "スラッシュコマンドをインポート";
+"Invalid JSON format." = "無効な JSON 形式です。";
+"Imported %lld custom commands." = "%lld 件のカスタムコマンドをインポートしました。";
+"A command with this name already exists." = "この名前のコマンドはすでに存在します。";
+"Clarc slash command export file." = "Clarc スラッシュコマンドのエクスポートファイルです。";
+"Usage:" = "使い方:";
+"Edit the array below to add, remove, or change custom slash commands." = "下の配列を編集して、カスタムスラッシュコマンドを追加、削除、変更してください。";
+"The leading slash is optional while editing names; Clarc saves names without it." = "名前を編集する際、先頭の / は任意です。Clarc は / なしで保存します。";
+"Built-in command names are ignored on import and are never exported." = "組み込みコマンド名はインポート時に無視され、エクスポートにも含まれません。";
+"Each custom command supports these properties:" = "各カスタムコマンドは次のプロパティに対応しています:";
+"name: command name without the leading slash." = "name: 先頭の / を除いたコマンド名です。";
+"description: short text shown in the command picker." = "description: コマンド選択に表示される短い説明です。";
+"detailDescription: optional longer text shown in command details. Use null or omit it when empty." = "detailDescription: コマンド詳細に表示される任意の長い説明です。空の場合は null を指定するか省略してください。";
+"acceptsInput: true lets users type additional text after the command." = "acceptsInput: true にすると、コマンドの後に追加テキストを入力できます。";
+"isInteractive: true runs the command in the interactive terminal." = "isInteractive: true にすると、インタラクティブターミナルで実行されます。";
+"All properties example:" = "全プロパティの例:";
+"Short description shown in the command picker" = "コマンド選択に表示される短い説明";
+"Optional longer description shown in command details" = "コマンド詳細に表示される任意の長い説明";
+"Clarc shortcut export file." = "Clarc ショートカットのエクスポートファイルです。";
+"Edit the array below to add, remove, or change shortcuts." = "下の配列を編集して、ショートカットを追加、削除、変更してください。";
+"Each shortcut supports these properties:" = "各ショートカットは次のプロパティに対応しています:";
+"id: optional unique identifier (UUID). Auto-generated on import if omitted." = "id: 任意の一意な識別子（UUID）。インポート時に省略すると自動生成されます。";
+"name: label shown on the shortcut button." = "name: ショートカットボタンに表示される名前です。";
+"message: text sent to Claude, or command run in the terminal." = "message: Claude に送信するテキスト、またはターミナルで実行するコマンドです。";
+"isTerminalCommand: true runs the message as a terminal command instead of sending it to chat." = "isTerminalCommand: true にすると、チャットの代わりにターミナルコマンドとして実行されます。";
+"Shortcut button label" = "ショートカットボタンの名前";
+"Message sent to Claude or command run in terminal" = "Claude に送信するメッセージ、またはターミナルで実行するコマンド";
+
+// MARK: - ShortcutManagerView
+"Shortcut Manager" = "ショートカットマネージャー";
+"%lld shortcuts" = "%lld 件のショートカット";
+"Export shortcuts to a JSON file" = "ショートカットを JSON ファイルにエクスポートします";
+"Import shortcuts from a JSON file" = "JSON ファイルからショートカットをインポートします";
+"New Shortcut" = "新規ショートカット";
+"No shortcuts" = "ショートカットがありません";
+"Register frequently used messages as shortcuts" = "よく使うメッセージをショートカットとして登録してください";
+"Add First Shortcut" = "最初のショートカットを追加";
+"Edit Shortcut" = "ショートカットを編集";
+"Add New Shortcut" = "新規ショートカットを追加";
+"Name shown on the button" = "ボタンに表示される名前";
+"Command" = "コマンド";
+"Message" = "メッセージ";
+"This command will run in the terminal when the button is clicked" = "ボタンをクリックすると、このコマンドがターミナルで実行されます";
+"This message will be sent when the button is clicked" = "ボタンをクリックすると、このメッセージが送信されます";
+"Execution Mode" = "実行モード";
+"Run as terminal command" = "ターミナルコマンドとして実行";
+"When enabled, the command runs in the terminal instead of chat" = "有効にすると、コマンドがチャットの代わりにターミナルで実行されます";
+"Preview" = "プレビュー";
+"Shortcut" = "ショートカット";
+"Export Shortcuts" = "ショートカットをエクスポート";
+"Import Shortcuts" = "ショートカットをインポート";
+
+// MARK: - SlashCommandBar / CommandMenuButton / UsagePopoverView
+"Slash Commands" = "スラッシュコマンド";
+"Close" = "閉じる";
+"Copied" = "コピーしました";
+"Copy Conversation" = "会話をコピー";
+"Usage" = "使用量";
+"Manage Commands" = "コマンドの管理";
+"Commands" = "コマンド";
+"Session Usage" = "セッション使用量";
+"Cost" = "コスト";
+"Input tokens" = "入力トークン";
+"Output tokens" = "出力トークン";
+"Cache creation" = "キャッシュ生成";
+"Cache read" = "キャッシュ読み込み";
+"Duration" = "所要時間";
+"Turns" = "対話回数";
+"File Search" = "ファイル検索";
+
+// MARK: - MessageListView
+"Show %lld earlier messages" = "以前のメッセージ %lld 件を表示";
+"Collapse earlier messages" = "以前のメッセージを折りたたむ";
+"%lld tools executed" = "%lld 件のツールを実行しました";
+"How can I help you?" = "何かお手伝いできることはありますか？";
+"Thinking..." = "考え中...";
+"Generating response..." = "応答を生成中...";
+
+// MARK: - MessageBubble
+"Edit message..." = "メッセージを編集...";
+"Send" = "送信";
+"Collapse" = "折りたたむ";
+"Show more" = "もっと見る";
+"Copy Message" = "メッセージをコピー";
+"Edit Message" = "メッセージを編集";
+"Fork from here" = "ここから分岐";
+
+// MARK: - ChatView
+"Manage shortcuts" = "ショートカットの管理";
+
+// MARK: - StatusLineView
+"context" = "コンテキスト";
+"5h" = "5時間";
+"7d" = "7日";
+
+// MARK: - ToolResultView
+"Show less" = "折りたたむ";
+"Show more" = "もっと見る";
+"Error occurred" = "エラーが発生しました";
+"Completed" = "完了";
+"Running" = "実行中";
+"Interrupted" = "中断";
+"Read file" = "ファイルを読み込み";
+"Edit file" = "ファイルを編集";
+"Create new file" = "新規ファイルを作成";
+"Run command" = "コマンドを実行";
+"Find files" = "ファイルを検索";
+"Search in code" = "コード内を検索";
+"Edit multiple locations" = "複数箇所を編集";
+"Edit notebook" = "ノートブックを編集";
+"Subagent" = "サブエージェント";
+"Skill" = "スキル";
+"Interactive terminal" = "インタラクティブターミナル";
+
+// MARK: - MarkdownView / TextPreviewSheet
+"Copy" = "コピー";
+"Copied" = "コピーしました";
+
+// MARK: - WebPreviewButton
+"View Result" = "結果を表示";
+"Open in browser" = "ブラウザで開く";
+
+// MARK: - Slash Command Descriptions
+"Start a new conversation" = "新しい会話を開始";
+"Side question not added to conversation" = "会話に追加されない補足的な質問";
+"Compact conversation (focus instructions allowed)" = "会話を圧縮（任意のフォーカス指示を許可）";
+"Copy last response to clipboard" = "最後の応答をクリップボードにコピー";
+"Export conversation as text" = "現在の会話をテキストとしてエクスポート";
+"Create a branch of current conversation" = "現在の会話のブランチを作成";
+"Rewind to a previous point" = "以前の時点に巻き戻す";
+"Rename session" = "セッション名を変更";
+"Diff viewer for uncommitted changes" = "未コミット変更の diff ビューア";
+"Generate a one-line session summary" = "セッションの 1 行要約を生成";
+"Select/change AI model" = "AI モデルを選択/変更";
+"Toggle fast mode" = "高速モードのオン/オフ";
+"Set model effort level" = "モデルの effort レベルを設定";
+"Token usage statistics" = "トークン使用統計";
+"Plan usage limits and rate limits" = "プランの使用上限とレート制限";
+"Daily usage and session history visualization" = "日々の使用量、セッション履歴、連続記録の可視化";
+"Configure extra usage" = "レート制限超過時の追加使用量を構成";
+"Settings interface" = "設定インターフェース";
+"Manage permissions" = "権限ルールの管理";
+"Privacy settings (Pro/Max)" = "プライバシー設定（Pro/Max）";
+"Change color theme" = "カラーテーマを変更";
+"Set prompt bar color" = "プロンプトバーの色を設定";
+"Configure status line" = "ステータスラインを構成";
+"Configure keybindings" = "キーバインドを構成";
+"Configure terminal keybindings" = "ターミナルのキーバインドを構成";
+"Toggle sandbox mode" = "サンドボックスモードを切り替え";
+"Initialize project with CLAUDE.md" = "CLAUDE.md でプロジェクトを初期化";
+"Edit CLAUDE.md memory file" = "CLAUDE.md メモリファイルを編集";
+"Add working directory to session" = "セッションに作業ディレクトリを追加";
+"Visualize context usage" = "コンテキスト使用量を可視化";
+"Enter plan mode" = "プランモードに入る";
+"Manage background tasks" = "バックグラウンドタスクを管理";
+"List available skills" = "利用可能なスキルの一覧";
+"Session analysis report" = "セッション分析レポートを生成";
+"Review and fix code quality/efficiency of changes" = "変更のコード品質/効率を検証して修正";
+"Analyze security vulnerabilities" = "現在のブランチ変更のセキュリティ分析";
+"Repeat execution (e.g. /loop 5m /foo)" = "繰り返し実行（例: /loop 5m /foo）";
+"Manage cloud scheduled tasks" = "クラウドのスケジュールタスクを管理";
+"Auto-fix PR CI failures and review comments" = "PR の CI 失敗とレビューコメントを自動修正";
+"Orchestrate large-scale parallel changes" = "大規模な並列変更をオーケストレーション";
+"Load Claude API reference for current project" = "現在のプロジェクト用に Claude API リファレンスを読み込み";
+"Enable debug logging and diagnose issues" = "デバッグログを有効化して問題を診断";
+"Reduce permission prompts by scanning transcripts" = "会話履歴の分析で権限リクエストの回数を削減";
+"Review a pull request locally" = "ローカルで PR をレビュー";
+"Generate a team onboarding guide" = "チームオンボーディングガイドを生成";
+"Manage agent configuration" = "エージェント構成を管理";
+"View hook configuration" = "フック構成を表示";
+"Manage plugins" = "プラグインを管理";
+"Reload plugins" = "プラグインを再読み込み";
+"Manage MCP servers" = "MCP サーバー接続を管理";
+"Manage IDE integration" = "IDE 連携を管理";
+"Configure Claude in Chrome" = "Chrome で Claude を設定";
+"Continue in Desktop app" = "デスクトップアプリでセッションを続行";
+"Remote control from claude.ai" = "claude.ai からリモート操作";
+"Configure remote environment" = "リモート環境を構成";
+"Toggle voice dictation" = "音声ディクテーションを切り替え";
+"Interactive feature lessons with demos" = "アニメーションデモ付きの機能レッスン";
+"Pull a web session into this terminal" = "Web セッションをターミナルに取り込む";
+"Set terminal UI renderer" = "ターミナル UI レンダラーを設定";
+"Draft a plan in an ultraplan session" = "Ultraplan セッションで計画を作成";
+"Deep multi-agent cloud code review" = "マルチエージェントによる詳細なクラウドコードレビュー";
+"Connect GitHub account to Claude Code on the web" = "GitHub アカウントを Claude Code Web に接続";
+"Log in to Anthropic account" = "Anthropic アカウントにログイン";
+"Log out of Anthropic account" = "Anthropic アカウントからログアウト";
+"Set up GitHub Actions app" = "GitHub Actions アプリを設定";
+"Install Slack app" = "Slack アプリをインストール";
+"Mobile app QR code" = "モバイルアプリの QR コード";
+"Write heap snapshot for memory diagnostics" = "メモリ診断用のヒープスナップショットを保存";
+"Diagnose installation/configuration" = "インストールおよび設定を診断";
+"Version, model, and account status" = "バージョン、モデル、アカウントの状態";
+"Show help" = "ヘルプを表示";
+"Submit feedback/bug report" = "フィードバック/バグ報告を送信";
+"View changelog" = "変更ログを表示";
+"Upgrade plan" = "上位プランにアップグレード";
+"Order Claude Code stickers" = "Claude Code ステッカーを注文";
+"Share free 1-week passes" = "1 週間無料パスを共有";
+"Exit CLI" = "CLI を終了";
+
+// MARK: - AskUserQuestionView
+"Question" = "質問";
