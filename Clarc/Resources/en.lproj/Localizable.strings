@@ -41,7 +41,7 @@
 "Manage GitHub Repos" = "Manage GitHub Repos";
 "Connect GitHub" = "Connect GitHub";
 "Add Project" = "Add Project";
-"History" = "History";
+"History" = "Sessions";
 "Files" = "Files";
 "Select a Project" = "Select a Project";
 "Select a project from the sidebar or add a new one." = "Select a project from the sidebar or add a new one.";
@@ -129,7 +129,7 @@
 "Response in progress in the background" = "Response in progress in the background";
 "Unpin" = "Unpin";
 "Pin" = "Pin";
-"No chat history" = "No chat history";
+"No chat history" = "No sessions";
 
 // MARK: - GitStatusView
 "Checking..." = "Checking...";
@@ -253,7 +253,7 @@
 "What is Clarc?" = "What is Clarc?";
 "A native macOS desktop client for the Claude Code CLI. Use all Claude Code features via a polished GUI without needing a terminal." = "A native macOS desktop client for the Claude Code CLI. Use all Claude Code features via a polished GUI without needing a terminal.";
 "Main Layout" = "Main Layout";
-"The left sidebar has History and Files tabs. Project tabs appear at the top of the chat area — click to switch projects. The right inspector panel contains the Terminal and Memo tabs." = "The left sidebar has History and Files tabs. Project tabs appear at the top of the chat area — click to switch projects. The right inspector panel contains the Terminal and Memo tabs.";
+"The left sidebar has History and Files tabs. Project tabs appear at the top of the chat area — click to switch projects. The right inspector panel contains the Terminal and Memo tabs." = "The left sidebar has Sessions and Files tabs. Project tabs appear at the top of the chat area — click to switch projects. The right inspector panel contains the Terminal and Memo tabs.";
 "Chat is disabled when no project is selected." = "Chat is disabled when no project is selected.";
 "Top Toolbar" = "Top Toolbar";
 "The toolbar contains: New Chat, Manage Slash Commands, Manage Shortcut Buttons, Skip Permissions toggle, Model picker, Inspector panel toggle, Settings, and the GitHub integration button." = "The toolbar contains: New Chat, Manage Slash Commands, Manage Shortcut Buttons, Skip Permissions toggle, Model picker, Inspector panel toggle, Settings, and the GitHub integration button.";
@@ -267,16 +267,16 @@
 "Double-click a project tab to open it in its own independent window. Each window manages its own sessions independently, allowing you to work on multiple projects at once." = "Double-click a project tab to open it in its own independent window. Each window manages its own sessions independently, allowing you to work on multiple projects at once.";
 "In a dedicated project window, only the project name is shown — there are no project tabs." = "In a dedicated project window, only the project name is shown — there are no project tabs.";
 "Sidebar Tabs" = "Sidebar Tabs";
-"History tab: shows previous conversations\nFiles tab: browse the project file tree" = "History tab: shows previous conversations\nFiles tab: browse the project file tree";
-"Go to History tab" = "Go to History tab";
+"History tab: shows previous conversations\nFiles tab: browse the project file tree" = "Sessions tab: shows previous conversations\nFiles tab: browse the project file tree";
+"Go to History tab" = "Go to Sessions tab";
 "Go to Files tab" = "Go to Files tab";
 "Files tab + activate search" = "Files tab + activate search";
-"History Management" = "History Management";
-"Right-click a session in the History tab for context menu options." = "Right-click a session in the History tab for context menu options.";
+"History Management" = "Session Management";
+"Right-click a session in the History tab for context menu options." = "Right-click a session in the Sessions tab for context menu options.";
 "Pin / Unpin — pinned sessions stay at the top of the list" = "Pin / Unpin — pinned sessions stay at the top of the list";
 "Rename — change the session title" = "Rename — change the session title";
 "Delete — remove the session" = "Delete — remove the session";
-"Use the trash icon in the History header to delete all sessions at once." = "Use the trash icon in the History header to delete all sessions at once.";
+"Use the trash icon in the History header to delete all sessions at once." = "Use the trash icon in the Sessions header to delete all sessions at once.";
 "File Inspector" = "File Inspector";
 "Click any file in the Files tab to preview it with syntax highlighting. Press the pencil button to enter edit mode and modify the file directly." = "Click any file in the Files tab to preview it with syntax highlighting. Press the pencil button to enter edit mode and modify the file directly.";
 "Save file changes" = "Save file changes";
@@ -310,7 +310,7 @@
 "Global Shortcuts" = "Global Shortcuts";
 "Start new chat" = "Start new chat";
 "Close current window" = "Close current window";
-"Sidebar — History tab (expands sidebar if hidden)" = "Sidebar — History tab (expands sidebar if hidden)";
+"Sidebar — History tab (expands sidebar if hidden)" = "Sidebar — Sessions tab (expands sidebar if hidden)";
 "Sidebar — Files tab (expands sidebar if hidden)" = "Sidebar — Files tab (expands sidebar if hidden)";
 "Toggle left sidebar" = "Toggle left sidebar";
 "Toggle right inspector panel" = "Toggle right inspector panel";

@@ -41,7 +41,7 @@
 "Manage GitHub Repos" = "Gestionar repositorios de GitHub";
 "Connect GitHub" = "Conectar GitHub";
 "Add Project" = "Añadir proyecto";
-"History" = "Historial";
+"History" = "Sesiones";
 "Files" = "Archivos";
 "Select a Project" = "Selecciona un proyecto";
 "Select a project from the sidebar or add a new one." = "Selecciona un proyecto en la barra lateral o añade uno nuevo.";
@@ -129,7 +129,7 @@
 "Response in progress in the background" = "Respuesta en curso en segundo plano";
 "Unpin" = "Desfijar";
 "Pin" = "Fijar";
-"No chat history" = "Sin historial de chat";
+"No chat history" = "Sin sesiones";
 
 // MARK: - GitStatusView
 "Checking..." = "Comprobando...";
@@ -253,7 +253,7 @@
 "What is Clarc?" = "¿Qué es Clarc?";
 "A native macOS desktop client for the Claude Code CLI. Use all Claude Code features via a polished GUI without needing a terminal." = "Un cliente de escritorio nativo de macOS para la CLI de Claude Code. Usa todas las funciones de Claude Code mediante una interfaz gráfica refinada, sin necesidad de un terminal.";
 "Main Layout" = "Diseño principal";
-"The left sidebar has History and Files tabs. Project tabs appear at the top of the chat area — click to switch projects. The right inspector panel contains the Terminal and Memo tabs." = "La barra lateral izquierda tiene las pestañas Historial y Archivos. Las pestañas de proyecto aparecen en la parte superior del área de chat: haz clic para cambiar de proyecto. El panel del inspector a la derecha contiene las pestañas Terminal y Nota.";
+"The left sidebar has History and Files tabs. Project tabs appear at the top of the chat area — click to switch projects. The right inspector panel contains the Terminal and Memo tabs." = "La barra lateral izquierda tiene las pestañas Sesiones y Archivos. Las pestañas de proyecto aparecen en la parte superior del área de chat: haz clic para cambiar de proyecto. El panel del inspector a la derecha contiene las pestañas Terminal y Nota.";
 "Chat is disabled when no project is selected." = "El chat se desactiva cuando no hay ningún proyecto seleccionado.";
 "Top Toolbar" = "Barra de herramientas superior";
 "The toolbar contains: New Chat, Manage Slash Commands, Manage Shortcut Buttons, Skip Permissions toggle, Model picker, Inspector panel toggle, Settings, and the GitHub integration button." = "La barra de herramientas contiene: Nuevo chat, Gestionar comandos de barra, Gestionar botones de atajo, interruptor de Omitir permisos, selector de modelo, interruptor del panel del inspector, Configuración y el botón de integración con GitHub.";
@@ -267,16 +267,16 @@
 "Double-click a project tab to open it in its own independent window. Each window manages its own sessions independently, allowing you to work on multiple projects at once." = "Haz doble clic en una pestaña de proyecto para abrirla en su propia ventana independiente. Cada ventana gestiona sus sesiones de forma independiente, lo que te permite trabajar en varios proyectos a la vez.";
 "In a dedicated project window, only the project name is shown — there are no project tabs." = "En una ventana de proyecto dedicada solo se muestra el nombre del proyecto; no hay pestañas de proyecto.";
 "Sidebar Tabs" = "Pestañas de la barra lateral";
-"History tab: shows previous conversations\nFiles tab: browse the project file tree" = "Pestaña Historial: muestra las conversaciones anteriores\nPestaña Archivos: explora el árbol de archivos del proyecto";
-"Go to History tab" = "Ir a la pestaña Historial";
+"History tab: shows previous conversations\nFiles tab: browse the project file tree" = "Pestaña Sesiones: muestra las conversaciones anteriores\nPestaña Archivos: explora el árbol de archivos del proyecto";
+"Go to History tab" = "Ir a la pestaña Sesiones";
 "Go to Files tab" = "Ir a la pestaña Archivos";
 "Files tab + activate search" = "Pestaña Archivos + activar búsqueda";
-"History Management" = "Gestión del historial";
-"Right-click a session in the History tab for context menu options." = "Haz clic derecho en una sesión de la pestaña Historial para ver las opciones del menú contextual.";
+"History Management" = "Gestión de sesiones";
+"Right-click a session in the History tab for context menu options." = "Haz clic derecho en una sesión de la pestaña Sesiones para ver las opciones del menú contextual.";
 "Pin / Unpin — pinned sessions stay at the top of the list" = "Fijar / Desfijar — las sesiones fijadas permanecen en la parte superior de la lista";
 "Rename — change the session title" = "Renombrar — cambia el título de la sesión";
 "Delete — remove the session" = "Eliminar — elimina la sesión";
-"Use the trash icon in the History header to delete all sessions at once." = "Usa el icono de papelera en el encabezado del historial para eliminar todas las sesiones a la vez.";
+"Use the trash icon in the History header to delete all sessions at once." = "Usa el icono de papelera en el encabezado de sesiones para eliminar todas las sesiones a la vez.";
 "File Inspector" = "Inspector de archivos";
 "Click any file in the Files tab to preview it with syntax highlighting. Press the pencil button to enter edit mode and modify the file directly." = "Haz clic en cualquier archivo de la pestaña Archivos para verlo en vista previa con resaltado de sintaxis. Pulsa el botón del lápiz para entrar en el modo de edición y modificar el archivo directamente.";
 "Save file changes" = "Guardar los cambios del archivo";
@@ -310,7 +310,7 @@
 "Global Shortcuts" = "Atajos globales";
 "Start new chat" = "Iniciar un nuevo chat";
 "Close current window" = "Cerrar la ventana actual";
-"Sidebar — History tab (expands sidebar if hidden)" = "Barra lateral — pestaña Historial (despliega la barra lateral si está oculta)";
+"Sidebar — History tab (expands sidebar if hidden)" = "Barra lateral — pestaña Sesiones (despliega la barra lateral si está oculta)";
 "Sidebar — Files tab (expands sidebar if hidden)" = "Barra lateral — pestaña Archivos (despliega la barra lateral si está oculta)";
 "Toggle left sidebar" = "Mostrar/ocultar la barra lateral izquierda";
 "Toggle right inspector panel" = "Mostrar/ocultar el panel del inspector derecho";

@@ -41,7 +41,7 @@
 "Manage GitHub Repos" = "GitHub 저장소 관리";
 "Connect GitHub" = "GitHub 연결";
 "Add Project" = "프로젝트 추가";
-"History" = "기록";
+"History" = "세션";
 "Files" = "파일";
 "Select a Project" = "프로젝트를 선택하세요";
 "Select a project from the sidebar or add a new one." = "사이드바에서 프로젝트를 선택하거나 새로 추가하세요.";
@@ -129,7 +129,7 @@
 "Response in progress in the background" = "백그라운드에서 응답 진행 중";
 "Unpin" = "고정 해제";
 "Pin" = "고정";
-"No chat history" = "채팅 기록 없음";
+"No chat history" = "세션 없음";
 
 // MARK: - GitStatusView
 "Checking..." = "확인 중...";
@@ -253,7 +253,7 @@
 "What is Clarc?" = "Clarc란?";
 "A native macOS desktop client for the Claude Code CLI. Use all Claude Code features via a polished GUI without needing a terminal." = "Claude Code CLI를 위한 네이티브 macOS 데스크톱 클라이언트입니다. 터미널 없이 세련된 GUI로 Claude Code의 모든 기능을 사용할 수 있습니다.";
 "Main Layout" = "기본 레이아웃";
-"The left sidebar has History and Files tabs. Project tabs appear at the top of the chat area — click to switch projects. The right inspector panel contains the Terminal and Memo tabs." = "왼쪽 사이드바에는 기록 및 파일 탭이 있습니다. 채팅 영역 상단에 프로젝트 탭이 표시되며 클릭하여 전환할 수 있습니다. 오른쪽 인스펙터 패널에는 터미널과 메모 탭이 있습니다.";
+"The left sidebar has History and Files tabs. Project tabs appear at the top of the chat area — click to switch projects. The right inspector panel contains the Terminal and Memo tabs." = "왼쪽 사이드바에는 세션 및 파일 탭이 있습니다. 채팅 영역 상단에 프로젝트 탭이 표시되며 클릭하여 전환할 수 있습니다. 오른쪽 인스펙터 패널에는 터미널과 메모 탭이 있습니다.";
 "Chat is disabled when no project is selected." = "프로젝트가 선택되지 않으면 채팅을 사용할 수 없습니다.";
 "Top Toolbar" = "상단 툴바";
 "The toolbar contains: New Chat, Manage Slash Commands, Manage Shortcut Buttons, Skip Permissions toggle, Model picker, Inspector panel toggle, Settings, and the GitHub integration button." = "툴바 구성: 새 채팅, 슬래시 커맨드 관리, 단축 버튼 관리, 권한 건너뛰기 토글, 모델 선택, 인스펙터 패널 토글, 설정, GitHub 연동 버튼.";
@@ -267,16 +267,16 @@
 "Double-click a project tab to open it in its own independent window. Each window manages its own sessions independently, allowing you to work on multiple projects at once." = "프로젝트 탭을 더블 클릭하면 독립적인 전용 창에서 열립니다. 각 창은 세션을 독립적으로 관리하므로 여러 프로젝트를 동시에 작업할 수 있습니다.";
 "In a dedicated project window, only the project name is shown — there are no project tabs." = "전용 프로젝트 창에서는 프로젝트 이름만 표시되며 프로젝트 탭은 없습니다.";
 "Sidebar Tabs" = "사이드바 탭";
-"History tab: shows previous conversations\nFiles tab: browse the project file tree" = "기록 탭: 이전 대화 표시\n파일 탭: 프로젝트 파일 트리 탐색";
-"Go to History tab" = "기록 탭으로 이동";
+"History tab: shows previous conversations\nFiles tab: browse the project file tree" = "세션 탭: 이전 대화 표시\n파일 탭: 프로젝트 파일 트리 탐색";
+"Go to History tab" = "세션 탭으로 이동";
 "Go to Files tab" = "파일 탭으로 이동";
 "Files tab + activate search" = "파일 탭 + 검색 활성화";
-"History Management" = "기록 관리";
-"Right-click a session in the History tab for context menu options." = "기록 탭에서 세션을 우클릭하면 컨텍스트 메뉴가 표시됩니다.";
+"History Management" = "세션 관리";
+"Right-click a session in the History tab for context menu options." = "세션 탭에서 세션을 우클릭하면 컨텍스트 메뉴가 표시됩니다.";
 "Pin / Unpin — pinned sessions stay at the top of the list" = "고정 / 고정 해제 — 고정된 세션은 항상 목록 최상단에 표시됩니다";
 "Rename — change the session title" = "이름 변경 — 세션 제목을 수정합니다";
 "Delete — remove the session" = "삭제 — 세션을 삭제합니다";
-"Use the trash icon in the History header to delete all sessions at once." = "기록 헤더의 휴지통 아이콘을 사용하면 모든 세션을 한 번에 삭제할 수 있습니다.";
+"Use the trash icon in the History header to delete all sessions at once." = "세션 헤더의 휴지통 아이콘을 사용하면 모든 세션을 한 번에 삭제할 수 있습니다.";
 "File Inspector" = "파일 인스펙터";
 "Click any file in the Files tab to preview it with syntax highlighting. Press the pencil button to enter edit mode and modify the file directly." = "파일 탭에서 파일을 클릭하면 구문 강조와 함께 미리 볼 수 있습니다. 연필 버튼을 눌러 편집 모드로 전환하고 파일을 직접 수정할 수 있습니다.";
 "Save file changes" = "파일 변경사항 저장";
@@ -310,7 +310,7 @@
 "Global Shortcuts" = "전체 단축키";
 "Start new chat" = "새 채팅 시작";
 "Close current window" = "현재 창 닫기";
-"Sidebar — History tab (expands sidebar if hidden)" = "사이드바 — 기록 탭 (숨겨진 경우 사이드바 펼침)";
+"Sidebar — History tab (expands sidebar if hidden)" = "사이드바 — 세션 탭 (숨겨진 경우 사이드바 펼침)";
 "Sidebar — Files tab (expands sidebar if hidden)" = "사이드바 — 파일 탭 (숨겨진 경우 사이드바 펼침)";
 "Toggle left sidebar" = "왼쪽 사이드바 펼치기/숨기기";
 "Toggle right inspector panel" = "오른쪽 인스펙터 패널 펼치기/숨기기";
