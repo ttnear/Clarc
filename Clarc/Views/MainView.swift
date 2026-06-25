@@ -117,6 +117,7 @@ struct MainView: View {
                     
                     }
                 }
+                .clarcWindowToolbarStyle(for: appState.selectedTheme)
 
                 if inspectorStarted {
                     InspectorPanel()
@@ -315,6 +316,7 @@ struct DetailToolbar: View {
                     .help("Settings")
                 }
             }
+            .clarcWindowToolbarStyle(for: appState.selectedTheme)
     }
 }
 
@@ -778,6 +780,27 @@ struct ChatDetailModifiers: ViewModifier {
             .sheet(item: Bindable(windowState).interactiveTerminal) { terminal in
                 InteractiveTerminalPopup(state: terminal)
             }
+    }
+}
+
+extension View {
+    func clarcWindowToolbarStyle(for theme: AppTheme) -> some View {
+        toolbarBackground(ClaudeTheme.surfaceElevated, for: .windowToolbar)
+            .toolbarBackground(.visible, for: .windowToolbar)
+            .toolbarColorScheme(theme.windowToolbarColorScheme, for: .windowToolbar)
+    }
+}
+
+extension AppTheme {
+    var windowToolbarColorScheme: ColorScheme? {
+        switch self {
+        case .dracula, .nord, .monokai, .oneDark:
+            .dark
+        case .rose, .latte:
+            .light
+        case .claude, .ocean, .forest, .lavender, .midnight, .amber:
+            nil
+        }
     }
 }
 

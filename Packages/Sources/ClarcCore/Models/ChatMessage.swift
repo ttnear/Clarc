@@ -268,6 +268,11 @@ extension ChatMessage {
             guard index < previous.count, previous[index].role == message.role else { return message }
             var reconciled = message
             reconciled.id = previous[index].id
+            // Carry over Clarc-only metadata the CLI jsonl doesn't store, so a
+            // disk reload doesn't clobber it. `duration` is recorded by Clarc when
+            // a stream completes; a fresh jsonl parse has none, which would reset
+            // the status-bar total response time to zero on every reload.
+            if reconciled.duration == nil { reconciled.duration = previous[index].duration }
             let priorBlocks = previous[index].blocks
             reconciled.blocks = message.blocks.enumerated().map { blockIndex, block in
                 guard blockIndex < priorBlocks.count,

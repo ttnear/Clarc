@@ -2132,6 +2132,25 @@ final class AppState {
         }
 
         window.currentSessionId = session.id
+
+        // The context % lives only in memory, so a session opened from history
+        // shows no value until its next response. Fetch it once on switch (CLI
+        // resume) so the status bar fills in immediately, mirroring the
+        // post-response path. Skip empty placeholders and legacy sessions, which
+        // have nothing to resume.
+        if session.origin == .cliBacked,
+           !window.pendingPlaceholderIds.contains(session.id),
+           sessionStates[session.id]?.lastTurnContextUsedPercentage == nil,
+           let cwd = window.selectedProject?.path {
+            let sid = session.id
+            Task { [weak self] in
+                guard let self else { return }
+                if let pct = await self.claude.fetchContextPercentage(sessionId: sid, cwd: cwd) {
+                    self.updateState(sid) { $0.lastTurnContextUsedPercentage = pct }
+                }
+            }
+        }
+
         window.sessionModel = sessionStates[session.id]?.model ?? session.model
         window.sessionEffort = sessionStates[session.id]?.effort ?? session.effort
         window.sessionPermissionMode = sessionStates[session.id]?.permissionMode ?? session.permissionMode

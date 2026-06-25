@@ -25,6 +25,30 @@ struct ChatMessageReconcileTests {
         #expect(result[0].content == "hello") // content still comes from disk
     }
 
+    @Test("Carries prior duration when the disk parse has none")
+    func carriesDuration() {
+        let prior = ChatMessage(role: .assistant,
+                                blocks: [.text("hello")], duration: 4.2)
+        let fresh = ChatMessage(role: .assistant,
+                                blocks: [.text("hello")]) // CLI jsonl stores no duration
+
+        let result = ChatMessage.reconcilingIdentity([fresh], from: [prior])
+
+        #expect(result[0].duration == 4.2)
+    }
+
+    @Test("Keeps incoming duration when present")
+    func keepsIncomingDuration() {
+        let prior = ChatMessage(role: .assistant,
+                                blocks: [.text("hello")], duration: 4.2)
+        let fresh = ChatMessage(role: .assistant,
+                                blocks: [.text("hello")], duration: 9.9)
+
+        let result = ChatMessage.reconcilingIdentity([fresh], from: [prior])
+
+        #expect(result[0].duration == 9.9)
+    }
+
     @Test("Keeps disk id when roles diverge at an index")
     func divergentRoleKeepsDiskId() {
         let prior = ChatMessage(role: .user, blocks: [.text("hi")])

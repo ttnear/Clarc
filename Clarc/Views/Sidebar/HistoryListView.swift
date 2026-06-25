@@ -156,7 +156,7 @@ struct HistoryListView: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(session.title)
                     .font(.system(size: ClaudeTheme.size(13)))
-                    .foregroundStyle(.primary.opacity(session.isCompleted ? 0.45 : 0.8))
+                    .foregroundStyle(ClaudeTheme.textPrimary.opacity(session.isCompleted ? 0.45 : 0.9))
                     .strikethrough(session.isCompleted, color: ClaudeTheme.textTertiary)
                     .lineLimit(1)
 
@@ -169,12 +169,12 @@ struct HistoryListView: View {
 
                         Text("·")
                             .font(.system(size: ClaudeTheme.size(10)))
-                            .foregroundStyle(.tertiary)
+                            .foregroundStyle(ClaudeTheme.textTertiary)
                     }
 
                     Text(formattedDate(session.updatedAt))
                         .font(.system(size: ClaudeTheme.size(11)))
-                        .foregroundStyle(.tertiary)
+                        .foregroundStyle(ClaudeTheme.textTertiary)
                 }
             }
 

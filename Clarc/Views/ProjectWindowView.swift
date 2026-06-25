@@ -165,6 +165,7 @@ struct ProjectWindowView: View {
                 .keyboardShortcut("4", modifiers: .command)
             }
         }
+        .clarcWindowToolbarStyle(for: appState.selectedTheme)
         .focusedValue(\.startNewChat) {
             appState.startNewChat(in: windowState)
         }
