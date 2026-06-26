@@ -266,6 +266,9 @@ private struct RichEditorView: NSViewRepresentable {
         scrollView.autohidesScrollers = true
         scrollView.drawsBackground = false
         scrollView.backgroundColor = .clear
+        // We manage the titlebar overlap ourselves in MemoScrollView.layout(), since the
+        // automatic adjustment doesn't fire when hosted inside a SwiftUI VSplitView.
+        scrollView.automaticallyAdjustsContentInsets = false
 
         let tv = MemoTextView()
         tv.delegate = context.coordinator
@@ -537,6 +540,22 @@ private final class MemoScrollView: NSScrollView {
             return doc
         }
         return hit
+    }
+
+    /// Inset the top by however much this scroll view overlaps the window titlebar.
+    /// When hosted under the titlebar (right-dock split) this reveals the first line;
+    /// when placed below other chrome (single-tab, bottom dock) the overlap is 0.
+    override func layout() {
+        super.layout()
+        guard let window else {
+            if contentInsets.top != 0 { contentInsets = NSEdgeInsetsZero }
+            return
+        }
+        let topInWindow = convert(bounds, to: nil).maxY
+        let overlap = max(0, topInWindow - window.contentLayoutRect.maxY)
+        if abs(contentInsets.top - overlap) > 0.5 {
+            contentInsets = NSEdgeInsets(top: overlap, left: 0, bottom: 0, right: 0)
+        }
     }
 }
 

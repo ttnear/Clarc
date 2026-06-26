@@ -502,16 +502,7 @@ struct InspectorPanel: View {
             }
         } else {
             // Single-tab mode: overlay both, toggle with opacity so the terminal process stays alive.
-            ZStack {
-                terminalView
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(ClaudeTheme.codeBackground)
-                    .opacity(windowState.inspectorTab == .terminal ? 1 : 0)
-                memoView
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .opacity(windowState.inspectorTab == .memo ? 1 : 0)
-            }
-            .overlay(alignment: .top) {
+            VStack(spacing: 0) {
                 HStack(spacing: 4) {
                     InspectorTabControl(
                         selection: Bindable(windowState).inspectorTab,
@@ -521,6 +512,15 @@ struct InspectorPanel: View {
                 }
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
+                ZStack {
+                    terminalView
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(ClaudeTheme.codeBackground)
+                        .opacity(windowState.inspectorTab == .terminal ? 1 : 0)
+                    memoView
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .opacity(windowState.inspectorTab == .memo ? 1 : 0)
+                }
             }
         }
     }
