@@ -464,5 +464,30 @@
         type="application/octet-stream"
         sparkle:edSignature="CvlFQZa/+ERVLhkhF/aRfTu9blxjuaZ9HYopTazH1FZiNU/i5AMi9/yN6QzYmLRWBdmxPg6GnXJMwR6t3EAOBg==" />
     </item>
+    <item>
+      <title>Clarc v1.3.6</title>
+      <sparkle:version>32</sparkle:version>
+      <sparkle:shortVersionString>1.3.6</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <pubDate>Fri, 26 Jun 2026 06:06:03 +0000</pubDate>
+      <description><![CDATA[
+<h3>New</h3>
+<ul>
+  <li>The memo and terminal panel can now be docked on the right (default) or at the bottom, configurable in Settings → General.</li>
+  <li>A new "show both" option splits the panel so the memo and terminal are visible at once — stacked on the right, side by side at the bottom — each with a draggable resize handle.</li>
+  <li>The terminal now uses a floating reset button and matches your active theme's colors.</li>
+</ul>
+<h3>Fixed</h3>
+<ul>
+  <li>Resetting the terminal no longer changes the panel's split proportions.</li>
+  <li>Cumulative response time is preserved when leaving a session and is no longer wiped by zero-duration saves.</li>
+</ul>
+      ]]></description>
+      <enclosure
+        url="https://github.com/ttnear/Clarc/releases/download/v1.3.6/Clarc-1.3.6.zip"
+        length="6513743"
+        type="application/octet-stream"
+        sparkle:edSignature="Pg9SlFoqaZN+hzLrOJvZQAj2ZbC6dYBXC1Cxop+M9YWEt+C59j+xnkVQX6thEHyAolGiQwGV1puKoggx2mVkAg==" />
+    </item>
   </channel>
 </rss>
