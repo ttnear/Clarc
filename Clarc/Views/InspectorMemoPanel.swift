@@ -78,6 +78,7 @@ struct InspectorMemoPanel: View {
     var projectId: UUID? = nil
     var clearTrigger: UUID? = nil
     var focusTrigger: UUID? = nil
+    var onClear: (() -> Void)? = nil
     @State private var memoContext = MemoContext()
 
     var body: some View {
@@ -88,7 +89,7 @@ struct InspectorMemoPanel: View {
                            projectId: projectId)
                 .id(projectId)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-            MemoFormattingToolbar(context: memoContext)
+            MemoFormattingToolbar(context: memoContext, onClear: onClear)
         }
         .background(ClaudeTheme.background)
     }
@@ -98,6 +99,7 @@ struct InspectorMemoPanel: View {
 
 private struct MemoFormattingToolbar: View {
     let context: MemoContext
+    var onClear: (() -> Void)? = nil
 
     var body: some View {
         HStack(spacing: 0) {
@@ -112,6 +114,11 @@ private struct MemoFormattingToolbar: View {
             toolbarTextBtn("-", label: "Bullet (- )", action: context.addBullet)
             toolbarBtn("checkmark.circle", label: "Checkbox (⌘⇧L)", action: context.addCheckbox)
             toolbarBtn("link", label: "Link (⌘K)", action: context.addLink)
+            if let onClear {
+                Spacer()
+                toolbarDivider()
+                toolbarBtn("eraser", label: "Clear Memo", action: onClear)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 6)

@@ -507,3 +507,11 @@
 "Add or remove a session from the selection" = "Add or remove a session from the selection";
 "Select a range of sessions" = "Select a range of sessions";
 "With multiple sessions selected, right-click to pin, complete, or delete them all at once." = "With multiple sessions selected, right-click to pin, complete, or delete them all at once.";
+
+/* Inspector Panel Layout */
+"Panel Layout" = "Panel Layout";
+"Choose where the memo and terminal panel is docked." = "Choose where the memo and terminal panel is docked.";
+"Right" = "Right";
+"Bottom" = "Bottom";
+"Show memo and terminal together" = "Show memo and terminal together";
+"Splits the panel in two. On the right they stack (memo on top); at the bottom they sit side by side (memo on the left)." = "Splits the panel in two. On the right they stack (memo on top); at the bottom they sit side by side (memo on the left).";

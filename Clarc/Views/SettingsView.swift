@@ -68,6 +68,8 @@ struct GeneralSettingsTab: View {
                 Divider()
                 notificationsSection(appState: $appState.notificationsEnabled)
                 Divider()
+                inspectorLayoutSection
+                Divider()
                 VStack(alignment: .leading, spacing: 8) {
                     skillMarketSection
                     helpSection
@@ -179,6 +181,40 @@ struct GeneralSettingsTab: View {
             detail: "Sends a system notification while Clarc is in the background.",
             isOn: appState
         )
+    }
+
+    // MARK: - Inspector Layout Section
+
+    private var inspectorLayoutSection: some View {
+        @Bindable var appState = appState
+        return VStack(alignment: .leading, spacing: 12) {
+            Text("Panel Layout")
+                .font(.system(size: ClaudeTheme.size(13), weight: .semibold))
+
+            Text("Choose where the memo and terminal panel is docked.")
+                .font(.system(size: ClaudeTheme.size(11)))
+                .foregroundStyle(.secondary)
+
+            Picker("", selection: $appState.inspectorPosition) {
+                Text("Right").tag(InspectorPosition.right)
+                Text("Bottom").tag(InspectorPosition.bottom)
+            }
+            .labelsHidden()
+            .pickerStyle(.segmented)
+            .fixedSize()
+
+            Toggle(isOn: $appState.inspectorShowBoth) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Show memo and terminal together")
+                        .font(.system(size: ClaudeTheme.size(13)))
+                    Text("Splits the panel in two. On the right they stack (memo on top); at the bottom they sit side by side (memo on the left).")
+                        .font(.system(size: ClaudeTheme.size(11)))
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .toggleStyle(.switch)
+        }
     }
 
     // MARK: - Theme Section

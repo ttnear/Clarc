@@ -527,3 +527,11 @@
 "Add or remove a session from the selection" = "將會話加入或移出所選項";
 "Select a range of sessions" = "選擇一段範圍內的會話";
 "With multiple sessions selected, right-click to pin, complete, or delete them all at once." = "選取多個會話後，按右鍵即可一次置頂、完成或刪除它們。";
+
+/* Inspector Panel Layout */
+"Panel Layout" = "面板版面配置";
+"Choose where the memo and terminal panel is docked." = "選擇備忘和終端機面板的停靠位置。";
+"Right" = "右側";
+"Bottom" = "底部";
+"Show memo and terminal together" = "同時顯示備忘和終端機";
+"Splits the panel in two. On the right they stack (memo on top); at the bottom they sit side by side (memo on the left)." = "將面板一分為二。停靠右側時上下排列（備忘在上）；停靠底部時左右排列（備忘在左）。";

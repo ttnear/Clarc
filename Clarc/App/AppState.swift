@@ -229,6 +229,18 @@ final class AppState {
         didSet { UserDefaults.standard.set(focusMode, forKey: "focusMode") }
     }
 
+    // MARK: - Inspector Layout
+
+    /// Where the memo / terminal inspector panel is docked. Defaults to the right side.
+    var inspectorPosition: InspectorPosition = InspectorPosition(rawValue: UserDefaults.standard.string(forKey: "inspectorPosition") ?? "") ?? .right {
+        didSet { UserDefaults.standard.set(inspectorPosition.rawValue, forKey: "inspectorPosition") }
+    }
+
+    /// When true, memo and terminal are shown together (split) instead of one tab at a time.
+    var inspectorShowBoth: Bool = (UserDefaults.standard.object(forKey: "inspectorShowBoth") as? Bool) ?? false {
+        didSet { UserDefaults.standard.set(inspectorShowBoth, forKey: "inspectorShowBoth") }
+    }
+
     // MARK: - Attachment Auto-Preview Settings
 
     private static let autoPreviewSettingsKey = "attachmentAutoPreviewSettings"

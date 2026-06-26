@@ -34,12 +34,24 @@ struct MainView: View {
             OnboardingView()
         } else {
             HSplitView {
-                NavigationSplitView(columnVisibility: $columnVisibility) {
-                    sidebarContent
-                } detail: {
-                    detailContent
+                mainSplit
+
+                if appState.inspectorPosition == .right, inspectorStarted {
+                    InspectorPanel(position: .right)
                 }
-                .background {
+            }
+        }
+    }
+
+    // MARK: - Main Split (sidebar + chat detail)
+
+    private var mainSplit: some View {
+        NavigationSplitView(columnVisibility: $columnVisibility) {
+            sidebarContent
+        } detail: {
+            detailContent
+        }
+        .background {
                     Button("") {
                         columnVisibility = (columnVisibility == .all) ? .detailOnly : .all
                     }
@@ -117,12 +129,6 @@ struct MainView: View {
                     
                     }
                 }
-
-                if inspectorStarted {
-                    InspectorPanel()
-                }
-            }
-        }
     }
 
     // MARK: - Sidebar
@@ -215,17 +221,39 @@ struct MainView: View {
 
     // MARK: - Detail
 
+    @AppStorage("inspectorBottomHeight") private var bottomInspectorHeight: Double = 280
+
+    private var chatCore: some View {
+        VStack(spacing: 0) {
+            chatToolbarArea
+            ClaudeThemeDivider()
+            ChatView {
+                ChatToolbarControls(placement: .composer)
+            }
+        }
+        .modifier(ChatDetailModifiers())
+    }
+
+    @ViewBuilder
+    private var chatColumn: some View {
+        if appState.inspectorPosition == .bottom {
+            VStack(spacing: 0) {
+                chatCore
+                if inspectorStarted, windowState.showInspector {
+                    BottomInspectorDivider(height: $bottomInspectorHeight)
+                    InspectorPanel(position: .bottom)
+                        .frame(maxWidth: .infinity, minHeight: CGFloat(bottomInspectorHeight), maxHeight: CGFloat(bottomInspectorHeight))
+                }
+            }
+        } else {
+            chatCore
+        }
+    }
+
     private var detailContent: some View {
         Group {
             if windowState.selectedProject != nil {
-                VStack(spacing: 0) {
-                    chatToolbarArea
-                    ClaudeThemeDivider()
-                    ChatView {
-                        ChatToolbarControls(placement: .composer)
-                    }
-                }
-                .modifier(ChatDetailModifiers())
+                chatColumn
             } else if !windowState.isInitialized {
                 ProgressView()
                     .controlSize(.small)
@@ -302,7 +330,7 @@ struct DetailToolbar: View {
                     Button {
                         windowState.showInspector.toggle()
                     } label: {
-                        Image(systemName: "sidebar.trailing")
+                        Image(systemName: appState.inspectorPosition == .bottom ? "inset.filled.bottomthird.rectangle" : "sidebar.trailing")
                     }
                     .help("Toggle Inspector")
                     .keyboardShortcut("4", modifiers: .command)
@@ -405,12 +433,16 @@ struct InspectorTabControl: View {
 // MARK: - Inspector Panel
 
 struct InspectorPanel: View {
+    @Environment(AppState.self) private var appState
     @Environment(WindowState.self) private var windowState
+    var position: InspectorPosition = .right
     @State private var inspectorProcess = TerminalProcess()
-    @State private var terminalResetID = UUID()
+    @State private var terminalResetID: UUID? = nil
     @State private var memoClearID: UUID? = nil
     @State private var terminalFocusID: UUID? = nil
     @State private var memoFocusID: UUID? = nil
+
+    private var showBoth: Bool { appState.inspectorShowBoth }
 
     private func bumpFocus(for tab: InspectorTab) {
         switch tab {
@@ -419,85 +451,167 @@ struct InspectorPanel: View {
         }
     }
 
+    private func resetTerminal() {
+        // Restart the shell in place via resetTrigger instead of recreating the view,
+        // which would reset the split divider positions.
+        inspectorProcess.terminateForRestart()
+        terminalResetID = UUID()
+    }
+
     var body: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 8) {
-                InspectorTabControl(
-                    selection: Bindable(windowState).inspectorTab,
-                    onTabClick: { tab in bumpFocus(for: tab) }
-                )
-
-                Spacer()
-
-                if windowState.inspectorTab == .terminal {
-                    InspectorIconButton(help: "Reset Terminal") {
-                        inspectorProcess.terminate()
-                        inspectorProcess = TerminalProcess()
-                        terminalResetID = UUID()
-                    }
-                } else if windowState.inspectorTab == .memo {
-                    InspectorIconButton(help: "Clear Memo") {
-                        memoClearID = UUID()
-                    }
-                }
-
-                Button {
-                    windowState.showInspector = false
-                } label: {
-                    Image(systemName: "xmark")
-                        .font(.system(size: ClaudeTheme.size(11), weight: .medium))
-                        .frame(width: 20, height: 20)
-                }
-                .buttonStyle(.plain)
-                .keyboardShortcut("w", modifiers: .command)
+        content
+            .background(ClaudeTheme.surfaceElevated)
+            .modifier(InspectorPositionModifier(position: position, visible: windowState.showInspector))
+            .onChange(of: windowState.inspectorTab) { _, newTab in
+                if !showBoth { bumpFocus(for: newTab) }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
+            .onChange(of: windowState.showInspector) { _, isShowing in
+                guard isShowing else { return }
+                if showBoth {
+                    bumpFocus(for: .memo)
+                } else {
+                    bumpFocus(for: windowState.inspectorTab)
+                }
+            }
+    }
 
-            ClaudeThemeDivider()
+    // MARK: - Content
 
-            EmbeddedTerminalView(
-                executable: "/bin/zsh",
-                arguments: ["-il"],
-                currentDirectory: windowState.selectedProject?.path,
-                process: inspectorProcess,
-                focusTrigger: terminalFocusID
-            )
-            .id(terminalResetID)
-            .padding(8)
-            .background(ClaudeTheme.codeBackground)
-            .frame(maxHeight: windowState.inspectorTab == .terminal ? .infinity : 0)
-            .clipped()
-
-            InspectorMemoPanel(projectId: windowState.selectedProject?.id,
-                               clearTrigger: memoClearID,
-                               focusTrigger: memoFocusID)
-                .frame(maxHeight: windowState.inspectorTab == .memo ? .infinity : 0)
-                .clipped()
+    @ViewBuilder
+    private var content: some View {
+        if showBoth {
+            Group {
+                if position == .bottom {
+                    // Bottom dock: memo on the left, terminal on the right, draggable divider.
+                    HSplitView {
+                        memoView
+                            .frame(minWidth: 160, idealWidth: 400, maxWidth: .infinity, maxHeight: .infinity)
+                        terminalView
+                            .frame(minWidth: 160, idealWidth: 400, maxWidth: .infinity, maxHeight: .infinity)
+                            .background(ClaudeTheme.codeBackground)
+                    }
+                } else {
+                    // Right dock: memo on top, terminal on the bottom, draggable divider.
+                    VSplitView {
+                        memoView.frame(maxWidth: .infinity, minHeight: 100, idealHeight: 300, maxHeight: .infinity)
+                        terminalView
+                            .frame(maxWidth: .infinity, minHeight: 100, idealHeight: 300, maxHeight: .infinity)
+                            .background(ClaudeTheme.codeBackground)
+                    }
+                }
+            }
+        } else {
+            // Single-tab mode: overlay both, toggle with opacity so the terminal process stays alive.
+            ZStack {
+                terminalView
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(ClaudeTheme.codeBackground)
+                    .opacity(windowState.inspectorTab == .terminal ? 1 : 0)
+                memoView
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .opacity(windowState.inspectorTab == .memo ? 1 : 0)
+            }
+            .overlay(alignment: .top) {
+                HStack(spacing: 4) {
+                    InspectorTabControl(
+                        selection: Bindable(windowState).inspectorTab,
+                        onTabClick: { tab in bumpFocus(for: tab) }
+                    )
+                    Spacer()
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+            }
         }
-        .background(ClaudeTheme.surfaceElevated)
-        .frame(
-            minWidth: windowState.showInspector ? 380 : 0,
-            maxWidth: windowState.showInspector ? .infinity : 0
+    }
+
+    @ViewBuilder
+    private var terminalView: some View {
+        EmbeddedTerminalView(
+            executable: "/bin/zsh",
+            arguments: ["-il"],
+            currentDirectory: windowState.selectedProject?.path,
+            process: inspectorProcess,
+            focusTrigger: terminalFocusID,
+            resetTrigger: terminalResetID
         )
-        .opacity(windowState.showInspector ? 1 : 0)
-        .clipped()
-        .onChange(of: windowState.inspectorTab) { _, newTab in
-            bumpFocus(for: newTab)
+        .padding(8)
+        .overlay(alignment: .bottomTrailing) {
+            Button(action: resetTerminal) {
+                Image(systemName: "arrow.counterclockwise")
+                    .font(.system(size: ClaudeTheme.size(11), weight: .medium))
+                    .frame(width: 26, height: 26)
+                    .background(ClaudeTheme.surfaceSecondary, in: RoundedRectangle(cornerRadius: 6))
+                    .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(ClaudeTheme.border, lineWidth: 0.5))
+            }
+            .buttonStyle(.plain)
+            .help("Reset Terminal")
+            .padding(14)
         }
-        .onChange(of: windowState.showInspector) { _, isShowing in
-            if isShowing { bumpFocus(for: windowState.inspectorTab) }
+    }
+
+    @ViewBuilder
+    private var memoView: some View {
+        InspectorMemoPanel(projectId: windowState.selectedProject?.id,
+                           clearTrigger: memoClearID,
+                           focusTrigger: memoFocusID,
+                           onClear: { memoClearID = UUID() })
+    }
+}
+
+/// Right dock: collapses width when hidden. Bottom dock: fills available width (height managed externally).
+private struct InspectorPositionModifier: ViewModifier {
+    let position: InspectorPosition
+    let visible: Bool
+
+    func body(content: Content) -> some View {
+        Group {
+            if position == .right {
+                content
+                    .frame(minWidth: visible ? 380 : 0, maxWidth: visible ? .infinity : 0)
+                    .opacity(visible ? 1 : 0)
+                    .clipped()
+            } else {
+                content.frame(maxWidth: .infinity)
+            }
         }
     }
 }
 
+struct BottomInspectorDivider: View {
+    @Binding var height: Double
+    @State private var isHovering = false
+    @State private var dragStartHeight: Double? = nil
+
+    var body: some View {
+        Rectangle()
+            .fill(isHovering ? ClaudeTheme.accent.opacity(0.4) : ClaudeTheme.border)
+            .frame(maxWidth: .infinity, minHeight: 4, maxHeight: 4)
+            .contentShape(Rectangle())
+            .onHover { hovering in
+                isHovering = hovering
+                if hovering { NSCursor.resizeUpDown.push() } else { NSCursor.pop() }
+            }
+            .gesture(
+                DragGesture()
+                    .onChanged { value in
+                        if dragStartHeight == nil { dragStartHeight = height }
+                        let newHeight = (dragStartHeight ?? height) - value.translation.height
+                        height = max(100, min(600, newHeight))
+                    }
+                    .onEnded { _ in dragStartHeight = nil }
+            )
+    }
+}
+
 private struct InspectorIconButton: View {
+    var systemName: String = "arrow.counterclockwise"
     let help: String
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            Image(systemName: "arrow.counterclockwise")
+            Image(systemName: systemName)
                 .font(.system(size: ClaudeTheme.size(11), weight: .medium))
                 .frame(width: 20, height: 20)
         }

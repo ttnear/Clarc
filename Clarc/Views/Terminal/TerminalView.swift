@@ -16,6 +16,12 @@ final class TerminalProcess {
         terminalView = nil
     }
 
+    /// Terminates the running shell but keeps the NSView alive so it can be
+    /// restarted in place (used by the inspector's reset button).
+    func terminateForRestart() {
+        terminalView?.terminate()
+    }
+
     deinit {
         terminalView?.terminate()
     }
@@ -33,18 +39,17 @@ struct EmbeddedTerminalView: NSViewRepresentable {
     var onProcessTerminated: ((Int32) -> Void)?
     var process: TerminalProcess?
     var focusTrigger: UUID? = nil
+    var resetTrigger: UUID? = nil
 
     func makeNSView(context: Context) -> LocalProcessTerminalView {
         let tv = LocalProcessTerminalView(frame: .zero)
 
-        // Set terminal background/foreground colors to match the theme
-        let isDark = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-        tv.nativeBackgroundColor = isDark
-            ? NSColor(red: 0x1A/255.0, green: 0x1A/255.0, blue: 0x18/255.0, alpha: 1) // dark: codeBackground
-            : NSColor(red: 0xE8/255.0, green: 0xE5/255.0, blue: 0xDC/255.0, alpha: 1) // light: codeBackground
-        tv.nativeForegroundColor = isDark
-            ? NSColor(red: 0xCC/255.0, green: 0xC9/255.0, blue: 0xC0/255.0, alpha: 1) // dark: textPrimary
-            : NSColor(red: 0x3C/255.0, green: 0x39/255.0, blue: 0x29/255.0, alpha: 1) // light: textPrimary
+        // Set terminal background/foreground colors from the active theme.
+        let themeColors = ThemeStore.shared.colors
+        tv.nativeBackgroundColor = NSColor(themeColors.codeBackground)
+            .usingColorSpace(.sRGB) ?? NSColor.black
+        tv.nativeForegroundColor = NSColor(themeColors.textPrimary)
+            .usingColorSpace(.sRGB) ?? NSColor.white
 
         tv.processDelegate = context.coordinator
         tv.startProcess(
@@ -69,8 +74,23 @@ struct EmbeddedTerminalView: NSViewRepresentable {
     }
 
     func updateNSView(_ nsView: LocalProcessTerminalView, context: Context) {
-        if let focus = focusTrigger,
-           focus != context.coordinator.lastFocusTrigger {
+        if let reset = resetTrigger, reset != context.coordinator.lastResetTrigger {
+            context.coordinator.lastResetTrigger = reset
+            // Restart the shell on the same NSView to avoid recreating the SwiftUI view
+            // (recreating would reset split divider positions).
+            process?.terminalView = nsView
+            DispatchQueue.main.async {
+                nsView.startProcess(
+                    executable: executable,
+                    args: arguments,
+                    environment: resolvedEnvironment(),
+                    currentDirectory: currentDirectory
+                )
+                nsView.window?.makeFirstResponder(nsView)
+            }
+        }
+
+        if let focus = focusTrigger, focus != context.coordinator.lastFocusTrigger {
             context.coordinator.lastFocusTrigger = focus
             DispatchQueue.main.async {
                 nsView.window?.makeFirstResponder(nsView)
@@ -122,6 +142,7 @@ struct EmbeddedTerminalView: NSViewRepresentable {
     final class Coordinator: NSObject, LocalProcessTerminalViewDelegate {
         nonisolated(unsafe) let onTerminated: ((Int32) -> Void)?
         nonisolated(unsafe) var lastFocusTrigger: UUID? = nil
+        nonisolated(unsafe) var lastResetTrigger: UUID? = nil
 
         nonisolated init(onTerminated: ((Int32) -> Void)?) {
             self.onTerminated = onTerminated

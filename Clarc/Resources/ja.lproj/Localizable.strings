@@ -527,3 +527,11 @@
 "Add or remove a session from the selection" = "セッションを選択に追加または解除";
 "Select a range of sessions" = "範囲でセッションを選択";
 "With multiple sessions selected, right-click to pin, complete, or delete them all at once." = "複数のセッションを選択した状態で右クリックすると、まとめてピン留め・完了・削除できます。";
+
+/* Inspector Panel Layout */
+"Panel Layout" = "パネルレイアウト";
+"Choose where the memo and terminal panel is docked." = "メモとターミナルパネルの配置場所を選択します。";
+"Right" = "右";
+"Bottom" = "下";
+"Show memo and terminal together" = "メモとターミナルを一緒に表示";
+"Splits the panel in two. On the right they stack (memo on top); at the bottom they sit side by side (memo on the left)." = "パネルを2つに分割します。右配置では上下（上がメモ）、下配置では左右（左がメモ）に分かれます。";

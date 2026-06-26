@@ -15,6 +15,14 @@ public enum InspectorTab: String, CaseIterable {
     }
 }
 
+// MARK: - InspectorPosition
+
+/// Where the inspector panel (memo / terminal) is docked relative to the chat.
+public enum InspectorPosition: String, CaseIterable {
+    case right = "Right"
+    case bottom = "Bottom"
+}
+
 // MARK: - QueuedMessage
 
 public struct QueuedMessage: Identifiable, Sendable {

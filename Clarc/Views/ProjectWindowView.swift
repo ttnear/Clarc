@@ -15,32 +15,10 @@ struct ProjectWindowView: View {
         Group {
             if windowState.isInitialized {
                 HSplitView {
-                    NavigationSplitView(columnVisibility: $columnVisibility) {
-                        sidebarContent
-                    } detail: {
-                        detailContent
-                    }
-                    .background {
-                        Button("") {
-                            columnVisibility = (columnVisibility == .all) ? .detailOnly : .all
-                        }
-                        .keyboardShortcut("3", modifiers: .command)
-                        .hidden()
-                    }
-                    .id(appState.themeRevision)
-                    .navigationTitle(windowState.selectedProject?.name ?? "Project")
-                    .onChange(of: windowState.showInspector) { _, isShowing in
-                        if isShowing, !inspectorStarted { inspectorStarted = true }
-                    }
-                    .onChange(of: appState.focusMode) { _, newValue in
-                        windowState.focusMode = newValue
-                    }
-                    .onAppear {
-                        windowState.focusMode = appState.focusMode
-                    }
+                    mainSplit
 
-                    if inspectorStarted {
-                        InspectorPanel()
+                    if appState.inspectorPosition == .right, inspectorStarted {
+                        InspectorPanel(position: .right)
                     }
                 }
             } else {
@@ -67,6 +45,34 @@ struct ProjectWindowView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text(LocalizedStringKey(windowState.errorMessage ?? ""))
+        }
+    }
+
+    // MARK: - Main Split (sidebar + chat detail)
+
+    private var mainSplit: some View {
+        NavigationSplitView(columnVisibility: $columnVisibility) {
+            sidebarContent
+        } detail: {
+            detailContent
+        }
+        .background {
+            Button("") {
+                columnVisibility = (columnVisibility == .all) ? .detailOnly : .all
+            }
+            .keyboardShortcut("3", modifiers: .command)
+            .hidden()
+        }
+        .id(appState.themeRevision)
+        .navigationTitle(windowState.selectedProject?.name ?? "Project")
+        .onChange(of: windowState.showInspector) { _, isShowing in
+            if isShowing, !inspectorStarted { inspectorStarted = true }
+        }
+        .onChange(of: appState.focusMode) { _, newValue in
+            windowState.focusMode = newValue
+        }
+        .onAppear {
+            windowState.focusMode = appState.focusMode
         }
     }
 
@@ -129,17 +135,39 @@ struct ProjectWindowView: View {
 
     // MARK: - Detail
 
+    @AppStorage("inspectorBottomHeight") private var bottomInspectorHeight: Double = 280
+
+    private var chatCore: some View {
+        VStack(spacing: 0) {
+            chatToolbarArea
+            ClaudeThemeDivider()
+            ChatView {
+                ChatToolbarControls(placement: .composer)
+            }
+        }
+        .modifier(ChatDetailModifiers())
+    }
+
+    @ViewBuilder
+    private var chatColumn: some View {
+        if appState.inspectorPosition == .bottom {
+            VStack(spacing: 0) {
+                chatCore
+                if inspectorStarted, windowState.showInspector {
+                    BottomInspectorDivider(height: $bottomInspectorHeight)
+                    InspectorPanel(position: .bottom)
+                        .frame(maxWidth: .infinity, minHeight: CGFloat(bottomInspectorHeight), maxHeight: CGFloat(bottomInspectorHeight))
+                }
+            }
+        } else {
+            chatCore
+        }
+    }
+
     private var detailContent: some View {
         Group {
             if windowState.selectedProject != nil {
-                VStack(spacing: 0) {
-                    chatToolbarArea
-                    ClaudeThemeDivider()
-                    ChatView {
-                        ChatToolbarControls(placement: .composer)
-                    }
-                }
-                .modifier(ChatDetailModifiers())
+                chatColumn
             } else {
                 ProgressView()
                     .controlSize(.small)
@@ -159,7 +187,7 @@ struct ProjectWindowView: View {
                 Button {
                     windowState.showInspector.toggle()
                 } label: {
-                    Image(systemName: "sidebar.trailing")
+                    Image(systemName: appState.inspectorPosition == .bottom ? "inset.filled.bottomthird.rectangle" : "sidebar.trailing")
                 }
                 .help("Toggle Inspector")
                 .keyboardShortcut("4", modifiers: .command)

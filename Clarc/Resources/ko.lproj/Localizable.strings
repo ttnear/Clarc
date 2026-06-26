@@ -527,3 +527,11 @@
 "Add or remove a session from the selection" = "선택 항목에 세션 추가 또는 제거";
 "Select a range of sessions" = "세션 범위 선택";
 "With multiple sessions selected, right-click to pin, complete, or delete them all at once." = "여러 세션을 선택한 상태에서 우클릭하면 한 번에 고정, 완료, 삭제할 수 있습니다.";
+
+/* Inspector Panel Layout */
+"Panel Layout" = "패널 레이아웃";
+"Choose where the memo and terminal panel is docked." = "메모·터미널 패널을 어디에 배치할지 선택합니다.";
+"Right" = "오른쪽";
+"Bottom" = "하단";
+"Show memo and terminal together" = "메모와 터미널 함께 표시";
+"Splits the panel in two. On the right they stack (memo on top); at the bottom they sit side by side (memo on the left)." = "패널을 둘로 나눕니다. 오른쪽 배치는 위아래(위가 메모), 하단 배치는 좌우(왼쪽이 메모)로 나뉩니다.";

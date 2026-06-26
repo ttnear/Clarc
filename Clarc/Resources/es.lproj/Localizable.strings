@@ -527,3 +527,11 @@
 "Add or remove a session from the selection" = "Añadir o quitar una sesión de la selección";
 "Select a range of sessions" = "Seleccionar un rango de sesiones";
 "With multiple sessions selected, right-click to pin, complete, or delete them all at once." = "Con varias sesiones seleccionadas, haz clic derecho para fijarlas, completarlas o eliminarlas todas a la vez.";
+
+/* Inspector Panel Layout */
+"Panel Layout" = "Disposición del panel";
+"Choose where the memo and terminal panel is docked." = "Elige dónde se acopla el panel de notas y terminal.";
+"Right" = "Derecha";
+"Bottom" = "Abajo";
+"Show memo and terminal together" = "Mostrar nota y terminal juntos";
+"Splits the panel in two. On the right they stack (memo on top); at the bottom they sit side by side (memo on the left)." = "Divide el panel en dos. A la derecha se apilan (nota arriba); abajo se colocan lado a lado (nota a la izquierda).";
