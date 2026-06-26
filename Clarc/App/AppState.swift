@@ -2198,7 +2198,7 @@ final class AppState {
                     permissionMode: outgoingState?.permissionMode ?? existing?.permissionMode,
                     origin: existing?.origin ?? .cliBacked,
                     contextPercent: outgoingState?.lastTurnContextUsedPercentage ?? existing?.contextPercent,
-                    totalDurationMs: outgoingState?.durationMs ?? existing?.totalDurationMs
+                    totalDurationMs: [outgoingState?.durationMs, existing?.totalDurationMs].compactMap { $0 }.max()
                 )
                 do { try await persistence.saveSession(outgoing) }
                 catch { logger.error("Failed to save outgoing session: \(error.localizedDescription)") }
@@ -2645,7 +2645,14 @@ final class AppState {
         // restarts. The context % may still be nil here (it arrives async after a
         // response) and is patched in separately via updateContextPercent.
         let contextPercent = sessionStates[sessionId]?.lastTurnContextUsedPercentage ?? existing?.contextPercent
-        let totalDurationMs = sessionStates[sessionId]?.durationMs ?? existing?.totalDurationMs
+        // Cumulative duration grows monotonically across a session. The in-memory
+        // state.durationMs can transiently read 0 — e.g. right after a session switch
+        // recreates the stream state, or before a restored value lands — and a save in
+        // that window must not clobber the larger persisted total. Take the max of the
+        // live value and the previously persisted summary value.
+        let totalDurationMs = [sessionStates[sessionId]?.durationMs, existing?.totalDurationMs]
+            .compactMap { $0 }
+            .max()
         let session = ChatSession(id: sessionId, projectId: projectId, title: title, messages: messages, updatedAt: lastResponseDate(from: messages), isCompleted: isCompleted, model: sessionModel, effort: sessionEffort, permissionMode: sessionPermissionMode, origin: origin, contextPercent: contextPercent, totalDurationMs: totalDurationMs)
 
         do {
