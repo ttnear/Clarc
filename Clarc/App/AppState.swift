@@ -2175,13 +2175,31 @@ final class AppState {
         guard let outgoingId,
               outgoingId != newId,
               !(sessionStates[outgoingId]?.isStreaming ?? false) else { return }
-        let outgoingMessages = sessionStates[outgoingId]?.allMessages ?? []
+        let outgoingState = sessionStates[outgoingId]
+        let outgoingMessages = outgoingState?.allMessages ?? []
         Task { [weak self] in
             guard let self else { return }
             if !outgoingMessages.isEmpty, let project = window.selectedProject {
                 let existing = allSessionSummaries.first(where: { $0.id == outgoingId })
                 let title = existing?.title ?? "Session"
-                let outgoing = ChatSession(id: outgoingId, projectId: project.id, title: title, messages: outgoingMessages, updatedAt: lastResponseDate(from: outgoingMessages), isCompleted: existing?.isCompleted ?? false)
+                // Carry over the Clarc-owned sidecar fields and status-bar stats so
+                // leaving a session doesn't clobber them — saveSession overwrites the
+                // whole meta file, so omitting these would persist nil and wipe the
+                // cumulative duration / context % on the next reload.
+                let outgoing = ChatSession(
+                    id: outgoingId,
+                    projectId: project.id,
+                    title: title,
+                    messages: outgoingMessages,
+                    updatedAt: lastResponseDate(from: outgoingMessages),
+                    isCompleted: existing?.isCompleted ?? false,
+                    model: outgoingState?.model ?? existing?.model,
+                    effort: outgoingState?.effort ?? existing?.effort,
+                    permissionMode: outgoingState?.permissionMode ?? existing?.permissionMode,
+                    origin: existing?.origin ?? .cliBacked,
+                    contextPercent: outgoingState?.lastTurnContextUsedPercentage ?? existing?.contextPercent,
+                    totalDurationMs: outgoingState?.durationMs ?? existing?.totalDurationMs
+                )
                 do { try await persistence.saveSession(outgoing) }
                 catch { logger.error("Failed to save outgoing session: \(error.localizedDescription)") }
             }
