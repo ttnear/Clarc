@@ -11,10 +11,10 @@ struct StatusLineView: View {
     }
 
     private var totalResponseDuration: Double {
-        chatBridge.messages
-            .filter { $0.role == .assistant }
-            .compactMap { $0.duration }
-            .reduce(0, +)
+        // Sourced from the cumulative session stat (persisted per session) rather
+        // than summing live message durations, so it shows on session open before
+        // any new response. durationMs is milliseconds.
+        chatBridge.sessionStats.durationMs / 1000
     }
 
     private var contextPercentage: Double? {

@@ -14,6 +14,11 @@ public actor SessionMetaStore {
         public var effort: String?
         public var permissionMode: PermissionMode?
         public var updatedAt: Date?
+        /// Last reported context-window usage percentage. Persisted so the status
+        /// bar can show it on session open without waiting for the next response.
+        public var contextPercent: Double?
+        /// Cumulative response duration in milliseconds across the session.
+        public var totalDurationMs: Double?
 
         public init(
             title: String? = nil,
@@ -22,7 +27,9 @@ public actor SessionMetaStore {
             model: String? = nil,
             effort: String? = nil,
             permissionMode: PermissionMode? = nil,
-            updatedAt: Date? = nil
+            updatedAt: Date? = nil,
+            contextPercent: Double? = nil,
+            totalDurationMs: Double? = nil
         ) {
             self.title = title
             self.isPinned = isPinned
@@ -31,10 +38,12 @@ public actor SessionMetaStore {
             self.effort = effort
             self.permissionMode = permissionMode
             self.updatedAt = updatedAt
+            self.contextPercent = contextPercent
+            self.totalDurationMs = totalDurationMs
         }
 
         private enum CodingKeys: String, CodingKey {
-            case title, isPinned, isCompleted, model, effort, permissionMode, updatedAt
+            case title, isPinned, isCompleted, model, effort, permissionMode, updatedAt, contextPercent, totalDurationMs
         }
 
         public init(from decoder: Decoder) throws {
@@ -46,6 +55,8 @@ public actor SessionMetaStore {
             effort = try container.decodeIfPresent(String.self, forKey: .effort)
             permissionMode = try container.decodeIfPresent(PermissionMode.self, forKey: .permissionMode)
             updatedAt = try container.decodeIfPresent(Date.self, forKey: .updatedAt)
+            contextPercent = try container.decodeIfPresent(Double.self, forKey: .contextPercent)
+            totalDurationMs = try container.decodeIfPresent(Double.self, forKey: .totalDurationMs)
         }
     }
 

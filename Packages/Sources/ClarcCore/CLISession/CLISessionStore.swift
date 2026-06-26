@@ -210,7 +210,9 @@ public actor CLISessionStore {
                 model: meta.model,
                 effort: meta.effort,
                 permissionMode: meta.permissionMode,
-                origin: .cliBacked
+                origin: .cliBacked,
+                contextPercent: meta.contextPercent,
+                totalDurationMs: meta.totalDurationMs
             ))
         }
         return summaries.sorted { $0.updatedAt > $1.updatedAt }

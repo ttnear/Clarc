@@ -53,7 +53,9 @@ actor PersistenceService {
                     model: session.model,
                     effort: session.effort,
                     permissionMode: session.permissionMode,
-                    updatedAt: session.updatedAt
+                    updatedAt: session.updatedAt,
+                    contextPercent: session.contextPercent,
+                    totalDurationMs: session.totalDurationMs
                 )
             )
 
@@ -65,6 +67,15 @@ actor PersistenceService {
             let url = dir.appendingPathComponent("\(session.id).json")
             try encode(session, to: url)
         }
+    }
+
+    /// Updates only the persisted context-window percentage in the sidecar,
+    /// merging into the existing meta. Used when the context value arrives
+    /// asynchronously (CLI resume) after the main session save.
+    func updateContextPercent(sessionId: String, percent: Double) async {
+        var meta = await metaStore.load(sessionId: sessionId)
+        meta.contextPercent = percent
+        await metaStore.save(sessionId: sessionId, meta: meta)
     }
 
     /// Lightweight load of legacy session list for a project. CLI-backed

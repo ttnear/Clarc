@@ -1332,6 +1332,7 @@ final class AppState {
                             guard let self else { return }
                             if let pct = await claude.fetchContextPercentage(sessionId: sid, cwd: cwdCapture) {
                                 updateState(key) { $0.lastTurnContextUsedPercentage = pct }
+                                await persistence.updateContextPercent(sessionId: sid, percent: pct)
                             }
                         }
 
@@ -2106,6 +2107,11 @@ final class AppState {
             state.model = session.model
             state.effort = session.effort
             state.permissionMode = session.permissionMode
+            // Restore persisted status-bar stats so they show immediately on open,
+            // before any new response. The context % falls through to the CLI
+            // fetch below only when it was never persisted.
+            state.lastTurnContextUsedPercentage = session.contextPercent
+            state.durationMs = session.totalDurationMs ?? 0
             if let msgs = loadedMessages {
                 state.committedMessages = cleanLoadedMessages(msgs)
             }
@@ -2147,6 +2153,7 @@ final class AppState {
                 guard let self else { return }
                 if let pct = await self.claude.fetchContextPercentage(sessionId: sid, cwd: cwd) {
                     self.updateState(sid) { $0.lastTurnContextUsedPercentage = pct }
+                    await self.persistence.updateContextPercent(sessionId: sid, percent: pct)
                 }
             }
         }
@@ -2616,7 +2623,12 @@ final class AppState {
         let sessionPermissionMode = sessionStates[sessionId]?.permissionMode
         let origin = existing?.origin ?? .cliBacked
         let isCompleted = existing?.isCompleted ?? false
-        let session = ChatSession(id: sessionId, projectId: projectId, title: title, messages: messages, updatedAt: lastResponseDate(from: messages), isCompleted: isCompleted, model: sessionModel, effort: sessionEffort, permissionMode: sessionPermissionMode, origin: origin)
+        // Persist the status-bar stats so they survive session switches and app
+        // restarts. The context % may still be nil here (it arrives async after a
+        // response) and is patched in separately via updateContextPercent.
+        let contextPercent = sessionStates[sessionId]?.lastTurnContextUsedPercentage ?? existing?.contextPercent
+        let totalDurationMs = sessionStates[sessionId]?.durationMs ?? existing?.totalDurationMs
+        let session = ChatSession(id: sessionId, projectId: projectId, title: title, messages: messages, updatedAt: lastResponseDate(from: messages), isCompleted: isCompleted, model: sessionModel, effort: sessionEffort, permissionMode: sessionPermissionMode, origin: origin, contextPercent: contextPercent, totalDurationMs: totalDurationMs)
 
         do {
             try await persistence.saveSession(session)
