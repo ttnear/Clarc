@@ -274,208 +274,6 @@ extension ThemeColors {
     }()
 }
 
-// MARK: - Dark Themes (always dark regardless of system appearance)
-
-extension ThemeColors {
-    public static let dracula: ThemeColors = {
-        let accent: Color = .hex(0xBD93F9)
-        return ThemeColors(
-            accent:               accent,
-            accentSubtle:         .hex(0xBD93F9).opacity(0.18),
-            background:           .hex(0x282A36),
-            surfacePrimary:       .hex(0x2F3142),
-            surfaceSecondary:     .hex(0x363848),
-            surfaceTertiary:      .hex(0x44475A),
-            surfaceElevated:      .hex(0x30323E),
-            sidebarBackground:    .hex(0x21222C),
-            sidebarItemHover:     .hex(0x2F3142),
-            sidebarItemSelected:  .hex(0xBD93F9).opacity(0.18),
-            textPrimary:          .hex(0xF8F8F2),
-            textSecondary:        .hex(0xA0A0B8),
-            textTertiary:         .hex(0x6272A4),
-            border:               .hex(0x44475A),
-            borderSubtle:         .hex(0x383A4A),
-            codeBackground:       .hex(0x1E1F29),
-            codeHeaderBackground: .hex(0x252631),
-            userBubble:           .hex(0x44475A),
-            userBubbleText:       .hex(0xF8F8F2),
-            assistantBubble:      .hex(0x2F3142),
-            statusSuccess:        .hex(0x50FA7B),
-            statusError:          .hex(0xFF5555),
-            statusWarning:        .hex(0xFFB86C),
-            inputBackground:      .hex(0x21222C),
-            inputBorder:          .hex(0x44475A)
-        )
-    }()
-}
-
-extension ThemeColors {
-    public static let nord: ThemeColors = {
-        let accent: Color = .hex(0x88C0D0)
-        return ThemeColors(
-            accent:               accent,
-            accentSubtle:         .hex(0x88C0D0).opacity(0.18),
-            background:           .hex(0x2E3440),
-            surfacePrimary:       .hex(0x3B4252),
-            surfaceSecondary:     .hex(0x434C5E),
-            surfaceTertiary:      .hex(0x4C566A),
-            surfaceElevated:      .hex(0x353B48),
-            sidebarBackground:    .hex(0x252B37),
-            sidebarItemHover:     .hex(0x3B4252),
-            sidebarItemSelected:  .hex(0x88C0D0).opacity(0.18),
-            textPrimary:          .hex(0xECEFF4),
-            textSecondary:        .hex(0xC0C8DA),
-            textTertiary:         .hex(0x8C99B3),
-            border:               .hex(0x4C566A),
-            borderSubtle:         .hex(0x434C5E),
-            codeBackground:       .hex(0x232830),
-            codeHeaderBackground: .hex(0x2B313E),
-            userBubble:           .hex(0x4C566A),
-            userBubbleText:       .hex(0xECEFF4),
-            assistantBubble:      .hex(0x3B4252),
-            statusSuccess:        .hex(0xA3BE8C),
-            statusError:          .hex(0xBF616A),
-            statusWarning:        .hex(0xEBCB8B),
-            inputBackground:      .hex(0x252B37),
-            inputBorder:          .hex(0x4C566A)
-        )
-    }()
-}
-
-extension ThemeColors {
-    public static let monokai: ThemeColors = {
-        let accent: Color = .hex(0x66D9E8)
-        return ThemeColors(
-            accent:               accent,
-            accentSubtle:         .hex(0x66D9E8).opacity(0.15),
-            background:           .hex(0x272822),
-            surfacePrimary:       .hex(0x2F2F2A),
-            surfaceSecondary:     .hex(0x383830),
-            surfaceTertiary:      .hex(0x44443C),
-            surfaceElevated:      .hex(0x2C2C27),
-            sidebarBackground:    .hex(0x1E1E1A),
-            sidebarItemHover:     .hex(0x2F2F2A),
-            sidebarItemSelected:  .hex(0x66D9E8).opacity(0.15),
-            textPrimary:          .hex(0xF8F8F2),
-            textSecondary:        .hex(0xCFCFC2),
-            textTertiary:         .hex(0x75715E),
-            border:               .hex(0x49483E),
-            borderSubtle:         .hex(0x383830),
-            codeBackground:       .hex(0x1A1A17),
-            codeHeaderBackground: .hex(0x212120),
-            userBubble:           .hex(0x49483E),
-            userBubbleText:       .hex(0xF8F8F2),
-            assistantBubble:      .hex(0x2F2F2A),
-            statusSuccess:        .hex(0xA6E22E),
-            statusError:          .hex(0xF92672),
-            statusWarning:        .hex(0xE6DB74),
-            inputBackground:      .hex(0x1E1E1A),
-            inputBorder:          .hex(0x49483E)
-        )
-    }()
-}
-
-extension ThemeColors {
-    public static let oneDark: ThemeColors = {
-        let accent: Color = .hex(0x61AFEF)
-        return ThemeColors(
-            accent:               accent,
-            accentSubtle:         .hex(0x61AFEF).opacity(0.15),
-            background:           .hex(0x282C34),
-            surfacePrimary:       .hex(0x2C313C),
-            surfaceSecondary:     .hex(0x323842),
-            surfaceTertiary:      .hex(0x3A4050),
-            surfaceElevated:      .hex(0x2F3340),
-            sidebarBackground:    .hex(0x21252B),
-            sidebarItemHover:     .hex(0x2C313C),
-            sidebarItemSelected:  .hex(0x61AFEF).opacity(0.15),
-            textPrimary:          .hex(0xABB2BF),
-            textSecondary:        .hex(0x828997),
-            textTertiary:         .hex(0x5C6370),
-            border:               .hex(0x3E4451),
-            borderSubtle:         .hex(0x323842),
-            codeBackground:       .hex(0x1E2127),
-            codeHeaderBackground: .hex(0x22262E),
-            userBubble:           .hex(0x3A4050),
-            userBubbleText:       .hex(0xABB2BF),
-            assistantBubble:      .hex(0x2C313C),
-            statusSuccess:        .hex(0x98C379),
-            statusError:          .hex(0xE06C75),
-            statusWarning:        .hex(0xE5C07B),
-            inputBackground:      .hex(0x21252B),
-            inputBorder:          .hex(0x3E4451)
-        )
-    }()
-}
-
-// MARK: - Extra Light Themes (always light regardless of system appearance)
-
-extension ThemeColors {
-    public static let rose: ThemeColors = {
-        let accent: Color = .hex(0xD03A6A)
-        return ThemeColors(
-            accent:               accent,
-            accentSubtle:         .hex(0xD03A6A).opacity(0.12),
-            background:           .hex(0xFFF1F3),
-            surfacePrimary:       .hex(0xFFE4E9),
-            surfaceSecondary:     .hex(0xFFD5DC),
-            surfaceTertiary:      .hex(0xFFC4CE),
-            surfaceElevated:      .hex(0xFFF8F9),
-            sidebarBackground:    .hex(0xFFEAEE),
-            sidebarItemHover:     .hex(0xFFD5DC),
-            sidebarItemSelected:  .hex(0xD03A6A).opacity(0.12),
-            textPrimary:          .hex(0x2D0A13),
-            textSecondary:        .hex(0x8C3050),
-            textTertiary:         .hex(0xB07888),
-            border:               .hex(0xF0B0BF),
-            borderSubtle:         .hex(0xFFD5DC),
-            codeBackground:       .hex(0xFFDAE1),
-            codeHeaderBackground: .hex(0xFFCDD6),
-            userBubble:           .hex(0x2D0A13),
-            userBubbleText:       .hex(0xFFF1F3),
-            assistantBubble:      .hex(0xFFDAE1),
-            statusSuccess:        .hex(0x3A7D50),
-            statusError:          .hex(0xC02040),
-            statusWarning:        .hex(0xA06020),
-            inputBackground:      .hex(0xFFF8F9),
-            inputBorder:          .hex(0xF0B0BF)
-        )
-    }()
-}
-
-extension ThemeColors {
-    public static let latte: ThemeColors = {
-        let accent: Color = .hex(0x1E66F5)
-        return ThemeColors(
-            accent:               accent,
-            accentSubtle:         .hex(0x1E66F5).opacity(0.12),
-            background:           .hex(0xEFF1F5),
-            surfacePrimary:       .hex(0xE6E9EF),
-            surfaceSecondary:     .hex(0xDCE0E8),
-            surfaceTertiary:      .hex(0xCCD0DA),
-            surfaceElevated:      .hex(0xF5F6FA),
-            sidebarBackground:    .hex(0xE8EAF0),
-            sidebarItemHover:     .hex(0xDCE0E8),
-            sidebarItemSelected:  .hex(0x1E66F5).opacity(0.12),
-            textPrimary:          .hex(0x4C4F69),
-            textSecondary:        .hex(0x6C6F85),
-            textTertiary:         .hex(0x9CA0B0),
-            border:               .hex(0xBCC0CC),
-            borderSubtle:         .hex(0xDCE0E8),
-            codeBackground:       .hex(0xE0E3EB),
-            codeHeaderBackground: .hex(0xD5D9E5),
-            userBubble:           .hex(0x4C4F69),
-            userBubbleText:       .hex(0xEFF1F5),
-            assistantBubble:      .hex(0xE0E3EB),
-            statusSuccess:        .hex(0x40A02B),
-            statusError:          .hex(0xD20F39),
-            statusWarning:        .hex(0xDF8E1D),
-            inputBackground:      .hex(0xF5F6FA),
-            inputBorder:          .hex(0xBCC0CC)
-        )
-    }()
-}
-
 // MARK: - App Theme Enum
 
 public enum AppTheme: String, CaseIterable, Identifiable {
@@ -485,12 +283,6 @@ public enum AppTheme: String, CaseIterable, Identifiable {
     case lavender = "Lavender"
     case midnight = "Midnight"
     case amber    = "Amber"
-    case dracula  = "Dracula"
-    case nord     = "Nord"
-    case monokai  = "Monokai"
-    case oneDark  = "One Dark"
-    case rose     = "Rose"
-    case latte    = "Latte"
 
     public var id: String { rawValue }
 
@@ -502,12 +294,6 @@ public enum AppTheme: String, CaseIterable, Identifiable {
         case .lavender: "Lavender (Purple)"
         case .midnight: "Midnight (Indigo)"
         case .amber:    "Amber (Yellow)"
-        case .dracula:  "Dracula (Dark)"
-        case .nord:     "Nord (Dark)"
-        case .monokai:  "Monokai (Dark)"
-        case .oneDark:  "One Dark"
-        case .rose:     "Rose (Light)"
-        case .latte:    "Latte (Light)"
         }
     }
 
@@ -519,12 +305,6 @@ public enum AppTheme: String, CaseIterable, Identifiable {
         case .lavender: .lavender
         case .midnight: .midnight
         case .amber:    .amber
-        case .dracula:  .dracula
-        case .nord:     .nord
-        case .monokai:  .monokai
-        case .oneDark:  .oneDark
-        case .rose:     .rose
-        case .latte:    .latte
         }
     }
 }
