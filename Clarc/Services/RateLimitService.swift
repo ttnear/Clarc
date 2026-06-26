@@ -19,6 +19,20 @@ actor RateLimitService {
     private let cacheTTL: TimeInterval = 300  // 5 minutes
     private var authFailed = false
 
+    /// App-wide (not per-session) persisted usage snapshot. Survives restarts so
+    /// the status bar shows the last known values immediately instead of "--".
+    private let persistenceKey = "rateLimitUsage.lastKnown"
+
+    init() {
+        // Seed the in-memory cache from disk so the first read after launch returns
+        // the last persisted values. cachedAt is left nil on purpose: the next fetch
+        // ignores the TTL and refreshes against the API (stale-while-revalidate).
+        if let data = UserDefaults.standard.data(forKey: persistenceKey),
+           let usage = try? JSONDecoder().decode(RateLimitUsage.self, from: data) {
+            cached = usage
+        }
+    }
+
     func fetchUsage(forceRefresh: Bool = false) async -> RateLimitUsage? {
         if !forceRefresh, let c = cached, let at = cachedAt, Date().timeIntervalSince(at) < cacheTTL {
             return c
@@ -59,7 +73,14 @@ actor RateLimitService {
         authFailed = false
         cached = usage
         cachedAt = Date()
+        persist(usage)
         return usage
+    }
+
+    /// Writes the latest usage to the app-wide store so it survives restarts.
+    private func persist(_ usage: RateLimitUsage) {
+        guard let data = try? JSONEncoder().encode(usage) else { return }
+        UserDefaults.standard.set(data, forKey: persistenceKey)
     }
 
     // MARK: - Keychain

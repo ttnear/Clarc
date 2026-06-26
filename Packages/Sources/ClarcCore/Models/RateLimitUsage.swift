@@ -1,7 +1,7 @@
 import Foundation
 
 /// Rate limit usage data passed through ChatBridge to avoid direct RateLimitService dependency in ClarcChatKit.
-public struct RateLimitUsage: Sendable {
+public struct RateLimitUsage: Sendable, Codable {
     public let fiveHourPercent: Double
     public let sevenDayPercent: Double
     public let fiveHourResetsAt: Date?
