@@ -446,6 +446,18 @@
       <sparkle:shortVersionString>1.3.5</sparkle:shortVersionString>
       <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
       <pubDate>Fri, 26 Jun 2026 02:45:48 +0000</pubDate>
+      <description><![CDATA[
+<h3>New</h3>
+<ul>
+  <li>Status-bar context usage and cumulative response time now restore immediately when you reopen a session.</li>
+  <li>Rate-limit usage now persists across app restarts, so the status bar no longer starts at <code>--</code> after launch.</li>
+</ul>
+<h3>Fixed</h3>
+<ul>
+  <li>Draft text is preserved when navigating message history with the arrow keys.</li>
+  <li>Assistant bubbles no longer leave an extra blank line below the final paragraph.</li>
+</ul>
+      ]]></description>
       <enclosure
         url="https://github.com/ttnear/Clarc/releases/download/v1.3.5/Clarc-1.3.5.zip"
         length="6472289"
