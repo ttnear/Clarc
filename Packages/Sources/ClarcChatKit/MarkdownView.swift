@@ -58,6 +58,9 @@ struct MarkdownContentView: View {
                 case .attributedText(let attrStr):
                     Text(attrStr)
                         .textSelection(.enabled)
+                        // Reserve the text's ideal height so the final line can't be
+                        // clipped at the bubble edge (markdown strips trailing newlines).
+                        .fixedSize(horizontal: false, vertical: true)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 case .blockquote(let attrStr):
                     BlockquoteView(content: attrStr)

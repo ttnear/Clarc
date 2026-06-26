@@ -251,11 +251,6 @@ struct MessageBubble: View {
         // AskUserQuestion prompt renders immediately instead of staying as raw source.
         let isStreamingTail = message.isStreaming && message.blocks.last?.id == blockId
 
-        // "Last text block" governs the trailing-space reservation below (markdown strips
-        // trailing newlines, so the final paragraph can clip at the bubble edge).
-        let lastText = message.blocks.last(where: \.isText)
-        let isLastTextBlock = lastText?.id == blockId && lastText?.text == text
-
         return HStack(alignment: .bottom, spacing: 0) {
             if isStreamingTail {
                 Text(text)
@@ -264,17 +259,8 @@ struct MessageBubble: View {
                     .textSelection(.enabled)
                     .frame(maxWidth: .infinity, alignment: .leading)
             } else {
-                VStack(alignment: .leading, spacing: 0) {
-                    MarkdownContentView(text: text)
-                    // Trailing empty paragraph: the markdown renderer strips trailing
-                    // newlines, so a finished response's last line can get clipped at the
-                    // bubble edge. Reserve one line of space below the final text block.
-                    if isLastTextBlock {
-                        Text(" ")
-                            .font(.system(size: ClaudeTheme.messageSize(15)))
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
+                MarkdownContentView(text: text)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
             if isStreamingTail {
                 Text("|")
