@@ -440,5 +440,17 @@
         type="application/octet-stream"
         sparkle:edSignature="Uyoimyb2gKz/RVdjLfCauhhBzeAuJrhazGVTGGWKtxEWF/UtumFeqGknZteyqISRwpP7mOA8yyDbcUeQhcNJCg==" />
     </item>
+    <item>
+      <title>Clarc v1.3.5</title>
+      <sparkle:version>31</sparkle:version>
+      <sparkle:shortVersionString>1.3.5</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <pubDate>Fri, 26 Jun 2026 02:45:48 +0000</pubDate>
+      <enclosure
+        url="https://github.com/ttnear/Clarc/releases/download/v1.3.5/Clarc-1.3.5.zip"
+        length="6472289"
+        type="application/octet-stream"
+        sparkle:edSignature="CvlFQZa/+ERVLhkhF/aRfTu9blxjuaZ9HYopTazH1FZiNU/i5AMi9/yN6QzYmLRWBdmxPg6GnXJMwR6t3EAOBg==" />
+    </item>
   </channel>
 </rss>
