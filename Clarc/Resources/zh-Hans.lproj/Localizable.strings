@@ -41,7 +41,7 @@
 "Manage GitHub Repos" = "管理 GitHub 仓库";
 "Connect GitHub" = "连接 GitHub";
 "Add Project" = "添加项目";
-"History" = "历史";
+"History" = "会话";
 "Files" = "文件";
 "Select a Project" = "请选择一个项目";
 "Select a project from the sidebar or add a new one." = "从侧边栏选择一个项目，或添加新项目。";
@@ -129,7 +129,7 @@
 "Response in progress in the background" = "响应正在后台进行中";
 "Unpin" = "取消置顶";
 "Pin" = "置顶";
-"No chat history" = "无对话历史";
+"No chat history" = "无会话";
 
 // MARK: - GitStatusView
 "Checking..." = "正在检查...";
@@ -253,7 +253,7 @@
 "What is Clarc?" = "什么是 Clarc？";
 "A native macOS desktop client for the Claude Code CLI. Use all Claude Code features via a polished GUI without needing a terminal." = "面向 Claude Code CLI 的原生 macOS 桌面客户端。无需终端，即可通过精致的图形界面使用 Claude Code 的全部功能。";
 "Main Layout" = "主界面布局";
-"The left sidebar has History and Files tabs. Project tabs appear at the top of the chat area — click to switch projects. The right inspector panel contains the Terminal and Memo tabs." = "左侧边栏包含历史和文件标签页。项目标签显示在对话区域顶部 — 点击即可切换项目。右侧检查器面板包含终端和备忘标签页。";
+"The left sidebar has History and Files tabs. Project tabs appear at the top of the chat area — click to switch projects. The right inspector panel contains the Terminal and Memo tabs." = "左侧边栏包含会话和文件标签页。项目标签显示在对话区域顶部 — 点击即可切换项目。右侧检查器面板包含终端和备忘标签页。";
 "Chat is disabled when no project is selected." = "未选择项目时无法使用对话。";
 "Top Toolbar" = "顶部工具栏";
 "The toolbar contains: New Chat, Manage Slash Commands, Manage Shortcut Buttons, Skip Permissions toggle, Model picker, Inspector panel toggle, Settings, and the GitHub integration button." = "工具栏包含：新建对话、管理斜杠命令、管理快捷按钮、跳过权限开关、模型选择器、检查器面板开关、设置以及 GitHub 集成按钮。";
@@ -267,16 +267,16 @@
 "Double-click a project tab to open it in its own independent window. Each window manages its own sessions independently, allowing you to work on multiple projects at once." = "双击项目标签可在独立的专用窗口中打开。每个窗口独立管理各自的会话，让你能够同时处理多个项目。";
 "In a dedicated project window, only the project name is shown — there are no project tabs." = "在专用项目窗口中仅显示项目名称 — 没有项目标签。";
 "Sidebar Tabs" = "侧边栏标签页";
-"History tab: shows previous conversations\nFiles tab: browse the project file tree" = "历史标签页：显示以往的对话\n文件标签页：浏览项目文件树";
-"Go to History tab" = "前往历史标签页";
+"History tab: shows previous conversations\nFiles tab: browse the project file tree" = "会话标签页：显示以往的对话\n文件标签页：浏览项目文件树";
+"Go to History tab" = "前往会话标签页";
 "Go to Files tab" = "前往文件标签页";
 "Files tab + activate search" = "文件标签页 + 激活搜索";
-"History Management" = "历史管理";
-"Right-click a session in the History tab for context menu options." = "在历史标签页中右键点击会话可显示上下文菜单选项。";
+"History Management" = "会话管理";
+"Right-click a session in the History tab for context menu options." = "在会话标签页中右键点击会话可显示上下文菜单选项。";
 "Pin / Unpin — pinned sessions stay at the top of the list" = "置顶 / 取消置顶 — 置顶的会话始终显示在列表最上方";
 "Rename — change the session title" = "重命名 — 修改会话标题";
 "Delete — remove the session" = "删除 — 移除该会话";
-"Use the trash icon in the History header to delete all sessions at once." = "使用历史标题栏中的垃圾桶图标可一次性删除所有会话。";
+"Use the trash icon in the History header to delete all sessions at once." = "使用会话标题栏中的垃圾桶图标可一次性删除所有会话。";
 "File Inspector" = "文件检查器";
 "Click any file in the Files tab to preview it with syntax highlighting. Press the pencil button to enter edit mode and modify the file directly." = "在文件标签页中点击任意文件，即可带语法高亮地预览。按下铅笔按钮进入编辑模式，直接修改文件。";
 "Save file changes" = "保存文件更改";
@@ -310,7 +310,7 @@
 "Global Shortcuts" = "全局快捷键";
 "Start new chat" = "开始新对话";
 "Close current window" = "关闭当前窗口";
-"Sidebar — History tab (expands sidebar if hidden)" = "侧边栏 — 历史标签页（侧边栏隐藏时会展开）";
+"Sidebar — History tab (expands sidebar if hidden)" = "侧边栏 — 会话标签页（侧边栏隐藏时会展开）";
 "Sidebar — Files tab (expands sidebar if hidden)" = "侧边栏 — 文件标签页（侧边栏隐藏时会展开）";
 "Toggle left sidebar" = "展开/隐藏左侧边栏";
 "Toggle right inspector panel" = "展开/隐藏右侧检查器面板";
@@ -515,3 +515,15 @@
 "The Slash Commands tab manages built-in and custom commands — edit, enable/disable, add, or delete. JSON import/export covers custom commands only. The Shortcuts tab manages shortcut buttons with JSON import/export support." = "斜杠命令标签页用于管理内置和自定义命令 — 编辑、启用/禁用、添加或删除。JSON 导入/导出仅涵盖自定义命令。快捷按钮标签页用于管理快捷按钮，并支持 JSON 导入/导出。";
 "Checking for Updates" = "检查更新";
 "Open Clarc → Check for Updates… to run Sparkle's update check manually. Updates are also checked automatically on launch." = "打开 Clarc → 检查更新…可手动运行 Sparkle 的更新检查。启动时也会自动检查更新。";
+
+// User Guide — Sessions & Chat additions
+"While Claude is responding, the send button turns into a stop button — click it or press Escape to cancel." = "Claude 响应时，发送按钮会变为停止按钮——点击它或按 Escape 即可取消。";
+"Thinking Traces" = "思考过程";
+"When the model reasons before answering, its thinking appears in a collapsible block above the response. It expands automatically while Claude is thinking so you can follow along, then collapses once the answer begins. Click the header to expand or collapse it yourself." = "当模型在回答前进行推理时，其思考过程会以可折叠的区块显示在响应上方。Claude 思考时该区块会自动展开，便于你实时跟进，回答开始后则自动折叠。点击标题可手动展开或折叠。";
+"Forking a Conversation" = "分支对话";
+"Hover over any assistant message and click the branch icon to fork the conversation from that point. Clarc opens a new session with the history up to that message, leaves the original untouched, and switches to the new branch. Forked branches also appear in the external claude --resume picker." = "将鼠标悬停在任意助手消息上并点击分支图标，即可从该处分支对话。Clarc 会新建一个包含该消息之前历史记录的会话，保持原会话不变，并切换到新分支。分支后的会话也会出现在外部 claude --resume 选择列表中。";
+"Completing & Selecting Sessions" = "完成与选择会话";
+"Click the circle to the left of a session title to mark it complete; completed sessions appear dimmed with a strikethrough. Use the checkmark button in the Sessions header to hide or show completed sessions." = "点击会话标题左侧的圆圈即可将其标记为完成；已完成的会话会变暗并显示删除线。使用会话标题栏中的对勾按钮可隐藏或显示已完成的会话。";
+"Add or remove a session from the selection" = "将会话加入或移出所选项";
+"Select a range of sessions" = "选择一段范围内的会话";
+"With multiple sessions selected, right-click to pin, complete, or delete them all at once." = "选中多个会话后，右键点击即可一次性置顶、完成或删除它们。";

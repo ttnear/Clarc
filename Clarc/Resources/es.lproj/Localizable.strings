@@ -41,7 +41,7 @@
 "Manage GitHub Repos" = "Gestionar repositorios de GitHub";
 "Connect GitHub" = "Conectar GitHub";
 "Add Project" = "Añadir proyecto";
-"History" = "Historial";
+"History" = "Sesiones";
 "Files" = "Archivos";
 "Select a Project" = "Selecciona un proyecto";
 "Select a project from the sidebar or add a new one." = "Selecciona un proyecto en la barra lateral o añade uno nuevo.";
@@ -129,7 +129,7 @@
 "Response in progress in the background" = "Respuesta en curso en segundo plano";
 "Unpin" = "Desfijar";
 "Pin" = "Fijar";
-"No chat history" = "Sin historial de chat";
+"No chat history" = "Sin sesiones";
 
 // MARK: - GitStatusView
 "Checking..." = "Comprobando...";
@@ -253,7 +253,7 @@
 "What is Clarc?" = "¿Qué es Clarc?";
 "A native macOS desktop client for the Claude Code CLI. Use all Claude Code features via a polished GUI without needing a terminal." = "Un cliente de escritorio nativo de macOS para la CLI de Claude Code. Usa todas las funciones de Claude Code mediante una interfaz gráfica refinada, sin necesidad de un terminal.";
 "Main Layout" = "Diseño principal";
-"The left sidebar has History and Files tabs. Project tabs appear at the top of the chat area — click to switch projects. The right inspector panel contains the Terminal and Memo tabs." = "La barra lateral izquierda tiene las pestañas Historial y Archivos. Las pestañas de proyecto aparecen en la parte superior del área de chat: haz clic para cambiar de proyecto. El panel del inspector a la derecha contiene las pestañas Terminal y Nota.";
+"The left sidebar has History and Files tabs. Project tabs appear at the top of the chat area — click to switch projects. The right inspector panel contains the Terminal and Memo tabs." = "La barra lateral izquierda tiene las pestañas Sesiones y Archivos. Las pestañas de proyecto aparecen en la parte superior del área de chat: haz clic para cambiar de proyecto. El panel del inspector a la derecha contiene las pestañas Terminal y Nota.";
 "Chat is disabled when no project is selected." = "El chat se desactiva cuando no hay ningún proyecto seleccionado.";
 "Top Toolbar" = "Barra de herramientas superior";
 "The toolbar contains: New Chat, Manage Slash Commands, Manage Shortcut Buttons, Skip Permissions toggle, Model picker, Inspector panel toggle, Settings, and the GitHub integration button." = "La barra de herramientas contiene: Nuevo chat, Gestionar comandos de barra, Gestionar botones de atajo, interruptor de Omitir permisos, selector de modelo, interruptor del panel del inspector, Configuración y el botón de integración con GitHub.";
@@ -267,16 +267,16 @@
 "Double-click a project tab to open it in its own independent window. Each window manages its own sessions independently, allowing you to work on multiple projects at once." = "Haz doble clic en una pestaña de proyecto para abrirla en su propia ventana independiente. Cada ventana gestiona sus sesiones de forma independiente, lo que te permite trabajar en varios proyectos a la vez.";
 "In a dedicated project window, only the project name is shown — there are no project tabs." = "En una ventana de proyecto dedicada solo se muestra el nombre del proyecto; no hay pestañas de proyecto.";
 "Sidebar Tabs" = "Pestañas de la barra lateral";
-"History tab: shows previous conversations\nFiles tab: browse the project file tree" = "Pestaña Historial: muestra las conversaciones anteriores\nPestaña Archivos: explora el árbol de archivos del proyecto";
-"Go to History tab" = "Ir a la pestaña Historial";
+"History tab: shows previous conversations\nFiles tab: browse the project file tree" = "Pestaña Sesiones: muestra las conversaciones anteriores\nPestaña Archivos: explora el árbol de archivos del proyecto";
+"Go to History tab" = "Ir a la pestaña Sesiones";
 "Go to Files tab" = "Ir a la pestaña Archivos";
 "Files tab + activate search" = "Pestaña Archivos + activar búsqueda";
-"History Management" = "Gestión del historial";
-"Right-click a session in the History tab for context menu options." = "Haz clic derecho en una sesión de la pestaña Historial para ver las opciones del menú contextual.";
+"History Management" = "Gestión de sesiones";
+"Right-click a session in the History tab for context menu options." = "Haz clic derecho en una sesión de la pestaña Sesiones para ver las opciones del menú contextual.";
 "Pin / Unpin — pinned sessions stay at the top of the list" = "Fijar / Desfijar — las sesiones fijadas permanecen en la parte superior de la lista";
 "Rename — change the session title" = "Renombrar — cambia el título de la sesión";
 "Delete — remove the session" = "Eliminar — elimina la sesión";
-"Use the trash icon in the History header to delete all sessions at once." = "Usa el icono de papelera en el encabezado del historial para eliminar todas las sesiones a la vez.";
+"Use the trash icon in the History header to delete all sessions at once." = "Usa el icono de papelera en el encabezado de sesiones para eliminar todas las sesiones a la vez.";
 "File Inspector" = "Inspector de archivos";
 "Click any file in the Files tab to preview it with syntax highlighting. Press the pencil button to enter edit mode and modify the file directly." = "Haz clic en cualquier archivo de la pestaña Archivos para verlo en vista previa con resaltado de sintaxis. Pulsa el botón del lápiz para entrar en el modo de edición y modificar el archivo directamente.";
 "Save file changes" = "Guardar los cambios del archivo";
@@ -310,7 +310,7 @@
 "Global Shortcuts" = "Atajos globales";
 "Start new chat" = "Iniciar un nuevo chat";
 "Close current window" = "Cerrar la ventana actual";
-"Sidebar — History tab (expands sidebar if hidden)" = "Barra lateral — pestaña Historial (despliega la barra lateral si está oculta)";
+"Sidebar — History tab (expands sidebar if hidden)" = "Barra lateral — pestaña Sesiones (despliega la barra lateral si está oculta)";
 "Sidebar — Files tab (expands sidebar if hidden)" = "Barra lateral — pestaña Archivos (despliega la barra lateral si está oculta)";
 "Toggle left sidebar" = "Mostrar/ocultar la barra lateral izquierda";
 "Toggle right inspector panel" = "Mostrar/ocultar el panel del inspector derecho";
@@ -515,3 +515,15 @@
 "The Slash Commands tab manages built-in and custom commands — edit, enable/disable, add, or delete. JSON import/export covers custom commands only. The Shortcuts tab manages shortcut buttons with JSON import/export support." = "La pestaña Comandos de barra gestiona los comandos integrados y personalizados: editar, activar/desactivar, añadir o eliminar. La importación/exportación JSON solo abarca los comandos personalizados. La pestaña Atajos gestiona los botones de atajo con compatibilidad para importación/exportación JSON.";
 "Checking for Updates" = "Buscar actualizaciones";
 "Open Clarc → Check for Updates… to run Sparkle's update check manually. Updates are also checked automatically on launch." = "Abre Clarc → Buscar actualizaciones… para ejecutar manualmente la comprobación de actualizaciones de Sparkle. Las actualizaciones también se comprueban automáticamente al arrancar.";
+
+// User Guide — Sessions & Chat additions
+"While Claude is responding, the send button turns into a stop button — click it or press Escape to cancel." = "Mientras Claude responde, el botón de enviar se convierte en un botón de detener; haz clic en él o pulsa Escape para cancelar.";
+"Thinking Traces" = "Trazas de razonamiento";
+"When the model reasons before answering, its thinking appears in a collapsible block above the response. It expands automatically while Claude is thinking so you can follow along, then collapses once the answer begins. Click the header to expand or collapse it yourself." = "Cuando el modelo razona antes de responder, su razonamiento aparece en un bloque plegable encima de la respuesta. Se expande automáticamente mientras Claude piensa para que puedas seguirlo y se pliega cuando comienza la respuesta. Haz clic en el encabezado para expandirlo o plegarlo manualmente.";
+"Forking a Conversation" = "Bifurcar una conversación";
+"Hover over any assistant message and click the branch icon to fork the conversation from that point. Clarc opens a new session with the history up to that message, leaves the original untouched, and switches to the new branch. Forked branches also appear in the external claude --resume picker." = "Pasa el cursor sobre cualquier mensaje del asistente y haz clic en el icono de bifurcación para bifurcar la conversación desde ese punto. Clarc abre una nueva sesión con el historial hasta ese mensaje, deja la original intacta y cambia a la nueva rama. Las ramas bifurcadas también aparecen en el selector externo claude --resume.";
+"Completing & Selecting Sessions" = "Completar y seleccionar sesiones";
+"Click the circle to the left of a session title to mark it complete; completed sessions appear dimmed with a strikethrough. Use the checkmark button in the Sessions header to hide or show completed sessions." = "Haz clic en el círculo a la izquierda del título de una sesión para marcarla como completada; las sesiones completadas aparecen atenuadas y tachadas. Usa el botón de marca de verificación en el encabezado de Sesiones para ocultar o mostrar las sesiones completadas.";
+"Add or remove a session from the selection" = "Añadir o quitar una sesión de la selección";
+"Select a range of sessions" = "Seleccionar un rango de sesiones";
+"With multiple sessions selected, right-click to pin, complete, or delete them all at once." = "Con varias sesiones seleccionadas, haz clic derecho para fijarlas, completarlas o eliminarlas todas a la vez.";

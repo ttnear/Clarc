@@ -6,7 +6,7 @@ Clarc is a lightweight native macOS desktop client for Claude Code. It brings th
 
 ![Platform](https://img.shields.io/badge/platform-macOS%2015.0%2B-blue)
 ![Swift](https://img.shields.io/badge/Swift-6.x-orange)
-![Version](https://img.shields.io/badge/version-1.2.0-blue)
+![Version](https://img.shields.io/badge/version-1.3.3-blue)
 ![License](https://img.shields.io/badge/license-Apache%202.0-green)
 
 ---
@@ -37,7 +37,7 @@ Same engine, no terminal required.
 
 | Clarc feature | Why it matters |
 |---------------|----------------|
-| **Native macOS app** | Built with SwiftUI, not Electron. The current v1.2.0 release is about 5.6 MB to download and about 13 MB unpacked, without bundling a browser runtime. |
+| **Native macOS app** | Built with SwiftUI, not Electron. The current v1.3.3 release is about 6 MB to download and about 14 MB unpacked, without bundling a browser runtime. |
 | **Project-centric workspace** | Register multiple local repositories, switch between them from project tabs, or open a project in its own window for parallel sessions. In-progress streams keep running in the background while you switch. |
 | **Custom slash commands** | Add, edit, disable, import, and export custom slash commands. Built-in commands can be edited locally, while JSON import/export stays custom-only. |
 | **Shortcut buttons** | Create quick buttons for prompts or terminal commands you run repeatedly. Terminal-command shortcuts can launch directly into Clarc's interactive terminal popup. |
@@ -51,8 +51,10 @@ Same engine, no terminal required.
 
 | Feature | Description |
 |---------|-------------|
-| **Streaming Chat** | Real-time Claude Code conversations with Markdown rendering, tool call visualization, diff views, and error bubbles for failed empty responses. |
+| **Streaming Chat** | Real-time Claude Code conversations with Markdown rendering, tool call visualization, diff views, expandable thinking traces, a visible stop button while streaming, and error bubbles for failed empty responses. |
+| **Conversation Forking** | Hover over any assistant message and fork the conversation from that point into a new branch session, leaving the original untouched. Forked branches also surface in the external `claude --resume` picker. |
 | **Multi-Project Workspace** | Register local folders or GitHub repositories, switch freely, and keep per-project session history. |
+| **Session Management** | Pin, rename, complete, and delete sessions. Treat sessions like a to-do list — tick a checkbox to mark one done (completed titles are struck through and dimmed), hide completed ones, and multi-select for batch pin/complete/delete actions. |
 | **Dedicated Project Windows** | Double-click a project tab to open it in an independent window and work across multiple repositories at once. |
 | **Per-Session Controls** | Choose model, permission mode, and effort level per session from the chat toolbar. Defaults are configurable in Settings. |
 | **Permission Modes** | Ask, Accept Edits, Plan, Auto, and Bypass modes mirror Claude Code's permission model and can be changed from the toolbar. |
@@ -74,7 +76,7 @@ Same engine, no terminal required.
 | **Themes and Font Controls** | Six accent themes plus independent font size controls for the interface and message area. |
 | **Focus Mode** | Optional focused chat layout that can be enabled from Settings. |
 | **Notifications** | Optional system notifications with response previews while Clarc is in the background. |
-| **Localization** | Full English and Korean UI. |
+| **Localization** | Full UI in English, Korean, Simplified Chinese, Traditional Chinese, Japanese, and Spanish. |
 | **User Guide** | Built-in in-app help guide accessible from the toolbar and Settings. |
 | **Auto-update** | Sparkle-based update checking on launch, with manual checks from the app menu. |
 

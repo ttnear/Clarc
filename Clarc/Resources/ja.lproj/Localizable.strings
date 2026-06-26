@@ -41,7 +41,7 @@
 "Manage GitHub Repos" = "GitHub リポジトリの管理";
 "Connect GitHub" = "GitHub に接続";
 "Add Project" = "プロジェクトを追加";
-"History" = "履歴";
+"History" = "セッション";
 "Files" = "ファイル";
 "Select a Project" = "プロジェクトを選択してください";
 "Select a project from the sidebar or add a new one." = "サイドバーからプロジェクトを選択するか、新しく追加してください。";
@@ -129,7 +129,7 @@
 "Response in progress in the background" = "バックグラウンドで応答を処理中";
 "Unpin" = "ピン留めを解除";
 "Pin" = "ピン留め";
-"No chat history" = "チャット履歴がありません";
+"No chat history" = "セッションがありません";
 
 // MARK: - GitStatusView
 "Checking..." = "確認中...";
@@ -253,7 +253,7 @@
 "What is Clarc?" = "Clarc とは？";
 "A native macOS desktop client for the Claude Code CLI. Use all Claude Code features via a polished GUI without needing a terminal." = "Claude Code CLI のためのネイティブ macOS デスクトップクライアントです。ターミナルなしで洗練された GUI から Claude Code のすべての機能を使用できます。";
 "Main Layout" = "基本レイアウト";
-"The left sidebar has History and Files tabs. Project tabs appear at the top of the chat area — click to switch projects. The right inspector panel contains the Terminal and Memo tabs." = "左サイドバーには履歴とファイルのタブがあります。チャットエリアの上部にプロジェクトタブが表示され、クリックして切り替えられます。右側のインスペクターパネルにはターミナルとメモのタブがあります。";
+"The left sidebar has History and Files tabs. Project tabs appear at the top of the chat area — click to switch projects. The right inspector panel contains the Terminal and Memo tabs." = "左サイドバーにはセッションとファイルのタブがあります。チャットエリアの上部にプロジェクトタブが表示され、クリックして切り替えられます。右側のインスペクターパネルにはターミナルとメモのタブがあります。";
 "Chat is disabled when no project is selected." = "プロジェクトが選択されていない場合、チャットは使用できません。";
 "Top Toolbar" = "上部ツールバー";
 "The toolbar contains: New Chat, Manage Slash Commands, Manage Shortcut Buttons, Skip Permissions toggle, Model picker, Inspector panel toggle, Settings, and the GitHub integration button." = "ツールバーの構成: 新規チャット、スラッシュコマンドの管理、ショートカットボタンの管理、権限スキップのトグル、モデル選択、インスペクターパネルのトグル、設定、GitHub 連携ボタン。";
@@ -267,16 +267,16 @@
 "Double-click a project tab to open it in its own independent window. Each window manages its own sessions independently, allowing you to work on multiple projects at once." = "プロジェクトタブをダブルクリックすると、独立した専用ウィンドウで開きます。各ウィンドウはセッションを独立して管理するため、複数のプロジェクトを同時に作業できます。";
 "In a dedicated project window, only the project name is shown — there are no project tabs." = "専用プロジェクトウィンドウではプロジェクト名のみが表示され、プロジェクトタブはありません。";
 "Sidebar Tabs" = "サイドバータブ";
-"History tab: shows previous conversations\nFiles tab: browse the project file tree" = "履歴タブ: 以前の会話を表示\nファイルタブ: プロジェクトのファイルツリーを閲覧";
-"Go to History tab" = "履歴タブへ移動";
+"History tab: shows previous conversations\nFiles tab: browse the project file tree" = "セッションタブ: 以前の会話を表示\nファイルタブ: プロジェクトのファイルツリーを閲覧";
+"Go to History tab" = "セッションタブへ移動";
 "Go to Files tab" = "ファイルタブへ移動";
 "Files tab + activate search" = "ファイルタブ + 検索を有効化";
-"History Management" = "履歴管理";
-"Right-click a session in the History tab for context menu options." = "履歴タブでセッションを右クリックするとコンテキストメニューが表示されます。";
+"History Management" = "セッション管理";
+"Right-click a session in the History tab for context menu options." = "セッションタブでセッションを右クリックするとコンテキストメニューが表示されます。";
 "Pin / Unpin — pinned sessions stay at the top of the list" = "ピン留め / ピン留め解除 — ピン留めしたセッションは常にリストの最上部に表示されます";
 "Rename — change the session title" = "名前を変更 — セッションのタイトルを変更します";
 "Delete — remove the session" = "削除 — セッションを削除します";
-"Use the trash icon in the History header to delete all sessions at once." = "履歴ヘッダーのゴミ箱アイコンを使うと、すべてのセッションを一度に削除できます。";
+"Use the trash icon in the History header to delete all sessions at once." = "セッションヘッダーのゴミ箱アイコンを使うと、すべてのセッションを一度に削除できます。";
 "File Inspector" = "ファイルインスペクター";
 "Click any file in the Files tab to preview it with syntax highlighting. Press the pencil button to enter edit mode and modify the file directly." = "ファイルタブでファイルをクリックすると、シンタックスハイライト付きでプレビューできます。鉛筆ボタンを押すと編集モードに切り替わり、ファイルを直接編集できます。";
 "Save file changes" = "ファイルの変更を保存";
@@ -310,7 +310,7 @@
 "Global Shortcuts" = "全体のショートカット";
 "Start new chat" = "新規チャットを開始";
 "Close current window" = "現在のウィンドウを閉じる";
-"Sidebar — History tab (expands sidebar if hidden)" = "サイドバー — 履歴タブ（非表示の場合はサイドバーを展開）";
+"Sidebar — History tab (expands sidebar if hidden)" = "サイドバー — セッションタブ（非表示の場合はサイドバーを展開）";
 "Sidebar — Files tab (expands sidebar if hidden)" = "サイドバー — ファイルタブ（非表示の場合はサイドバーを展開）";
 "Toggle left sidebar" = "左サイドバーの表示/非表示";
 "Toggle right inspector panel" = "右インスペクターパネルの表示/非表示";
@@ -515,3 +515,15 @@
 "The Slash Commands tab manages built-in and custom commands — edit, enable/disable, add, or delete. JSON import/export covers custom commands only. The Shortcuts tab manages shortcut buttons with JSON import/export support." = "スラッシュコマンドタブでは、組み込みおよびカスタムコマンドを管理します — 編集、有効化/無効化、追加、削除ができます。JSON のインポート/エクスポートはカスタムコマンドのみ対応します。ショートカットタブではショートカットボタンを管理し、JSON のインポート/エクスポートに対応します。";
 "Checking for Updates" = "アップデートの確認";
 "Open Clarc → Check for Updates… to run Sparkle's update check manually. Updates are also checked automatically on launch." = "Clarc → アップデートを確認… から Sparkle のアップデート確認を手動で実行できます。アプリ起動時にも自動的に確認されます。";
+
+// User Guide — Sessions & Chat additions
+"While Claude is responding, the send button turns into a stop button — click it or press Escape to cancel." = "Claude が応答している間、送信ボタンは停止ボタンに変わります。ボタンをクリックするか Escape を押すとキャンセルできます。";
+"Thinking Traces" = "思考トレース";
+"When the model reasons before answering, its thinking appears in a collapsible block above the response. It expands automatically while Claude is thinking so you can follow along, then collapses once the answer begins. Click the header to expand or collapse it yourself." = "モデルが回答前に推論すると、その思考が応答の上に折りたたみ可能なブロックとして表示されます。Claude が思考している間は自動的に展開され、リアルタイムで追えます。回答が始まると折りたたまれます。ヘッダーをクリックすると手動で展開・折りたたみできます。";
+"Forking a Conversation" = "会話の分岐";
+"Hover over any assistant message and click the branch icon to fork the conversation from that point. Clarc opens a new session with the history up to that message, leaves the original untouched, and switches to the new branch. Forked branches also appear in the external claude --resume picker." = "アシスタントのメッセージにカーソルを合わせて分岐アイコンをクリックすると、その時点から会話を分岐できます。Clarc はそのメッセージまでの履歴を含む新しいセッションを開き、元のセッションはそのままに新しい分岐へ切り替えます。分岐したセッションは外部の claude --resume の選択一覧にも表示されます。";
+"Completing & Selecting Sessions" = "セッションの完了と選択";
+"Click the circle to the left of a session title to mark it complete; completed sessions appear dimmed with a strikethrough. Use the checkmark button in the Sessions header to hide or show completed sessions." = "セッションタイトルの左にある円をクリックすると完了として表示されます。完了したセッションは淡色になり、タイトルに取り消し線が付きます。セッションヘッダーのチェックボタンで完了したセッションの表示・非表示を切り替えられます。";
+"Add or remove a session from the selection" = "セッションを選択に追加または解除";
+"Select a range of sessions" = "範囲でセッションを選択";
+"With multiple sessions selected, right-click to pin, complete, or delete them all at once." = "複数のセッションを選択した状態で右クリックすると、まとめてピン留め・完了・削除できます。";
