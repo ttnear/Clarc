@@ -20,6 +20,9 @@ struct InputBarView<Accessory: View, TopAccessory: View>: View {
     @State private var showAtFilePopup = false
     @State private var atFileSelectedIndex = 0
     @State private var historyIndex: Int = -1
+    // Preserves the in-progress draft when the user steps into message history with the up arrow,
+    // so the down arrow can restore it when stepping back out.
+    @State private var draftBeforeHistory: String = ""
     @State private var textFieldLayoutID = 0
     @State private var measuredInputHeight: CGFloat = 20
     @State private var inputHasMarkedText = false
@@ -280,6 +283,9 @@ struct InputBarView<Accessory: View, TopAccessory: View>: View {
         }
         let history = userMessageHistory
         guard !history.isEmpty else { return .ignored }
+        if historyIndex == -1 {
+            draftBeforeHistory = windowState.inputText
+        }
         let nextIndex = historyIndex + 1
         if nextIndex < history.count {
             historyIndex = nextIndex
@@ -303,7 +309,8 @@ struct InputBarView<Accessory: View, TopAccessory: View>: View {
         guard historyIndex >= 0 else { return .ignored }
         historyIndex -= 1
         if historyIndex < 0 {
-            windowState.inputText = ""
+            windowState.inputText = draftBeforeHistory
+            draftBeforeHistory = ""
         } else {
             let history = userMessageHistory
             let msgIndex = history.count - 1 - historyIndex
