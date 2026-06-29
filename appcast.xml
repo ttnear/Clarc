@@ -507,5 +507,25 @@
         type="application/octet-stream"
         sparkle:edSignature="YfIKOiM1mw7Uo7FH5l8TOdVJQzv+273vURMLgKfbr3isSxOmh3eqUTM3r1MWfOa182PTxkC2F0D3VUrFkkKLBg==" />
     </item>
+    <item>
+      <title>Clarc v1.3.8</title>
+      <sparkle:version>36</sparkle:version>
+      <sparkle:shortVersionString>1.3.8</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <pubDate>Mon, 29 Jun 2026 07:24:33 +0000</pubDate>
+      <description><![CDATA[
+<h3>Fixed</h3>
+<ul>
+  <li>The git status view now refreshes when you switch project tabs.</li>
+  <li>Background streams no longer hijack the foreground window or show error bubbles after you move to another project.</li>
+  <li>Draft queues now follow a session when its temporary stream key is promoted to the real session id.</li>
+</ul>
+      ]]></description>
+      <enclosure
+        url="https://github.com/ttnear/Clarc/releases/download/v1.3.8/Clarc-1.3.8.zip"
+        length="6515003"
+        type="application/octet-stream"
+        sparkle:edSignature="4v12b/337Ejwo779/ztzJVpZheNEQ1pgd6T5khR1qzSqMn4Qso1L05hHj7IF1FpZkuVwPnH2bHtLVAZCsd4dBg==" />
+    </item>
   </channel>
 </rss>
