@@ -1209,6 +1209,7 @@ final class AppState {
                                 sessionStates[sid] = state
                             }
                             lastCommittedReloadKey.removeValue(forKey: oldKey)
+                            migrateDraftState(from: oldKey, to: sid, in: window)
                             sessionKey = sid
                             startFlushTimer(for: sid)
 
@@ -1311,6 +1312,7 @@ final class AppState {
                             sessionStates[resultEvent.sessionId] = state
                         }
                         lastCommittedReloadKey.removeValue(forKey: sessionKey)
+                        migrateDraftState(from: sessionKey, to: resultEvent.sessionId, in: window)
                         sessionKey = resultEvent.sessionId
                     }
 
@@ -2725,6 +2727,22 @@ final class AppState {
         let key = window.currentSessionId ?? "new"
         if window.messageQueue.isEmpty { window.draftQueues.removeValue(forKey: key) }
         else { window.draftQueues[key] = window.messageQueue }
+    }
+
+    /// Move persisted draft state (message queue, input draft) when a stream's key
+    /// changes from a pending/temp id to the real CLI session id. Queued messages
+    /// saved under the old key would otherwise be orphaned — invisible when the user
+    /// returns to the session and skipped by background queue processing. The live
+    /// foreground queue lives in `window.messageQueue`, so only `draftQueues` and
+    /// `draftTexts` need to follow the key.
+    private func migrateDraftState(from old: String, to new: String, in window: WindowState) {
+        guard old != new else { return }
+        if let queue = window.draftQueues.removeValue(forKey: old) {
+            window.draftQueues[new] = queue
+        }
+        if let text = window.draftTexts.removeValue(forKey: old) {
+            window.draftTexts[new] = text
+        }
     }
 
     /// Sends the next queued message for a background session (one the window is not currently displaying).
