@@ -438,6 +438,14 @@ final class AppState {
         streamState(in: window).isStreaming
     }
 
+    /// Whether the stream identified by `key` owns the foreground window — i.e. the
+    /// user is currently viewing that session. A stream detached to the background
+    /// (the user switched projects or started a new chat, clearing currentSessionId)
+    /// does NOT own the foreground and must not mutate `window` state.
+    func isForegroundStream(_ key: String, in window: WindowState) -> Bool {
+        window.currentSessionId == key
+    }
+
     func isThinking(in window: WindowState) -> Bool {
         streamState(in: window).isThinking
     }
@@ -1204,9 +1212,11 @@ final class AppState {
                             sessionKey = sid
                             startFlushTimer(for: sid)
 
-                            // If this is the foreground session, also update window.currentSessionId
-                            let isFg = (window.currentSessionId ?? window.newSessionKey) == oldKey || window.currentSessionId == nil
-                            if isFg { window.currentSessionId = sid }
+                            // If this is the foreground session, also update window.currentSessionId.
+                            // A stream detached to the background (user switched projects or
+                            // started a new chat) must NOT hijack the window here — otherwise the
+                            // old session's messages bleed into whatever the window now shows.
+                            if isForegroundStream(oldKey, in: window) { window.currentSessionId = sid }
                         }
 
                         let expectedPlaceholder = "pending-\(streamId.uuidString)"
@@ -1319,7 +1329,7 @@ final class AppState {
                     // Promote in-flight tail into committed before disk reload
                     promoteTailToCommitted(for: resultEvent.sessionId)
 
-                    let isFg = (window.currentSessionId ?? window.newSessionKey) == sessionKey
+                    let isFg = isForegroundStream(sessionKey, in: window)
                     if isFg {
                         window.currentSessionId = resultEvent.sessionId
                         if resultEvent.isError {
@@ -1374,7 +1384,7 @@ final class AppState {
 
                 case .rateLimitEvent(let info):
                     logger.warning("[Stream:UI] event #\(eventCount) .rateLimitEvent (retrySec=\(info.retrySec ?? 0))")
-                    if (window.currentSessionId ?? window.newSessionKey) == sessionKey,
+                    if isForegroundStream(sessionKey, in: window),
                        let retry = info.retrySec, retry > 0 {
                         addErrorMessage("Rate limited. Retrying in \(Int(retry))s...", in: window)
                     }
@@ -1396,14 +1406,17 @@ final class AppState {
 
             if eventCount == 0 {
                 // User cancellation revokes activeStreamId or cancels the task — distinguish
-                // that from a real "CLI died with no output" failure.
+                // that from a real "CLI died with no output" failure. Only surface the error
+                // bubble when this stream still owns the foreground window: a stream detached
+                // to the background (user switched projects) must not bleed an error into
+                // whatever session the window now shows.
                 let wasCancelled = Task.isCancelled || stateForSession(sessionKey).activeStreamId != streamId
-                if !wasCancelled {
+                if !wasCancelled && isForegroundStream(sessionKey, in: window) {
                     let errorMsg = stderrOutput ?? "No response received"
                     addErrorMessage(errorMsg, in: window)
                     logger.error("[Stream:UI] no events received — appending error bubble. stderr=\(stderrOutput ?? "nil")")
                 } else {
-                    logger.debug("[Stream:UI] no events received — suppressed (cancelled). stderr=\(stderrOutput ?? "nil")")
+                    logger.debug("[Stream:UI] no events received — suppressed (cancelled or backgrounded). stderr=\(stderrOutput ?? "nil")")
                 }
             }
 

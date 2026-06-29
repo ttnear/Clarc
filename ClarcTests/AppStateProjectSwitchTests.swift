@@ -111,6 +111,34 @@ final class AppStateProjectSwitchTests: XCTestCase {
         XCTAssertNotNil(appState.sessionStates["live"])
     }
 
+    // MARK: - isForegroundStream: ownership of the window after navigation
+
+    func testIsForegroundStream_currentlyViewedSession_isForeground() {
+        window.currentSessionId = "pending-X"
+
+        XCTAssertTrue(appState.isForegroundStream("pending-X", in: window),
+                      "A stream whose key matches the viewed session is foreground")
+    }
+
+    func testIsForegroundStream_backgroundStreamAfterProjectSwitch_isNotForeground() {
+        // A new-session stream started with key "pending-X". The user then switched
+        // projects (or hit New Chat), which detaches the stream and clears
+        // currentSessionId to nil. The backgrounded stream must NOT be treated as
+        // foreground just because the window now shows a fresh-chat screen — otherwise
+        // it hijacks the window and the old project's messages bleed into the new one.
+        window.currentSessionId = nil
+
+        XCTAssertFalse(appState.isForegroundStream("pending-X", in: window),
+                       "A backgrounded stream must not own a window that navigated away")
+    }
+
+    func testIsForegroundStream_viewingDifferentSession_isNotForeground() {
+        window.currentSessionId = "other-session"
+
+        XCTAssertFalse(appState.isForegroundStream("pending-X", in: window),
+                       "A stream is not foreground when the window shows a different session")
+    }
+
     // MARK: - Helpers
 
     private func makeProject(_ name: String) -> Project {
