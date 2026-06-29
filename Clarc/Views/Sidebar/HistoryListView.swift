@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 import ClarcCore
 
 struct HistoryListView: View {
@@ -9,6 +10,8 @@ struct HistoryListView: View {
     /// Selected session ids. A single selection opens that session; multiple
     /// selections (cmd/shift-click) drive batch context-menu actions.
     @State private var selection = Set<String>()
+    /// Anchor row for shift-click range selection.
+    @State private var selectionAnchor: String?
     @AppStorage("historyShowAllProjects") private var showAllProjects = true
     @AppStorage("historyHideCompleted") private var hideCompleted = false
     @State private var showDeleteAllAlert = false
@@ -110,27 +113,60 @@ struct HistoryListView: View {
     // MARK: - Session List
 
     private var sessionList: some View {
-        List(selection: $selection) {
+        // Fully custom selection: no `List(selection:)` binding, so macOS never
+        // paints its system-accent highlight. We track selection ourselves and
+        // draw the selected row with the theme color via `.listRowBackground`.
+        List {
             ForEach(sessions) { session in
                 sessionRow(session)
-                    .tag(session.id)
+                    .listRowBackground(rowBackground(for: session))
+                    .contentShape(Rectangle())
+                    .onTapGesture { handleTap(session) }
+                    .contextMenu { sessionContextMenu(for: contextTargets(for: session)) }
             }
         }
         .listStyle(.sidebar)
-        .animation(.default, value: sessions)
-        .contextMenu(forSelectionType: String.self) { ids in
-            sessionContextMenu(for: ids)
-        }
-        .onChange(of: selection) { _, ids in
-            // A lone selection opens the session; a multi-selection leaves the
-            // currently open chat untouched and only feeds batch actions.
-            if ids.count == 1, let id = ids.first {
-                appState.selectSession(id: id, in: windowState)
-            }
-        }
         .onChange(of: appState.currentSession(in: windowState)?.id, initial: true) { _, id in
             syncSelectionToCurrent(id)
         }
+    }
+
+    /// Selected-row background painted in the theme color, inset into a pill.
+    @ViewBuilder
+    private func rowBackground(for session: DisplaySession) -> some View {
+        if selection.contains(session.id) {
+            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                .fill(ClaudeTheme.sidebarItemSelected)
+                .padding(.horizontal, 8)
+        }
+    }
+
+    /// Resolve a click into single open / cmd-toggle / shift-range selection.
+    private func handleTap(_ session: DisplaySession) {
+        let flags = NSEvent.modifierFlags
+        if flags.contains(.command) {
+            if selection.contains(session.id) {
+                selection.remove(session.id)
+            } else {
+                selection.insert(session.id)
+            }
+            selectionAnchor = session.id
+        } else if flags.contains(.shift), let anchor = selectionAnchor,
+                  let lo = sessions.firstIndex(where: { $0.id == anchor }),
+                  let hi = sessions.firstIndex(where: { $0.id == session.id }) {
+            let range = lo <= hi ? lo...hi : hi...lo
+            selection.formUnion(sessions[range].map(\.id))
+        } else {
+            selection = [session.id]
+            selectionAnchor = session.id
+            appState.selectSession(id: session.id, in: windowState)
+        }
+    }
+
+    /// Right-click targets: the whole selection if the clicked row is part of
+    /// it, otherwise just the clicked row.
+    private func contextTargets(for session: DisplaySession) -> Set<String> {
+        selection.contains(session.id) ? selection : [session.id]
     }
 
     /// Mirror the open session into `selection` unless the user is mid
@@ -138,10 +174,11 @@ struct HistoryListView: View {
     private func syncSelectionToCurrent(_ id: String?) {
         guard selection.count <= 1 else { return }
         selection = id.map { [$0] } ?? []
+        selectionAnchor = id
     }
 
     private func sessionRow(_ session: DisplaySession) -> some View {
-        return HStack(spacing: 6) {
+        HStack(spacing: 6) {
             Button {
                 completeTapped(session)
             } label: {
@@ -180,11 +217,7 @@ struct HistoryListView: View {
 
             Spacer()
 
-            if session.isBackgroundStreaming {
-                ProgressView()
-                    .controlSize(.mini)
-                    .help("Response in progress in the background")
-            }
+            StreamingIndicator(sessionId: session.id)
 
             if session.isPinned {
                 Image(systemName: "pin.fill")
@@ -296,7 +329,6 @@ struct HistoryListView: View {
         let updatedAt: Date
         let isPinned: Bool
         let isCompleted: Bool
-        let isBackgroundStreaming: Bool
         let projectName: String?
     }
 
@@ -333,7 +365,6 @@ struct HistoryListView: View {
 
     private var currentProjectSessions: [DisplaySession] {
         guard let projectId = windowState.selectedProject?.id else { return [] }
-        let streamingIds = appState.backgroundStreamingSessionIds(in: windowState)
         return appState.allSessionSummaries
             .filter { $0.projectId == projectId }
             .sorted { Self.sessionOrder($0, $1) }
@@ -345,7 +376,6 @@ struct HistoryListView: View {
                     updatedAt: summary.updatedAt,
                     isPinned: summary.isPinned,
                     isCompleted: summary.isCompleted,
-                    isBackgroundStreaming: streamingIds.contains(summary.id),
                     projectName: nil
                 )
             }
@@ -355,7 +385,6 @@ struct HistoryListView: View {
         let projectNames = Dictionary(
             uniqueKeysWithValues: appState.projects.map { ($0.id, $0.name) }
         )
-        let streamingIds = appState.backgroundStreamingSessionIds(in: windowState)
         var seen = Set<String>()
         return appState.allSessionSummaries
             .sorted { Self.sessionOrder($0, $1) }
@@ -368,7 +397,6 @@ struct HistoryListView: View {
                     updatedAt: summary.updatedAt,
                     isPinned: summary.isPinned,
                     isCompleted: summary.isCompleted,
-                    isBackgroundStreaming: streamingIds.contains(summary.id),
                     projectName: projectNames[summary.projectId]
                 )
             }
@@ -392,6 +420,23 @@ struct HistoryListView: View {
 
     private func formattedDate(_ date: Date) -> String {
         Self.relativeDateFormatter.localizedString(for: date, relativeTo: Date())
+    }
+}
+
+/// Background-streaming spinner isolated into its own view. Reading
+/// `sessionStates` here keeps that fast-changing dependency out of the parent
+/// list, so streaming text deltas no longer re-render the whole session list.
+private struct StreamingIndicator: View {
+    @Environment(AppState.self) private var appState
+    @Environment(WindowState.self) private var windowState
+    let sessionId: String
+
+    var body: some View {
+        if appState.isBackgroundStreaming(sessionId, in: windowState) {
+            ProgressView()
+                .controlSize(.mini)
+                .help("Response in progress in the background")
+        }
     }
 }
 
