@@ -97,12 +97,17 @@ struct GitStatusView: View {
         .padding(.vertical, 8)
         .background(ClaudeTheme.surfaceSecondary.opacity(0.5))
         .onAppear {
+            refresh()
             startWatchingHEAD()
         }
         .onDisappear {
             stopWatchingHEAD()
         }
         .onChange(of: projectPath) { _, _ in
+            // Refresh status directly here: relying on .task(id:) alone misses the
+            // refresh when selectProject batches its mutations into a single
+            // transaction, leaving the previous project's git status on screen.
+            refresh()
             // Enqueue stop/start on the next run loop tick — keeps the watcher lifecycle
             // out of the selectProject first-frame critical path.
             Task { @MainActor in
@@ -112,12 +117,6 @@ struct GitStatusView: View {
         }
         .onChange(of: appState.isStreaming(in: windowState)) { old, new in
             if old && !new { refresh() }
-        }
-        .task(id: projectPath) {
-            let path = projectPath
-            let fresh = await fetchGitStatus(at: path)
-            guard !Task.isCancelled else { return }
-            gitStatus = fresh
         }
     }
 
