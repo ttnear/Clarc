@@ -508,6 +508,28 @@
         sparkle:edSignature="YfIKOiM1mw7Uo7FH5l8TOdVJQzv+273vURMLgKfbr3isSxOmh3eqUTM3r1MWfOa182PTxkC2F0D3VUrFkkKLBg==" />
     </item>
     <item>
+      <title>Clarc v1.3.9</title>
+      <sparkle:version>37</sparkle:version>
+      <sparkle:shortVersionString>1.3.9</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+      <pubDate>Mon, 30 Jun 2026 00:00:00 +0000</pubDate>
+      <description><![CDATA[
+<h3>Fixed</h3>
+<ul>
+  <li>Status bar now refreshes rate-limit usage when switching back to Clarc from another app.</li>
+  <li>The last-used session is restored automatically when opening a project, so context and cumulative response time show immediately without clicking the session.</li>
+  <li>Cumulative response time now accumulates correctly even when the CLI omits duration data in the result event.</li>
+  <li>Context percentage and response time are no longer lost when switching quickly between sessions.</li>
+</ul>
+      ]]></description>
+      <enclosure
+        url="https://github.com/ttnear/Clarc/releases/download/v1.3.9/Clarc-1.3.9.zip"
+        length="6517650"
+        type="application/octet-stream"
+        sparkle:edSignature="sdJraEVEU7y8wesJrTopDD8axOJUyLrJrmtuP0E1ULvXWdp90TBklOjagcjuisOLkimuUnM7vvK4pna4s3vtBQ==" />
+    </item>
+
+    <item>
       <title>Clarc v1.3.8</title>
       <sparkle:version>36</sparkle:version>
       <sparkle:shortVersionString>1.3.8</sparkle:shortVersionString>
