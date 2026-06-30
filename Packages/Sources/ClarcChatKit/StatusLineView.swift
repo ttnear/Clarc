@@ -4,7 +4,6 @@ import ClarcCore
 struct StatusLineView: View {
     @Environment(ChatBridge.self) private var chatBridge
     @Environment(WindowState.self) private var windowState
-    @Environment(\.scenePhase) private var scenePhase
     @State private var rateLimit: RateLimitUsage?
 
     private var modelDisplayName: String {
@@ -83,10 +82,8 @@ struct StatusLineView: View {
                 Task { await refreshRateLimit() }
             }
         }
-        .onChange(of: scenePhase) { _, new in
-            if new == .active {
-                Task { await refreshRateLimit() }
-            }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            Task { await refreshRateLimit() }
         }
     }
 

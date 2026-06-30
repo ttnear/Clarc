@@ -1318,7 +1318,15 @@ final class AppState {
 
                     finalizeStreamSession(for: sessionKey) { state in
                         if let cost = resultEvent.totalCostUsd { state.costUsd = cost }
-                        if let duration = resultEvent.durationMs { state.durationMs += duration }
+                        // Prefer the CLI-reported duration, but fall back to wall-clock
+                        // when the result event omits duration_ms (or reports 0). Without
+                        // this the cumulative session time stays 0 and persists as 0,
+                        // even though per-message durations (also wall-clock) show fine.
+                        if let duration = resultEvent.durationMs, duration > 0 {
+                            state.durationMs += duration
+                        } else if let start = state.streamingStartDate {
+                            state.durationMs += Date().timeIntervalSince(start) * 1000
+                        }
                         if let turns = resultEvent.totalTurns { state.turns += turns }
                         if let usage = resultEvent.usage {
                             state.inputTokens += usage.inputTokens
@@ -2036,6 +2044,16 @@ final class AppState {
     func loadSessionHistory(in window: WindowState) async {
         guard let project = window.selectedProject else { return }
         await reloadSessionSummaries(for: project)
+
+        // Restore the last-used session when entering a project in new-chat state
+        // so the status bar shows persisted stats immediately. No didSwitchToSession
+        // here — the project's lastSessionId already points at this session, so
+        // persisting it again would be a redundant projects-array write.
+        if window.currentSessionId == nil,
+           let lastId = project.lastSessionId,
+           let summary = allSessionSummaries.first(where: { $0.id == lastId && $0.projectId == project.id }) {
+            switchToSession(summary.makeSession(), in: window)
+        }
     }
 
     /// Window-independent reload — used by the FS watcher when the CLI (or
@@ -2065,6 +2083,12 @@ final class AppState {
             merged.model = mem.model
             merged.effort = mem.effort
             merged.permissionMode = mem.permissionMode
+            // Status-bar stats are written eagerly to allSessionSummaries (in
+            // releaseOutgoingSession) before the async disk save completes. A
+            // watcher reload that races that save would overwrite the in-memory
+            // value with stale disk data. Prefer the larger/set in-memory value.
+            merged.totalDurationMs = [mem.totalDurationMs, merged.totalDurationMs].compactMap { $0 }.max()
+            merged.contextPercent = mem.contextPercent ?? merged.contextPercent
             return merged
         }
 
@@ -2204,6 +2228,21 @@ final class AppState {
               !(sessionStates[outgoingId]?.isStreaming ?? false) else { return }
         let outgoingState = sessionStates[outgoingId]
         let outgoingMessages = outgoingState?.allMessages ?? []
+
+        // Eagerly update the in-memory summary so navigating back to this session
+        // before the async save completes still shows the correct stats.
+        if let state = outgoingState,
+           let idx = allSessionSummaries.firstIndex(where: { $0.id == outgoingId }) {
+            var s = allSessionSummaries[idx]
+            if state.durationMs > 0 {
+                s.totalDurationMs = [state.durationMs, s.totalDurationMs].compactMap { $0 }.max()
+            }
+            if let pct = state.lastTurnContextUsedPercentage {
+                s.contextPercent = pct
+            }
+            allSessionSummaries[idx] = s
+        }
+
         Task { [weak self] in
             guard let self else { return }
             if !outgoingMessages.isEmpty, let project = window.selectedProject {
