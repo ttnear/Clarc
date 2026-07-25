@@ -96,6 +96,11 @@ Same engine, no terminal required.
 2. Unzip and move `Clarc.app` to your `Applications` folder.
 3. Launch `Clarc.app`.
 
+> [!TIP]
+> You can also install via Homebrew with this command:
+>
+> `brew install --cask clarc`
+
 ### First Launch on macOS 15 (Sequoia)
 
 macOS Sequoia blocks the first launch of any downloaded app, even notarized ones, and routes approval through System Settings instead of the old right-click -> Open flow.
