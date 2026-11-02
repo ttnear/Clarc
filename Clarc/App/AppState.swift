@@ -2370,6 +2370,7 @@ final class AppState {
 
     func startNewChat(in window: WindowState) {
         window.selectionEpoch &+= 1
+        window.cancelSessionSwitchTask()
         if isStreaming(in: window) { detachCurrentStream(in: window) }
         saveDraft(in: window)
         saveQueue(in: window)
@@ -2547,11 +2548,14 @@ final class AppState {
             guard let self else { return }
             guard !Task.isCancelled else { return }
             selectProject(project, in: window)
+            let epoch = window.selectionEpoch
             guard !Task.isCancelled else { return }
             if let s = allSessionSummaries.first(where: { $0.id == id }) {
                 let session = s.makeSession()
                 if sessionStates[session.id] == nil,
                    let full = await persistence.loadFullSession(summary: s, cwd: project.path) {
+                    // The disk load is slow; drop the switch if the user chose something else meanwhile.
+                    guard !Task.isCancelled, window.selectionEpoch == epoch else { return }
                     switchToSession(full, messages: full.messages, in: window)
                 } else {
                     switchToSession(session, in: window)
