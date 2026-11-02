@@ -51,6 +51,10 @@ public final class WindowState {
 
     public var selectedProject: Project?
     public var currentSessionId: String?
+    /// Bumped on every explicit session selection (new chat, switch, first send). Background work
+    /// that restores a previous session after an await compares it to the value it started with,
+    /// so it cannot override a choice the user made in the meantime.
+    public var selectionEpoch = 0
 
     // MARK: - Placeholder Tracking
 
