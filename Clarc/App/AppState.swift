@@ -667,6 +667,7 @@ final class AppState {
         func observeStream() {
             withObservationTracking {
                 let state = streamState(in: window)
+                bridge.sessionKey = window.currentSessionId ?? window.newSessionKey
                 bridge.messages = state.allMessages
                 bridge.isStreaming = state.isStreaming
                 bridge.isThinking = state.isThinking
