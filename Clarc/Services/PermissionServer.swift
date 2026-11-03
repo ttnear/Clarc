@@ -245,6 +245,21 @@ actor PermissionServer {
             }
         }
 
+        // Honor the allow/deny rules the user already maintains for Claude Code. This hook runs before
+        // the CLI evaluates them, so without this check they would never apply inside Clarc.
+        // Plan mode is excluded so a settings allow rule cannot approve edits while planning.
+        let context = req.sessionId.flatMap { sessionRegistry[$0] }
+        if context?.mode != .plan {
+            let rules = ClaudeSettingsPermissions.load(projectPath: context?.projectKey)
+            if rules.autoApproves(
+                toolName: req.toolName,
+                command: req.toolInput["command"]?.stringValue,
+                isSafeSegment: { BashSafety.isSafeReadOnly(command: $0) }
+            ) {
+                return "Allowed by Claude Code permission settings"
+            }
+        }
+
         return nil
     }
 
