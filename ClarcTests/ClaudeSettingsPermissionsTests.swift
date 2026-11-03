@@ -102,6 +102,44 @@ final class ClaudeSettingsPermissionsTests: XCTestCase {
         XCTAssertTrue(r.autoApproves(toolName: "Bash", command: "echo hi >/dev/null 2>&1"))
     }
 
+    // MARK: - Scratch redirects, loops, assignments
+
+    func testRedirectsToLiteralTmpPathsAreIgnored() {
+        let r = rules(allow: ["Bash(maestro *)"])
+        XCTAssertTrue(r.autoApproves(toolName: "Bash", command: "maestro task list --json > /tmp/x.json 2>/dev/null"))
+        XCTAssertTrue(r.autoApproves(toolName: "Bash", command: "maestro task list >> /tmp/x"))
+        XCTAssertTrue(r.autoApproves(toolName: "Bash", command: "maestro task list 2>/tmp/e"))
+        XCTAssertTrue(r.autoApproves(toolName: "Bash", command: "maestro task list >/private/tmp/x"))
+    }
+
+    func testOtherRedirectsStillBlockApproval() {
+        let r = rules(allow: ["Bash(maestro *)"])
+        for target in ["~/x", "/tmp/../etc/x", "/tmp/$X", "\"/tmp/x\"", "/etc/x", "/tmp/a*", "/tmp/a$X", "/tmp/", "\"/tmp/../x\""] {
+            XCTAssertFalse(r.autoApproves(toolName: "Bash", command: "maestro task list > \(target)"), target)
+        }
+    }
+
+    func testForLoopScaffoldingIsIgnored() {
+        let r = rules(allow: ["Bash(echo *)"])
+        XCTAssertTrue(r.autoApproves(toolName: "Bash", command: "for id in a b; do echo $id; done"))
+        XCTAssertTrue(r.autoApproves(toolName: "Bash", command: "for id in a b\ndo\n  echo $id\ndone"))
+        XCTAssertFalse(r.autoApproves(toolName: "Bash", command: "for id in a b; do rm $id; done"))
+        XCTAssertFalse(r.autoApproves(toolName: "Bash", command: "for id in $(ls); do echo $id; done"))
+        XCTAssertFalse(r.autoApproves(toolName: "Bash", command: "for id in $X; do echo $id; done"))
+        XCTAssertFalse(r.autoApproves(toolName: "Bash", command: "while true; do echo x; done"))
+    }
+
+    func testBareAssignmentsAreIgnored() {
+        let r = rules(allow: ["Bash(cat *)"])
+        XCTAssertTrue(r.autoApproves(toolName: "Bash", command: "d=.maestro/x; cat $d/y"))
+        XCTAssertTrue(r.autoApproves(toolName: "Bash", command: "d=\"a b\"; cat $d"))
+        XCTAssertFalse(r.autoApproves(toolName: "Bash", command: "d=$(find .) ; cat $d"))
+        XCTAssertFalse(r.autoApproves(toolName: "Bash", command: "d=$HOME; cat $d"))
+        XCTAssertFalse(r.autoApproves(toolName: "Bash", command: "PATH=/tmp/bin; cat x"))
+        XCTAssertFalse(r.autoApproves(toolName: "Bash", command: "d=x rm y; cat z"))
+        XCTAssertFalse(r.autoApproves(toolName: "Bash", command: "d=x"))
+    }
+
     // MARK: - Loading
 
     func testLoadMergesUserAndProjectSettings() throws {
