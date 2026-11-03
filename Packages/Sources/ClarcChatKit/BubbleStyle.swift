@@ -103,7 +103,7 @@ extension View {
 
 // MARK: - AnyInsettableShape
 
-private struct AnyInsettableShape: InsettableShape, @unchecked Sendable {
+private nonisolated struct AnyInsettableShape: InsettableShape, @unchecked Sendable {
     private let _path: (CGRect) -> Path
     private let _inset: (CGFloat) -> AnyInsettableShape
 
