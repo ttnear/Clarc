@@ -193,6 +193,7 @@ struct ClaudeSettingsPermissions: Sendable {
                     text.removeSubrange(at..<at + token.count)
                 }
             }
+            stripScratchRedirects(text: &text, skeleton: &skeleton)
             if skeleton.contains(">") { return false }
             let segment = String(text).trimmingCharacters(in: .whitespaces)
             if !segment.isEmpty { segments.append(segment) }
@@ -254,6 +255,39 @@ struct ClaudeSettingsPermissions: Sendable {
         }
         if quote != nil || escaped { return nil }
         return flush() ? segments : nil
+    }
+
+    private nonisolated static let scratchPrefixes: [[Character]] = [Array("/tmp/"), Array("/private/tmp/")]
+    private nonisolated static let scratchPathCharacters = Set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._-/")
+
+    /// Removes `>` / `>>` / `N>` redirects whose target is an unquoted literal path under `/tmp`
+    /// (no `..`, no variables or globs), so scratch output files don't block auto-approval.
+    private nonisolated static func stripScratchRedirects(text: inout [Character], skeleton: inout [Character]) {
+        var i = 0
+        while i < skeleton.count {
+            guard skeleton[i] == ">" else { i += 1; continue }
+            var start = i
+            if start > 0, skeleton[start - 1].isNumber, start == 1 || skeleton[start - 2] == " " { start -= 1 }
+            var j = i + 1
+            if j < skeleton.count, skeleton[j] == ">" { j += 1 }
+            while j < skeleton.count, skeleton[j] == " " { j += 1 }
+            var k = j
+            // Scan `text`, not `skeleton`: the skeleton blanks quoted content to `_`, which would pass this check.
+            while k < text.count, scratchPathCharacters.contains(text[k]) { k += 1 }
+            let target = Array(text[j..<k])
+            // The target must end at whitespace or the end of the segment, so `/tmp/a$X` or `/tmp/a*` never qualify.
+            let endsCleanly = k == skeleton.count || skeleton[k] == " "
+            let isScratch = endsCleanly
+                && scratchPrefixes.contains { target.starts(with: $0) && target.count > $0.count }
+                && !String(target).contains("..")
+            if isScratch {
+                skeleton.removeSubrange(start..<k)
+                text.removeSubrange(start..<k)
+                i = start
+            } else {
+                i += 1
+            }
+        }
     }
 
     private nonisolated static func indexOf(_ needle: [Character], in haystack: [Character]) -> Int? {
