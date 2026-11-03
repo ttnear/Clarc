@@ -123,6 +123,19 @@ struct MessageListView: View {
             try? await Task.sleep(for: .milliseconds(32))  // 2 frames: fade-in after scroll settles
             withAnimation(.easeIn(duration: 0.15)) { isSessionReady = true }
         }
+        // The bridge is updated by a deferred observation loop, so at the moment the session id
+        // changes (the `.task` above) `chatBridge.messages` can still hold the previous session's
+        // messages, or none yet. Rebuild again once the bridge reports the new session / contents.
+        .onChange(of: chatBridge.sessionKey) {
+            rebuildSettledItems()
+            isSessionReady = true
+            scrollToBottomDebounced()
+        }
+        .onChange(of: chatBridge.messages.count) {
+            guard !chatBridge.isStreaming else { return }
+            rebuildSettledItems()
+            if isNearBottom { scrollToBottomDebounced() }
+        }
         .onChange(of: chatBridge.isStreaming) { old, new in
             // Only update when streaming ends — settled list doesn't change at start, so skip
             if old && !new {
@@ -160,6 +173,7 @@ struct MessageListView: View {
 
     private func rebuildSettledItems() {
         let messages = settledOnlyMessages(from: chatBridge.messages)
+        print("[UI] rebuildSettledItems bridgeKey=\(chatBridge.sessionKey.prefix(12)) window=\((windowState.currentSessionId ?? "nil").prefix(12)) items=\(messages.count)")
         var t = Transaction()
         t.animation = nil
         withTransaction(t) { settledItems = messages }

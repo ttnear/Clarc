@@ -667,6 +667,7 @@ final class AppState {
         func observeStream() {
             withObservationTracking {
                 let state = streamState(in: window)
+                bridge.sessionKey = window.currentSessionId ?? window.newSessionKey
                 bridge.messages = state.allMessages
                 bridge.isStreaming = state.isStreaming
                 bridge.isThinking = state.isThinking
@@ -960,6 +961,7 @@ final class AppState {
         let cliSessionId: String? = (isNewSession || isPending) ? nil : window.currentSessionId
 
         if isNewSession {
+            window.selectionEpoch &+= 1
             let tempId = "pending-\(streamId.uuidString)"
             window.currentSessionId = tempId
             window.insertPendingPlaceholder(tempId)
@@ -1914,10 +1916,12 @@ final class AppState {
 
         UserDefaults.standard.set(project.id.uuidString, forKey: "selectedProjectId")
 
-        // Refresh session history in the background
+        // Refresh session history in the background. The epoch is captured now so the late restore
+        // of the last-used session is dropped if the user picks anything before the scan finishes.
+        let epoch = window.selectionEpoch
         Task { [weak self] in
             guard let self else { return }
-            await loadSessionHistory(in: window)
+            await loadSessionHistory(in: window, restoringLastSessionIfUnchangedSince: epoch)
         }
     }
 
@@ -2054,9 +2058,14 @@ final class AppState {
     }
 
     /// Load/refresh the project's session list into allSessionSummaries
-    func loadSessionHistory(in window: WindowState) async {
+    func loadSessionHistory(in window: WindowState, restoringLastSessionIfUnchangedSince epoch: Int? = nil) async {
         guard let project = window.selectedProject else { return }
+        let startEpoch = epoch ?? window.selectionEpoch
         await reloadSessionSummaries(for: project)
+
+        // The summary scan is slow; if the user started a new chat, switched, or sent a message in
+        // the meantime, `currentSessionId == nil` below no longer means "just entered the project".
+        guard window.selectionEpoch == startEpoch, window.selectedProject?.id == project.id else { return }
 
         // Restore the last-used session when entering a project in new-chat state
         // so the status bar shows persisted stats immediately. No didSwitchToSession
@@ -2157,6 +2166,7 @@ final class AppState {
     }
 
     private func switchToSession(_ session: ChatSession, messages loadedMessages: [ChatMessage]? = nil, in window: WindowState) {
+        window.selectionEpoch &+= 1
         saveDraft(in: window)
         saveQueue(in: window)
 
@@ -2360,6 +2370,8 @@ final class AppState {
     // MARK: - View Convenience API
 
     func startNewChat(in window: WindowState) {
+        window.selectionEpoch &+= 1
+        window.cancelSessionSwitchTask()
         if isStreaming(in: window) { detachCurrentStream(in: window) }
         saveDraft(in: window)
         saveQueue(in: window)
@@ -2537,11 +2549,14 @@ final class AppState {
             guard let self else { return }
             guard !Task.isCancelled else { return }
             selectProject(project, in: window)
+            let epoch = window.selectionEpoch
             guard !Task.isCancelled else { return }
             if let s = allSessionSummaries.first(where: { $0.id == id }) {
                 let session = s.makeSession()
                 if sessionStates[session.id] == nil,
                    let full = await persistence.loadFullSession(summary: s, cwd: project.path) {
+                    // The disk load is slow; drop the switch if the user chose something else meanwhile.
+                    guard !Task.isCancelled, window.selectionEpoch == epoch else { return }
                     switchToSession(full, messages: full.messages, in: window)
                 } else {
                     switchToSession(session, in: window)
