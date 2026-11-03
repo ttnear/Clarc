@@ -140,6 +140,106 @@ final class ClaudeSettingsPermissionsTests: XCTestCase {
         XCTAssertFalse(r.autoApproves(toolName: "Bash", command: "d=x"))
     }
 
+    // MARK: - Scratch redirects, loops and assignments x isSafeSegment
+
+    /// Stands in for the BashSafety read-only whitelist: approves `cat` / `grep` segments only.
+    private let readOnly: (String) -> Bool = { $0.hasPrefix("cat ") || $0.hasPrefix("grep ") }
+
+    /// Records the segments the safe check is asked about, approving them with `readOnly`.
+    private final class SegmentRecorder {
+        var seen: [String] = []
+    }
+
+    func testScratchRedirectIsStrippedBeforeTheSafeSegmentCheck() {
+        let r = rules()
+        let rec = SegmentRecorder()
+        let ok = r.autoApproves(toolName: "Bash", command: "cat x.json > /tmp/o.json 2>&1 && grep k /tmp/o.json", isSafeSegment: { rec.seen.append($0); return self.readOnly($0) })
+        XCTAssertTrue(ok)
+        XCTAssertTrue(rec.seen == ["cat x.json", "grep k /tmp/o.json"])
+        XCTAssertTrue(r.autoApproves(toolName: "Bash", command: "cat x >/private/tmp/o", isSafeSegment: readOnly))
+        XCTAssertTrue(r.autoApproves(toolName: "Bash", command: "cat x 2>/tmp/e", isSafeSegment: readOnly))
+    }
+
+    func testStrictRedirectTargetsNeverReachApprovalWithSafeSegments() {
+        let r = rules()
+        for target in ["/tmp/", "/tmp/a$X", "/tmp/a*", "/tmp/../etc/x", "~/x", "/etc/x", "\"/tmp/x\""] {
+            XCTAssertFalse(r.autoApproves(toolName: "Bash", command: "cat x > \(target)", isSafeSegment: { _ in true }), target)
+        }
+    }
+
+    func testDenyStillBlocksASegmentWhoseScratchRedirectWasStripped() {
+        let r = rules(deny: ["Bash(cat *)"])
+        XCTAssertFalse(r.autoApproves(toolName: "Bash", command: "cat x > /tmp/o", isSafeSegment: { _ in true }))
+        let asked = rules(ask: ["Bash(cat *)"])
+        XCTAssertFalse(asked.autoApproves(toolName: "Bash", command: "cat x > /tmp/o", isSafeSegment: { _ in true }))
+    }
+
+    func testForLoopBodyIsJudgedByTheSafeSegmentCheck() {
+        let r = rules()
+        let rec = SegmentRecorder()
+        let ok = r.autoApproves(toolName: "Bash", command: "for f in a b; do cat $f; done", isSafeSegment: { rec.seen.append($0); return self.readOnly($0) })
+        XCTAssertTrue(ok)
+        XCTAssertTrue(rec.seen == ["cat $f"])
+        XCTAssertTrue(r.autoApproves(toolName: "Bash", command: "for f in a b\ndo\n  grep k $f\ndone", isSafeSegment: readOnly))
+        XCTAssertFalse(r.autoApproves(toolName: "Bash", command: "for f in a b; do rm $f; done", isSafeSegment: readOnly))
+        XCTAssertFalse(r.autoApproves(toolName: "Bash", command: "for f in a b; do cat $f; rm $f; done", isSafeSegment: readOnly))
+    }
+
+    func testUnplainForLoopHeadersAndOtherLoopsAreNotCoveredBySafeSegments() {
+        let r = rules()
+        for cmd in ["for f in $(ls); do cat $f; done", "for f in $X; do cat $f; done", "for f in *; do cat $f; done",
+                    "while true; do cat x; done", "until false; do cat x; done"] {
+            XCTAssertFalse(r.autoApproves(toolName: "Bash", command: cmd, isSafeSegment: readOnly), cmd)
+        }
+    }
+
+    func testSensitiveAssignmentsAreNotIgnoredBySafeSegments() {
+        let r = rules()
+        let names = ["PATH", "IFS", "BASH_ENV", "ENV", "SHELLOPTS", "PS4", "PROMPT_COMMAND",
+                     "LD_PRELOAD", "LD_LIBRARY_PATH", "DYLD_INSERT_LIBRARIES", "DYLD_LIBRARY_PATH"]
+        for name in names {
+            XCTAssertFalse(r.autoApproves(toolName: "Bash", command: "\(name)=/tmp/x; cat y", isSafeSegment: readOnly), name)
+        }
+        // The assignment segment is what the safe check sees (and rejects), not silently dropped.
+        let rec = SegmentRecorder()
+        _ = r.autoApproves(toolName: "Bash", command: "PATH=/tmp/bin; cat y", isSafeSegment: { rec.seen.append($0); return self.readOnly($0) })
+        XCTAssertTrue(rec.seen.first == "PATH=/tmp/bin")
+    }
+
+    func testHarmlessAssignmentIsDroppedBeforeTheSafeSegmentCheck() {
+        let r = rules()
+        let rec = SegmentRecorder()
+        let ok = r.autoApproves(toolName: "Bash", command: "d=.maestro/x; cat $d/y", isSafeSegment: { rec.seen.append($0); return self.readOnly($0) })
+        XCTAssertTrue(ok)
+        XCTAssertTrue(rec.seen == ["cat $d/y"])
+        XCTAssertTrue(r.autoApproves(toolName: "Bash", command: "d=\"a b\"; cat $d", isSafeSegment: readOnly))
+    }
+
+    func testAssignmentValuesWithExpansionWhitespaceOrRedirectsAreNotIgnored() {
+        let r = rules()
+        for cmd in ["d=$HOME; cat x", "d=\"$HOME\"; cat x", "d=a$X; cat x", "d=x y; cat x", "d=a<b; cat x", "d=x rm y; cat x", "d=a>b; cat x"] {
+            XCTAssertFalse(r.autoApproves(toolName: "Bash", command: cmd, isSafeSegment: readOnly), cmd)
+        }
+        XCTAssertFalse(r.autoApproves(toolName: "Bash", command: "d=x", isSafeSegment: readOnly))
+    }
+
+    func testScratchRedirectLoopAndAssignmentCombine() {
+        let r = rules()
+        let cmd = "d=/tmp/work; for f in a b; do cat $d/$f > /tmp/out-$f 2>&1; done; grep k /tmp/out-a"
+        // `/tmp/out-$f` has a variable, so the redirect is not stripped and nothing is approved.
+        XCTAssertFalse(r.autoApproves(toolName: "Bash", command: cmd, isSafeSegment: readOnly))
+        let ok = "d=/tmp/work; for f in a b; do cat $d/$f > /tmp/out.txt 2>&1; done; grep k /tmp/out.txt"
+        XCTAssertTrue(r.autoApproves(toolName: "Bash", command: ok, isSafeSegment: readOnly))
+        XCTAssertFalse(r.autoApproves(toolName: "Bash", command: ok + "; rm /tmp/out.txt", isSafeSegment: readOnly))
+    }
+
+    func testRulesAndSafeCheckMixWithScaffolding() {
+        let r = rules(allow: ["Bash(maestro *)"])
+        let cmd = "d=x; for id in a b; do maestro task show $id > /tmp/t.json; cat /tmp/t.json; done"
+        XCTAssertFalse(r.autoApproves(toolName: "Bash", command: cmd))
+        XCTAssertTrue(r.autoApproves(toolName: "Bash", command: cmd, isSafeSegment: readOnly))
+    }
+
     // MARK: - Loading
 
     func testLoadMergesUserAndProjectSettings() throws {
