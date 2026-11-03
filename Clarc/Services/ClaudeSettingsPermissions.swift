@@ -196,7 +196,7 @@ struct ClaudeSettingsPermissions: Sendable {
             stripScratchRedirects(text: &text, skeleton: &skeleton)
             if skeleton.contains(">") { return false }
             let segment = String(text).trimmingCharacters(in: .whitespaces)
-            if !segment.isEmpty { segments.append(segment) }
+            if !segment.isEmpty, let kept = loopNormalized(segment) { segments.append(kept) }
             text = []
             skeleton = []
             return true
@@ -288,6 +288,30 @@ struct ClaudeSettingsPermissions: Sendable {
                 i += 1
             }
         }
+    }
+
+    private nonisolated static let loopWordCharacters = Set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._-/@%+=:,~")
+
+    /// Handles the scaffolding of `for NAME in WORDS; do CMD; done`: the header and `done` are
+    /// dropped (nil) and the `do ` prefix is stripped, leaving CMD to be matched on its own.
+    /// A header whose words are not plain (variables, globs, substitution) is left as-is, so no
+    /// rule will cover it. `while` / `until` are not handled and stay unmatched.
+    private nonisolated static func loopNormalized(_ segment: String) -> String? {
+        if segment == "done" || segment == "do" { return nil }
+        if segment.hasPrefix("do ") {
+            let rest = segment.dropFirst(3).trimmingCharacters(in: .whitespaces)
+            return rest.isEmpty ? nil : loopNormalized(rest)
+        }
+        if segment.hasPrefix("for ") {
+            let words = segment.split(separator: " ", omittingEmptySubsequences: true).map(String.init)
+            if words.count >= 4, words[2] == "in",
+               let first = words[1].first, first.isLetter || first == "_",
+               words[1].allSatisfy({ $0.isLetter || $0.isNumber || $0 == "_" }),
+               words[3...].allSatisfy({ word in !word.isEmpty && word.allSatisfy { loopWordCharacters.contains($0) } }) {
+                return nil
+            }
+        }
+        return segment
     }
 
     private nonisolated static func indexOf(_ needle: [Character], in haystack: [Character]) -> Int? {
