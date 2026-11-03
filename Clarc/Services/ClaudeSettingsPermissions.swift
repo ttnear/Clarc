@@ -89,13 +89,20 @@ struct ClaudeSettingsPermissions: Sendable {
 
     /// True when the call is fully covered by allow rules and not touched by any deny/ask rule.
     /// - Parameter command: the `command` input of a Bash call (ignored for other tools).
-    nonisolated func autoApproves(toolName: String, command: String?) -> Bool {
+    /// - Parameter isSafeSegment: an extra check for one Bash segment (e.g. a built-in read-only
+    ///   whitelist), so a compound command can mix segments covered by rules with segments the
+    ///   check approves. It never overrides a deny/ask match.
+    nonisolated func autoApproves(
+        toolName: String,
+        command: String?,
+        isSafeSegment: (String) -> Bool = { _ in false }
+    ) -> Bool {
         if toolName == "Bash" {
             guard let command, let segments = Self.parseSegments(command), !segments.isEmpty else { return false }
             for segment in segments where matches(deny, bashSegment: segment) || matches(ask, bashSegment: segment) {
                 return false
             }
-            return segments.allSatisfy { matches(allow, bashSegment: $0) }
+            return segments.allSatisfy { matches(allow, bashSegment: $0) || isSafeSegment($0) }
         }
 
         // Specifier rules (`Edit(path)`, `WebFetch(domain:…)`) are not evaluated here, so a deny/ask

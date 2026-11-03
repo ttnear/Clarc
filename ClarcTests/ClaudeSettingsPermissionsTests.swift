@@ -65,6 +65,18 @@ final class ClaudeSettingsPermissionsTests: XCTestCase {
         XCTAssertFalse(r.autoApproves(toolName: "Bash", command: "cd /x; rm -rf y"))
     }
 
+    func testSafeSegmentCheckCanCoverPartOfACompoundCommand() {
+        let r = rules(allow: ["Bash(cd *)"])
+        let cmd = "cd .. && git status --short x && grep -n y x"
+        XCTAssertFalse(r.autoApproves(toolName: "Bash", command: cmd))
+        XCTAssertTrue(r.autoApproves(toolName: "Bash", command: cmd, isSafeSegment: { $0.hasPrefix("git status") || $0.hasPrefix("grep") }))
+    }
+
+    func testSafeSegmentCheckNeverOverridesDeny() {
+        let r = rules(allow: ["Bash(cd *)"], deny: ["Bash(git status *)"])
+        XCTAssertFalse(r.autoApproves(toolName: "Bash", command: "cd .. && git status -s", isSafeSegment: { _ in true }))
+    }
+
     func testDenyRuleBlocksAnySegment() {
         let r = rules(allow: ["Bash(*)"], deny: ["Bash(rm *)"])
         XCTAssertFalse(r.autoApproves(toolName: "Bash", command: "ls && rm -rf y"))

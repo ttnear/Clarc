@@ -251,7 +251,11 @@ actor PermissionServer {
         let context = req.sessionId.flatMap { sessionRegistry[$0] }
         if context?.mode != .plan {
             let rules = ClaudeSettingsPermissions.load(projectPath: context?.projectKey)
-            if rules.autoApproves(toolName: req.toolName, command: req.toolInput["command"]?.stringValue) {
+            if rules.autoApproves(
+                toolName: req.toolName,
+                command: req.toolInput["command"]?.stringValue,
+                isSafeSegment: { BashSafety.isSafeReadOnly(command: $0) }
+            ) {
                 return "Allowed by Claude Code permission settings"
             }
         }
