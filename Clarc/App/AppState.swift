@@ -1916,12 +1916,10 @@ final class AppState {
 
         UserDefaults.standard.set(project.id.uuidString, forKey: "selectedProjectId")
 
-        // Refresh session history in the background. The epoch is captured now so the late restore
-        // of the last-used session is dropped if the user picks anything before the scan finishes.
-        let epoch = window.selectionEpoch
+        // Refresh session history in the background
         Task { [weak self] in
             guard let self else { return }
-            await loadSessionHistory(in: window, restoringLastSessionIfUnchangedSince: epoch)
+            await loadSessionHistory(in: window)
         }
     }
 
@@ -2057,25 +2055,14 @@ final class AppState {
             .sorted { $0.updatedAt > $1.updatedAt }
     }
 
-    /// Load/refresh the project's session list into allSessionSummaries
-    func loadSessionHistory(in window: WindowState, restoringLastSessionIfUnchangedSince epoch: Int? = nil) async {
+    /// Load/refresh the project's session list into allSessionSummaries.
+    ///
+    /// A project is always entered on a new chat. The previous session is not restored: the
+    /// sidebar lists chats by recency and may hide it behind a filter (e.g. completed chats), and
+    /// restoring it after the slow summary scan could override a choice made in the meantime.
+    func loadSessionHistory(in window: WindowState) async {
         guard let project = window.selectedProject else { return }
-        let startEpoch = epoch ?? window.selectionEpoch
         await reloadSessionSummaries(for: project)
-
-        // The summary scan is slow; if the user started a new chat, switched, or sent a message in
-        // the meantime, `currentSessionId == nil` below no longer means "just entered the project".
-        guard window.selectionEpoch == startEpoch, window.selectedProject?.id == project.id else { return }
-
-        // Restore the last-used session when entering a project in new-chat state
-        // so the status bar shows persisted stats immediately. No didSwitchToSession
-        // here — the project's lastSessionId already points at this session, so
-        // persisting it again would be a redundant projects-array write.
-        if window.currentSessionId == nil,
-           let lastId = project.lastSessionId,
-           let summary = allSessionSummaries.first(where: { $0.id == lastId && $0.projectId == project.id }) {
-            switchToSession(summary.makeSession(), in: window)
-        }
     }
 
     /// Window-independent reload — used by the FS watcher when the CLI (or
