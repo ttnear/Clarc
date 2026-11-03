@@ -667,6 +667,7 @@ final class AppState {
         func observeStream() {
             withObservationTracking {
                 let state = streamState(in: window)
+                bridge.sessionKey = window.currentSessionId ?? window.newSessionKey
                 bridge.messages = state.allMessages
                 bridge.isStreaming = state.isStreaming
                 bridge.isThinking = state.isThinking
@@ -960,6 +961,7 @@ final class AppState {
         let cliSessionId: String? = (isNewSession || isPending) ? nil : window.currentSessionId
 
         if isNewSession {
+            window.selectionEpoch &+= 1
             let tempId = "pending-\(streamId.uuidString)"
             window.currentSessionId = tempId
             window.insertPendingPlaceholder(tempId)
@@ -2053,20 +2055,14 @@ final class AppState {
             .sorted { $0.updatedAt > $1.updatedAt }
     }
 
-    /// Load/refresh the project's session list into allSessionSummaries
+    /// Load/refresh the project's session list into allSessionSummaries.
+    ///
+    /// A project is always entered on a new chat. The previous session is not restored: the
+    /// sidebar lists chats by recency and may hide it behind a filter (e.g. completed chats), and
+    /// restoring it after the slow summary scan could override a choice made in the meantime.
     func loadSessionHistory(in window: WindowState) async {
         guard let project = window.selectedProject else { return }
         await reloadSessionSummaries(for: project)
-
-        // Restore the last-used session when entering a project in new-chat state
-        // so the status bar shows persisted stats immediately. No didSwitchToSession
-        // here — the project's lastSessionId already points at this session, so
-        // persisting it again would be a redundant projects-array write.
-        if window.currentSessionId == nil,
-           let lastId = project.lastSessionId,
-           let summary = allSessionSummaries.first(where: { $0.id == lastId && $0.projectId == project.id }) {
-            switchToSession(summary.makeSession(), in: window)
-        }
     }
 
     /// Window-independent reload — used by the FS watcher when the CLI (or
@@ -2157,6 +2153,7 @@ final class AppState {
     }
 
     private func switchToSession(_ session: ChatSession, messages loadedMessages: [ChatMessage]? = nil, in window: WindowState) {
+        window.selectionEpoch &+= 1
         saveDraft(in: window)
         saveQueue(in: window)
 
@@ -2360,6 +2357,8 @@ final class AppState {
     // MARK: - View Convenience API
 
     func startNewChat(in window: WindowState) {
+        window.selectionEpoch &+= 1
+        window.cancelSessionSwitchTask()
         if isStreaming(in: window) { detachCurrentStream(in: window) }
         saveDraft(in: window)
         saveQueue(in: window)
@@ -2537,11 +2536,14 @@ final class AppState {
             guard let self else { return }
             guard !Task.isCancelled else { return }
             selectProject(project, in: window)
+            let epoch = window.selectionEpoch
             guard !Task.isCancelled else { return }
             if let s = allSessionSummaries.first(where: { $0.id == id }) {
                 let session = s.makeSession()
                 if sessionStates[session.id] == nil,
                    let full = await persistence.loadFullSession(summary: s, cwd: project.path) {
+                    // The disk load is slow; drop the switch if the user chose something else meanwhile.
+                    guard !Task.isCancelled, window.selectionEpoch == epoch else { return }
                     switchToSession(full, messages: full.messages, in: window)
                 } else {
                     switchToSession(session, in: window)

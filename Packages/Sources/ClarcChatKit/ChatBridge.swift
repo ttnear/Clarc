@@ -12,6 +12,9 @@ public final class ChatBridge {
     // MARK: - Streaming State (pushed by AppState)
 
     public var messages: [ChatMessage] = []
+    /// Key of the session `messages` belongs to, set together with `messages` so views can tell when
+    /// the bridge has caught up with a session switch (it lags the window's `currentSessionId`).
+    public var sessionKey: String = ""
     public var isStreaming: Bool = false
     public var isThinking: Bool = false
     public var streamingStartDate: Date?
