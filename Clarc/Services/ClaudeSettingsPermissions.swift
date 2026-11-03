@@ -196,7 +196,8 @@ struct ClaudeSettingsPermissions: Sendable {
             stripScratchRedirects(text: &text, skeleton: &skeleton)
             if skeleton.contains(">") { return false }
             let segment = String(text).trimmingCharacters(in: .whitespaces)
-            if !segment.isEmpty, let kept = loopNormalized(segment) { segments.append(kept) }
+            let blanked = String(skeleton).trimmingCharacters(in: .whitespaces)
+            if !segment.isEmpty, let kept = scaffoldingStripped(segment, skeleton: blanked) { segments.append(kept) }
             text = []
             skeleton = []
             return true
@@ -296,12 +297,14 @@ struct ClaudeSettingsPermissions: Sendable {
     /// dropped (nil) and the `do ` prefix is stripped, leaving CMD to be matched on its own.
     /// A header whose words are not plain (variables, globs, substitution) is left as-is, so no
     /// rule will cover it. `while` / `until` are not handled and stay unmatched.
-    private nonisolated static func loopNormalized(_ segment: String) -> String? {
+    private nonisolated static func scaffoldingStripped(_ segment: String, skeleton: String) -> String? {
         if segment == "done" || segment == "do" { return nil }
         if segment.hasPrefix("do ") {
             let rest = segment.dropFirst(3).trimmingCharacters(in: .whitespaces)
-            return rest.isEmpty ? nil : loopNormalized(rest)
+            let restSkeleton = skeleton.dropFirst(3).trimmingCharacters(in: .whitespaces)
+            return rest.isEmpty ? nil : scaffoldingStripped(rest, skeleton: restSkeleton)
         }
+        if isHarmlessAssignment(segment, skeleton: skeleton) { return nil }
         if segment.hasPrefix("for ") {
             let words = segment.split(separator: " ", omittingEmptySubsequences: true).map(String.init)
             if words.count >= 4, words[2] == "in",
@@ -312,6 +315,22 @@ struct ClaudeSettingsPermissions: Sendable {
             }
         }
         return segment
+    }
+
+    /// Variables that change how later commands are resolved or loaded; never treated as harmless.
+    private nonisolated static let sensitiveVariables: Set<String> = ["PATH", "IFS", "BASH_ENV", "ENV", "SHELLOPTS", "PS4", "PROMPT_COMMAND"]
+
+    /// A bare `NAME=value` segment: one word, no expansion of any kind. `NAME=value cmd` (an env
+    /// prefix for cmd) has an unquoted space and is not bare, so it still goes through rule matching.
+    private nonisolated static func isHarmlessAssignment(_ segment: String, skeleton: String) -> Bool {
+        guard let eq = skeleton.firstIndex(of: "=") else { return false }
+        let name = skeleton[..<eq]
+        guard let first = name.first, first.isLetter || first == "_",
+              name.allSatisfy({ $0.isLetter || $0.isNumber || $0 == "_" }),
+              !sensitiveVariables.contains(String(name)),
+              !name.hasPrefix("LD_"), !name.hasPrefix("DYLD_") else { return false }
+        let value = skeleton[skeleton.index(after: eq)...]
+        return !value.contains(where: \.isWhitespace) && !segment.contains("$") && !value.contains("<") && !value.contains(">")
     }
 
     private nonisolated static func indexOf(_ needle: [Character], in haystack: [Character]) -> Int? {
